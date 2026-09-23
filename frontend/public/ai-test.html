@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Model Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .chat-container {
+            margin: 20px 0;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            text-align: right;
+        }
+
+        .assistant-message {
+            background-color: #e9ecef;
+            color: #333;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #sendButton {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #sendButton:hover {
+            background-color: #0056b3;
+        }
+
+        #sendButton:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .metadata {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .test-buttons {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .test-button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .test-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 AI Model Connection Test</h1>
+
+        <div class="test-buttons">
+            <button class="test-button" onclick="testAPIStatus()">Test API Status</button>
+            <button class="test-button" onclick="sendTestMessage()">Send Test Message</button>
+            <button class="test-button" onclick="testLongMessage()">Test Long Message</button>
+            <button class="test-button" onclick="clearChat()">Clear Chat</button>
+        </div>
+
+        <div id="status" class="status info">
+            Ready to test the AI Model Connection. Click "Test API Status" to check if the API is running.
+        </div>
+
+        <div class="chat-container">
+            <div id="messages"></div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type your message here..."
+                onkeypress="handleKeyPress(event)">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const messagesContainer = document.getElementById('messages');
+        const statusDiv = document.getElementById('status');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        let conversationHistory = [];
+
+        function updateStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function addMessage(role, content, metadata = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role === 'user' ? 'user-message' : 'assistant-message'}`;
+            messageDiv.innerHTML = `
+                <strong>${role === 'user' ? 'You' : 'Assistant'}:</strong>
+                <div>${content}</div>
+                ${metadata ? `<div class="metadata">Tokens: ${metadata.input_tokens} | Processed: ${metadata.messages_processed} | Truncated: ${metadata.truncated}</div>` : ''}
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function testAPIStatus() {
+            updateStatus('Testing API status...');
+            try {
+                const response = await fetch('/api/ai');
+                const data = await response.json();
+                updateStatus(`✅ API is running! Max tokens: ${data.max_input_tokens?.toLocaleString() || 'N/A'}`);
+                console.log('API Status:', data);
+            } catch (error) {
+                updateStatus('❌ API test failed: ' + error.message, 'error');
+                console.error('API Status Error:', error);
+            }
+        }
+
+        async function sendMessage(messageText = null) {
+            const message = messageText || messageInput.value.trim();
+            if (!message) return;
+
+            if (!messageText) {
+                messageInput.value = '';
+            }
+
+            addMessage('user', message);
+            conversationHistory.push({ role: 'user', content: message });
+
+            sendButton.disabled = true;
+            updateStatus('Sending message...');
+
+            try {
+                const response = await fetch('/api/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    addMessage('assistant', data.response, data.metadata);
+                    conversationHistory.push({ role: 'assistant', content: data.response });
+                    updateStatus(`✅ Message sent successfully! (~${data.metadata.input_tokens} tokens)`);
+                } else {
+                    updateStatus('❌ Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                updateStatus('❌ Network error: ' + error.message, 'error');
+                console.error('Send Message Error:', error);
+            } finally {
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        function sendTestMessage() {
+            sendMessage('Hello! This is a test message to check if the AI model connection is working correctly.');
+        }
+
+        function testLongMessage() {
+            const longMessage = 'This is a test message to check how the API handles longer inputs. '.repeat(100) +
+                'The API should handle this gracefully with token counting and truncation if needed. ' +
+                'This message is approximately 2000+ characters long to test the token estimation system.';
+            sendMessage(longMessage);
+        }
+
+        function clearChat() {
+            messagesContainer.innerHTML = '';
+            conversationHistory = [];
+            updateStatus('Chat cleared. Ready for new conversation.');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Auto-focus on the input field
+        messageInput.focus();
+
+        // Test API on page load
+        testAPIStatus();
+    </script>
+</body>
+
+</html>

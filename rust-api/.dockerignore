@@ -1,0 +1,32 @@
+# Keep the build context small and reproducible.
+
+# Rust build artifacts (rebuilt inside the image)
+target/
+**/target/
+**/*.rs.bk
+*.pdb
+
+# Runtime data — mounted as a volume, never baked into the image
+data/
+
+# Secrets / env files — passed in at runtime, never baked into the image
+.env
+.env.*
+
+# VCS / OS / editor cruft
+.git/
+.gitignore
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+
+# Docs and dev tooling not needed to compile the binary
+*.md
+scripts/
+tools/
+
+# The Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml

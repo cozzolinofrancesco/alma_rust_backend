@@ -1,0 +1,43 @@
+# Alma Rust backend — container orchestration.
+#
+#   docker compose up --build       # build + run
+#   docker compose logs -f          # follow logs
+#   docker compose down             # stop (named volume persists)
+#
+# Env vars (all optional; defaults run a working stub server). Put secrets like
+# GEMINI_API_KEY / SERVICE_API_KEY in a local `.env` file (gitignored) — it is
+# loaded automatically via env_file below.
+#
+#   GEMINI_API_KEY           present -> real Gemini + File Search + durable store;
+#                            absent  -> hermetic echo / lexical / in-memory stubs
+#   GEMINI_API_URL           Gemini base URL override
+#   GEMINI_DEFAULT_MODEL     default gemini-2.5-flash
+#   GEMINI_AVAILABLE_MODELS  comma-separated resolvable model ids
+#   GEMINI_FILE_SEARCH_MODEL File Search model override
+#   SERVICE_API_KEY          shared-secret header guard (set for any exposed deploy)
+#   GOOGLE_DRIVE_BASE_URL    Drive host override (for local mocks)
+#   RUST_LOG                 tracing filter, default info
+
+services:
+  alma-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: alma-rust-api:latest
+    container_name: alma-rust-api
+    ports:
+      - "8811:8811"
+    environment:
+      ALMA_RUST_BIND_ADDRESS: 0.0.0.0:8811
+      ALMA_RUST_DATA_DIR: /data
+      RUST_LOG: info
+    env_file:
+      # Optional: create ./ .env with GEMINI_API_KEY etc. Absent is fine.
+      - path: .env
+        required: false
+    volumes:
+      - alma-data:/data
+    restart: unless-stopped
+
+volumes:
+  alma-data:

@@ -1,0 +1,362 @@
+/* ChatPanel Component Styles */
+
+.chatContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    padding: 1rem;
+    border-bottom: 1px solid;
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.headerTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.inputContainer {
+    flex: 1;
+    min-width: 0;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.inputBoxesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.inputBoxWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.inputBoxWrapper.dragOver {
+    transform: scale(1.05);
+}
+
+.inputBoxWrapper.dragging {
+    opacity: 0.5;
+}
+
+.inputBox {
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dragHandle {
+    cursor: move;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 1rem;
+    opacity: 0.15;
+    transition: opacity 0.2s ease;
+}
+
+.dragHandle:hover {
+    opacity: 0.4;
+}
+
+.dragHandleDot {
+    width: 0.25rem;
+    height: 0.25rem;
+    background-color: currentColor;
+    border-radius: 50%;
+    margin-bottom: 0.25rem;
+}
+
+.dragHandleDot:last-child {
+    margin-bottom: 0;
+}
+
+.textarea {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 6rem;
+    background-color: transparent;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    resize: none;
+    outline: none;
+    padding-right: 3rem;
+    padding-bottom: 2.5rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.textarea.dragOver,
+.modalTextarea.dragOver {
+    border: 2px dashed #8A2BE2;
+    background-color: rgba(138, 43, 226, 0.05);
+}
+
+.expandButton {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    opacity: 0.25;
+    transition: opacity 0.2s ease;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+
+.expandButton:hover {
+    opacity: 0.6;
+}
+
+.expandIcon {
+    font-size: 1rem;
+    line-height: 1;
+    transform: rotate(0deg);
+    transition: transform 0.2s ease;
+}
+
+.expandButton:hover .expandIcon {
+    transform: rotate(45deg);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .textarea {
+        height: 5rem;
+        font-size: 0.8rem;
+        padding-right: 2.5rem;
+        padding-bottom: 2rem;
+    }
+    
+    .expandButton {
+        width: 1.25rem;
+        height: 1.25rem;
+        font-size: 0.75rem;
+    }
+    
+    .expandIcon {
+        font-size: 0.875rem;
+    }
+    
+    .inputBox {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .textarea {
+        height: 4rem;
+        font-size: 0.75rem;
+        padding-bottom: 1.75rem;
+    }
+    
+    .expandButton {
+        width: 1rem;
+        height: 1rem;
+        font-size: 0.625rem;
+    }
+    
+    .expandIcon {
+        font-size: 0.75rem;
+    }
+}
+
+.removeButton {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    opacity: 0.2;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.removeButton:hover {
+    opacity: 0.6;
+}
+
+.connectingDots {
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 0;
+}
+
+.dotsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.dot {
+    width: 0.25rem;
+    height: 0.25rem;
+    background-color: #555555;
+    opacity: 0.3;
+}
+
+.addButtonContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.addButton {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px dashed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.addButton:disabled {
+    color: #666666;
+    border-color: #666666;
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.addButton.filled {
+    color: #1A2B5B;
+    border-color: #1A2B5B;
+    opacity: 1;
+}
+
+.addButton.filled:hover {
+    opacity: 0.8;
+}
+
+.bottomSection {
+    padding: 1rem;
+    border-top: 1px solid;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.writeButton {
+    padding: 0.5rem 1rem;
+    color: white;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.writeButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Minimalist Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 10vh 10vw;
+}
+
+.modalContent {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+}
+
+.modalTextarea {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    outline: none;
+    border: none;
+    padding: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    font-family: inherit;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.modalFloatingButtons {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.modalFloatingButton {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    opacity: 0.15;
+    transition: opacity 0.2s ease;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: currentColor;
+}
+
+.modalFloatingButton:hover {
+    opacity: 0.6;
+}
+
+.modalFloatingButtonPrimary {
+    background-color: rgba(26, 43, 91, 0.25);
+}
+
+.modalFloatingButtonPrimary.hasContent {
+    opacity: 0.4;
+}
+
+.modalFloatingButtonPrimary.hasContent:hover {
+    opacity: 0.8;
+}
+
+.modalEscapeHint {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 0.75rem;
+    opacity: 0.1;
+    pointer-events: none;
+}

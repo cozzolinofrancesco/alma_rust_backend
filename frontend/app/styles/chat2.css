@@ -1,0 +1,370 @@
+/* ================================================================= */
+/*                            VARIABLES                             */
+/* ================================================================= */
+:root {
+    /* ─── BACKGROUND / BORDER ───────────────────────────────────────────── */
+    --bg-page: #f7f7f8;
+    /* very light gray (unchanged) */
+    --border-color: #e3e3e3;
+    /* unchanged */
+
+    /* ─── BRAND ACCENT ──────────────────────────────────────────────────── */
+    --button-bg: #0C1C78;
+    /* dark‐blue accent (replaces #10a37f) */
+    --button-text: #ffffff;
+    /* keep white text on buttons */
+
+    --dot-active: #0C1C78;
+    /* dark‐blue (replaces #10a37f) */
+    --dot-done: #0C1C78;
+    /* dark‐blue (replaces #10a37f) */
+    --dot-inactive: #c1c1c1;
+    /* unchanged */
+
+    --line-color: #e3e3e3;
+    /* unchanged */
+
+    /* ─── CHAT BUBBLE BACKGROUNDS ───────────────────────────────────────── */
+    --bot-bg: #F0F4FF;
+    /* very light‐blue (replaces white) */
+    --user-bg: #E6FFFA;
+    /* very light‐teal (replaces #dcf8c6) */
+
+    /* ─── INPUT AREA ────────────────────────────────────────────────────── */
+    --input-bg: #ffffff;
+    /* unchanged */
+    --input-border: #d1d5db;
+    /* unchanged */
+    --input-placeholder: #9ca3af;
+    /* unchanged */
+}
+
+/* ================================================================= */
+/*                       GLOBAL ELEMENT STYLES                        */
+/* ================================================================= */
+html,
+body,
+#__next {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: #2c2c2c;
+    /* Ensures our "sticky footer" chat input sits at the bottom. */
+}
+
+/* ================================================================= */
+/*                     INITIAL "TOPIC" SCREEN                         */
+/* ================================================================= */
+/* .chat-container is already set to full‐height flex‐centering, so we can
+     add a ".centered" modifier to .chat-main to vertically/horizontally center. */
+.chat-main.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Box that holds "Enter a topic…" text + input + button. */
+.topic-box {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Title "Enter a topic…" */
+.topic-box h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    color: #2c2c2c;
+}
+
+/* The <input class="topic-input"> */
+.topic-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    color: #2c2c2c;
+}
+
+.topic-input::placeholder {
+    color: var(--input-placeholder);
+}
+
+/* The <button class="start-button"> */
+.start-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.start-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ================================================================= */
+/*                           CHAT LAYOUT                              */
+/* ================================================================= */
+.chat-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+/* Once "Start Discussion" is clicked, chat-main loses .centered and becomes normal chat UI */
+.chat-main {
+    width: 100%;
+    max-width: 700px;
+    height: 90vh;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ================================================================= */
+/*                            TIMELINE BAR                            */
+/* ================================================================= */
+.timeline-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-step {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex: 1;
+}
+
+.timeline-step .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--dot-inactive);
+    cursor: pointer;
+}
+
+.timeline-step .dot.done {
+    background: var(--dot-done);
+}
+
+.timeline-step .dot.active {
+    background: var(--dot-active);
+}
+
+.timeline-step .step-label {
+    font-size: 0.70rem;
+    margin-top: 4px;
+    text-align: center;
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #6b6b6b;
+}
+
+.timeline-step .step-label.active-label {
+    color: var(--dot-active);
+    font-weight: bold;
+}
+
+.timeline-step .line {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--line-color);
+    z-index: -1;
+}
+
+.timeline-step:last-child .line {
+    display: none;
+}
+
+/* ================================================================= */
+/*                         CHAT MESSAGES AREA                         */
+/* ================================================================= */
+.chat-messages {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    background: var(--bg-page);
+}
+
+.message.bot {
+    max-width: 75%;
+    background: var(--bot-bg);
+    padding: 12px 16px;
+    border-radius: 12px 12px 12px 0px;
+    align-self: flex-start;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.message.user {
+    max-width: 75%;
+    background: var(--user-bg);
+    padding: 12px 16px;
+    border-radius: 12px 12px 0px 12px;
+    align-self: flex-end;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* The very first "Topic:" line at top of chat log */
+.message.bot:first-child {
+    font-weight: bold;
+    background: var(--bg-page);
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 8px;
+}
+
+/* ================================================================= */
+/*                          INPUT AREA                                */
+/* ================================================================= */
+.chat-input-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 16px;
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
+    position: relative;
+}
+
+.chat-textarea {
+    flex: 1;
+    min-height: 24px;
+    max-height: 200px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    background: var(--input-bg);
+    resize: none;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.chat-textarea:focus {
+    border-color: var(--button-bg);
+    box-shadow: 0 0 0 2px rgba(12, 28, 120, 0.1);
+}
+
+.chat-textarea::placeholder {
+    color: var(--input-placeholder);
+}
+
+.chat-attach-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.chat-attach-button:hover {
+    background: #f8f9fa;
+    border-color: var(--button-bg);
+}
+
+.chat-attach-button input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.chat-send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(12, 28, 120, 0.2);
+}
+
+.chat-send-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(12, 28, 120, 0.25);
+}
+
+.chat-send-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(12, 28, 120, 0.2);
+}
+
+.chat-send-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--button-text);
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

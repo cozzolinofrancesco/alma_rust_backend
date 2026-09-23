@@ -1,0 +1,251 @@
+/* Inverted Cyberpunk/Futuristic Style with Custom Colors - Squared Cards, Single Line */
+
+.collection-manager {
+  background: #ffffff;
+  border-radius: 0px;
+  color: #1E1C36;
+  width: 88%;
+  margin: 2rem auto;
+  /* center aligned */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.collection-list {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  /* center aligned */
+  overflow-x: auto;
+  /* allow horizontal scrolling */
+  flex-wrap: nowrap;
+  /* keep items on one line */
+}
+
+/* Each collection card is square */
+.collection-item {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  background: #ffffff;
+  border: 1px solid #CCCCCC;
+  /* thin dark border */
+  border-radius: 0.75rem;
+  /* match saved agent card */
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.10);
+  /* subtle shadow outside border */
+  transition: transform 0.3s, box-shadow 0.3s, margin 0.3s;
+  color: #B0B0B0;
+  /* light text by default */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Extra vertical margin when active (i.e. items exist) */
+.collection-item.active {
+  background: #ffffff;
+  /* accent background */
+  color: #1E1C36;
+  /* text turns black */
+  border-color: #EBF0FF;
+  border: 1px solid #1E1C36;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.13);
+  /* slightly stronger shadow when active */
+}
+
+/* Content inside the card */
+.collection-content {
+  text-align: center;
+}
+
+/* Large number in the center */
+.collection-number {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+  font-weight: 300;
+  /* thin text */
+}
+
+/* Page count below the number */
+.collection-pages {
+  font-size: 0.9rem;
+  font-weight: 300;
+  /* thin text */
+}
+
+/* Icons container, positioned at the bottom-right corner */
+.collection-icons {
+  position: absolute;
+  bottom: 5px;
+  right: -40px;
+  /* Initially off-screen */
+  display: flex;
+  gap: 0.5rem;
+  transition: transform 0.3s;
+}
+
+/* Loading states */
+.collection-item.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.collection-item.assigning {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* On hover, slide the icons into view */
+.collection-item:hover .collection-icons {
+  transform: translateX(-40px);
+}
+
+/* Delete (trash) icon styling */
+.delete-icon {
+  font-size: 1.4rem;
+  color: #1E1C36;
+  transition: transform 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.delete-icon:hover {
+  transform: scale(1.2);
+  color: #EBF0FF;
+}
+
+.close-sidebar-btn {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 0.75rem 0;
+  background: #0F084F;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(15, 8, 79, 0.08);
+}
+
+.close-sidebar-btn:hover {
+  background: #12074A;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.toggle-sidebar {
+  position: absolute;
+  top: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.toggle-sidebar:hover {
+  background: #f8fafc;
+  border-color: #d1d5db;
+  transform: translateX(-2px);
+}
+
+.toggle-sidebar.closed {
+  left: 2.5rem;
+}
+
+.toggle-sidebar.closed:hover {
+  background: #f8fafc;
+  border-color: #d1d5db;
+  color: #12074A;
+  transform: translateX(-2px);
+}
+
+/* Collections styles */
+
+.collections-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Header with refresh button */
+.collection-header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.collection-header {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1E1C36;
+}
+
+.collection-refresh-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #6B7280;
+}
+
+.collection-refresh-btn:hover:not(:disabled) {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+.collection-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.collection-refresh-icon {
+  transition: transform 0.3s ease;
+}
+
+.collection-refresh-icon.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+.spinning-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

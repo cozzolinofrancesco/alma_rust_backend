@@ -1,0 +1,34 @@
+# =============================================================================
+# Study Type Definitions (A–F)
+# =============================================================================
+# Used by the Report Creation UI for:
+# - dropdown options
+# - the classification guide / help panel
+#
+# IMPORTANT:
+# - Keep these definitions here (not hardcoded in React/TS).
+# - Study type matching is inferred from the selected template id (`...-type-<id>`).
+# - `is_default: true` is used as fallback when no template matches.
+# =============================================================================
+
+study_types:
+  - id: "A"
+    name: "Type A: BA/BE & Food Effect"
+    description: "Bioequivalence, formulation bridging, absolute bioavailability, food effect."
+  - id: "B"
+    name: "Type B: Human ADME / Mass Balance"
+    description: "Radiolabeled [14C], excretion routes, metabolite profiling."
+  - id: "D"
+    name: "Type D: Intrinsic Factors"
+    description: "Renal/Hepatic impairment, age, gender, race, pharmacogenomics."
+  - id: "E"
+    name: "Type E: Extrinsic Factors (DDI)"
+    description: "Drug-drug interaction (perpetrator/victim), cocktail studies."
+  - id: "F"
+    name: "Type F: Cardiac Safety"
+    description: "TQT, QTc interval, concentration-QTc analysis."
+  - id: "C"
+    name: "Type C: Dose Escalation / PK-PD"
+    description: "SAD, MAD, dose-proportionality, safety/tolerability in healthy volunteers or patients."
+    is_default: true
+

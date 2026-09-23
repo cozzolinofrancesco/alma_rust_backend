@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Analysis API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background-color: #d1ecf1;
+            border: 1px solid #b8daff;
+            color: #0c5460;
+        }
+        .preview {
+            margin-top: 10px;
+        }
+        .preview img {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .metadata {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Image Analysis API Test</h1>
+        
+        <div class="warning">
+            <strong>🔑 Service API Key Required:</strong> You need the service API key to access this image analysis service.
+            <br><br>
+            <strong>📊 Scientific Focus:</strong> This tool is optimized for scientific image analysis with maximum accuracy and determinism.
+        </div>
+
+        <form id="analyzeForm">
+            <div class="form-group">
+                <label for="apiKey">🔑 Service API Key *</label>
+                <input 
+                    type="password" 
+                    id="apiKey" 
+                    required 
+                    placeholder="Enter the service API key"
+                    value=""
+                    autocomplete="off"
+                >
+                <small style="color: #666;">This is the API key for this service (not Google Gemini).</small>
+            </div>
+
+            <div class="form-group">
+                <label for="model">🤖 Model</label>
+                <select id="model">
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (Best Quality)</option>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Faster)</option>
+                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Stable)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="prompt">💭 Custom Prompt (Optional)</label>
+                <textarea 
+                    id="prompt" 
+                    placeholder="Describe what you want to know about the image... (Leave empty to use default prompt)"
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="images">📷 Select Images *</label>
+                <input type="file" id="images" multiple accept="image/*" required>
+                <small style="color: #666;">Supported formats: JPG, PNG, GIF, WebP, BMP, TIFF</small>
+                <div id="preview" class="preview"></div>
+            </div>
+
+            <button type="submit" id="submitBtn">
+                🚀 Analyze Images
+            </button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Preview selected images
+        document.getElementById('images').addEventListener('change', function(e) {
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            
+            for (const file of e.target.files) {
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.onload = () => URL.revokeObjectURL(img.src);
+                    preview.appendChild(img);
+                }
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Validate inputs
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const files = document.getElementById('images').files;
+            
+            if (!apiKey) {
+                showResult('Please enter your Gemini API key.', 'error');
+                return;
+            }
+            
+            if (files.length === 0) {
+                showResult('Please select at least one image.', 'error');
+                return;
+            }
+            
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('api_key', apiKey);
+            
+            const model = document.getElementById('model').value;
+            formData.append('model', model);
+            
+            const prompt = document.getElementById('prompt').value.trim();
+            if (prompt) {
+                formData.append('prompt', prompt);
+            }
+            
+            // Add all images
+            for (let i = 0; i < files.length; i++) {
+                formData.append(`image${i}`, files[i]);
+            }
+            
+            // Update UI
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 Analyzing...';
+            showResult('Processing your request... This may take a few moments.', 'loading');
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch('/api/image-analysis', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                const duration = Date.now() - startTime;
+                
+                if (result.success) {
+                    const metadata = result.metadata || {};
+                    const metadataText = `
+📊 Analysis Metadata:
+• Model: ${metadata.model || 'Unknown'}
+• Images processed: ${metadata.imageCount || files.length}
+• Prompt type: ${metadata.promptUsed || 'default'}
+• Processing time: ${duration}ms
+• Timestamp: ${new Date(metadata.timestamp || Date.now()).toLocaleString()}`;
+                    
+                    showResult(result.analysis, 'success', metadataText);
+                } else {
+                    const errorMsg = `❌ Error: ${result.error}`;
+                    const details = result.details ? `\n\nDetails: ${result.details}` : '';
+                    showResult(errorMsg + details, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Request failed:', error);
+                showResult(`❌ Request failed: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Analyze Images';
+            }
+        });
+
+        function showResult(text, type, metadata = '') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = text;
+            
+            if (metadata) {
+                const metadataDiv = document.createElement('div');
+                metadataDiv.className = 'metadata';
+                metadataDiv.textContent = metadata;
+                resultDiv.appendChild(metadataDiv);
+            }
+        }
+
+        // Auto-resize textarea
+        document.getElementById('prompt').addEventListener('input', function(e) {
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+        });
+
+        // Add some helpful shortcuts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus on API key field
+            document.getElementById('apiKey').focus();
+            
+            // Add sample prompts button
+            const promptTextarea = document.getElementById('prompt');
+            const samplesBtn = document.createElement('button');
+            samplesBtn.type = 'button';
+            samplesBtn.textContent = '💡 Sample Prompts';
+            samplesBtn.style.marginTop = '5px';
+            samplesBtn.style.fontSize = '12px';
+            samplesBtn.style.padding = '5px 10px';
+            
+            samplesBtn.addEventListener('click', function() {
+                const samples = [
+                    'Identify and classify all scientific instruments or equipment visible in this image.',
+                    'Extract and transcribe all numerical data, measurements, and text labels exactly as shown.',
+                    'Analyze this microscopy image and identify cellular structures or particles.',
+                    'Describe the experimental setup and identify all components in this laboratory image.',
+                    'Quantify the objects present and describe their spatial relationships.',
+                    'Identify any safety hazards, chemical labels, or warning signs in this laboratory setting.',
+                    'Analyze this chart/graph and extract all data points and trend information.',
+                    'Classify the type of scientific diagram or technical drawing shown.'
+                ];
+                
+                const randomSample = samples[Math.floor(Math.random() * samples.length)];
+                promptTextarea.value = randomSample;
+                promptTextarea.style.height = 'auto';
+                promptTextarea.style.height = promptTextarea.scrollHeight + 'px';
+            });
+            
+            promptTextarea.parentNode.appendChild(samplesBtn);
+        });
+    </script>
+</body>
+</html> 

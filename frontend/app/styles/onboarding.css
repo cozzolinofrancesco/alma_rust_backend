@@ -1,0 +1,441 @@
+/* Onboarding Modal Styles */
+.onboarding-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--alma-overlay);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: onboarding-fade-in 0.3s ease-out;
+}
+
+.onboarding-modal {
+    background: var(--alma-surface);
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+    width: 98vw;
+    max-width: 1400px;
+    height: 95vh;
+    max-height: 900px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: onboarding-slide-up 0.4s ease-out;
+    overflow: hidden;
+}
+
+/* Close Button */
+.onboarding-close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--alma-surface);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--alma-text-muted);
+    z-index: 10;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.onboarding-close-button:hover {
+    background: var(--alma-surface);
+    color: var(--alma-text-muted);
+    transform: scale(1.05);
+}
+
+/* Progress Bar */
+.onboarding-progress-container {
+    padding: 20px 32px 16px;
+    background: linear-gradient(135deg, var(--alma-surface-sunken) 0%, var(--alma-surface-sunken) 100%);
+    border-bottom: 1px solid var(--alma-border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.onboarding-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--alma-border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.onboarding-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--alma-accent) 0%, var(--alma-accent-hover) 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.onboarding-progress-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--alma-text-muted);
+    min-width: 100px;
+    text-align: right;
+}
+
+/* Main Content */
+.onboarding-content {
+    flex: 1;
+    padding: 56px 80px;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Step Content */
+.onboarding-step {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+.onboarding-step-header {
+    margin-bottom: 40px;
+}
+
+.onboarding-step-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    display: block;
+}
+
+.onboarding-step-title-group {
+    margin-bottom: 32px;
+}
+
+.onboarding-step-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--alma-text);
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+}
+
+.onboarding-step-subtitle {
+    font-size: 18px;
+    color: var(--alma-text-muted);
+    margin: 0;
+    font-weight: 400;
+}
+
+.onboarding-step-content {
+    text-align: left;
+    margin-bottom: 48px;
+    line-height: 1.6;
+    color: var(--alma-text-muted);
+}
+
+.onboarding-content-line {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+}
+
+.onboarding-bold {
+    font-weight: 600;
+    color: var(--alma-text);
+}
+
+.onboarding-bullet-point {
+    display: flex;
+    align-items: flex-start;
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.onboarding-bullet {
+    color: var(--alma-accent);
+    margin-right: 12px;
+    margin-top: 2px;
+    font-weight: 600;
+}
+
+.onboarding-bullet-text {
+    flex: 1;
+}
+
+.onboarding-spacer {
+    height: 16px;
+}
+
+/* Actions */
+.onboarding-step-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.onboarding-action {
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    border: none;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.onboarding-action-primary {
+    background: linear-gradient(135deg, var(--alma-accent) 0%, var(--alma-accent-hover) 100%);
+    color: var(--alma-on-accent);
+}
+
+.onboarding-action-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(17, 7, 74, 0.3);
+}
+
+.onboarding-action-secondary {
+    background: var(--alma-surface-sunken);
+    color: var(--alma-text-muted);
+    border: 1px solid var(--alma-border);
+}
+
+.onboarding-action-secondary:hover {
+    background: var(--alma-border);
+    border-color: var(--alma-text-muted);
+}
+
+.onboarding-action-outline {
+    background: transparent;
+    color: var(--alma-text-muted);
+    border: 2px solid var(--alma-border);
+}
+
+.onboarding-action-outline:hover {
+    border-color: var(--alma-accent);
+    color: var(--alma-accent);
+}
+
+.onboarding-action-icon {
+    font-size: 14px;
+}
+
+/* Step Indicator */
+.onboarding-step-indicator {
+    margin-top: 16px;
+}
+
+.onboarding-step-counter {
+    font-size: 14px;
+    color: var(--alma-text-muted);
+    font-weight: 500;
+}
+
+/* Navigation */
+.onboarding-navigation {
+    padding: 24px 32px;
+    background: var(--alma-surface-sunken);
+    border-top: 1px solid var(--alma-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.onboarding-nav-left,
+.onboarding-nav-right {
+    min-width: 120px;
+}
+
+.onboarding-nav-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.onboarding-nav-button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    color: var(--alma-text-muted);
+}
+
+.onboarding-nav-button:hover {
+    background: var(--alma-border);
+    color: var(--alma-text-muted);
+}
+
+.onboarding-nav-previous {
+    color: var(--alma-accent);
+}
+
+.onboarding-nav-previous:hover {
+    background: var(--alma-accent-soft);
+}
+
+/* Step Dots */
+.onboarding-step-dots {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.onboarding-step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: var(--alma-border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.onboarding-step-dot.active {
+    background: var(--alma-accent);
+    transform: scale(1.2);
+}
+
+.onboarding-step-dot.completed {
+    background: var(--alma-success);
+}
+
+.onboarding-step-dot:hover {
+    transform: scale(1.1);
+}
+
+/* Project Context */
+.onboarding-project-context {
+    position: absolute;
+    bottom: 20px;
+    left: 32px;
+    font-size: 12px;
+    color: var(--alma-text-muted);
+    display: flex;
+    gap: 6px;
+}
+
+.onboarding-project-label {
+    font-weight: 500;
+}
+
+.onboarding-project-name {
+    font-weight: 600;
+    color: var(--alma-accent);
+}
+
+/* Animations */
+@keyframes onboarding-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes onboarding-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(32px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .onboarding-modal {
+        width: 95vw;
+        height: 92vh;
+        border-radius: 12px;
+    }
+
+    .onboarding-content {
+        padding: 40px 32px;
+    }
+
+    .onboarding-step-title {
+        font-size: 24px;
+    }
+
+    .onboarding-step-subtitle {
+        font-size: 16px;
+    }
+
+    .onboarding-step-icon {
+        font-size: 48px;
+    }
+
+    .onboarding-progress-container {
+        padding: 16px 24px 12px;
+    }
+
+    .onboarding-navigation {
+        padding: 20px 24px;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .onboarding-nav-left,
+    .onboarding-nav-right {
+        min-width: auto;
+    }
+
+    .onboarding-step-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .onboarding-action {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .onboarding-modal {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .onboarding-content {
+        padding: 32px 24px;
+    }
+
+    .onboarding-step-title {
+        font-size: 20px;
+    }
+
+    .onboarding-close-button {
+        top: 16px;
+        right: 16px;
+        width: 36px;
+        height: 36px;
+    }
+}

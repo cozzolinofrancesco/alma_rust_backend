@@ -1,0 +1,271 @@
+/* Import the Roboto font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Global styles for the body */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Use Roboto font */
+    background-color: #f5f5f5;
+    /* Light grey background for the page */
+    color: #343a40;
+    /* Dark grey text color */
+    margin: 0;
+    /* Remove default margin */
+    padding: 0;
+    /* Remove default padding */
+}
+
+/* Workflow Card styles */
+.workflow-card {
+    border: 1px solid #004085;
+    /* Dark blue border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 16px;
+    /* Inner spacing */
+    text-align: center;
+    /* Center align text */
+    background-color: #ffffff;
+    /* White background */
+    color: #004085;
+    /* Dark blue text */
+    width: 140px;
+    /* Fixed width */
+    height: 250px;
+    /* Fixed height */
+    box-shadow: 0 2px 8px rgba(0, 64, 133, 0.15);
+    /* Subtle blue shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Smooth transition for hover effects */
+    margin: 20px;
+    /* Margin around the card */
+}
+
+.workflow-card:hover {
+    transform: translateY(-5px);
+    /* Slightly move up on hover */
+    box-shadow: 0 4px 12px rgba(0, 64, 133, 0.25);
+    /* Darker blue shadow on hover */
+}
+
+/* Add Card styles */
+.add-card {
+    border: 1px solid #004085;
+    /* Dark blue border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 16px;
+    /* Inner spacing */
+    width: 140px;
+    /* Fixed width */
+    height: 250px;
+    /* Fixed height */
+    display: flex;
+    /* Flexbox for centering content */
+    align-items: center;
+    /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    background-color: #cce5ff;
+    /* Light blue background */
+    color: #004085;
+    /* Dark blue text */
+    box-shadow: 0 2px 8px rgba(0, 64, 133, 0.15);
+    /* Subtle blue shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Smooth transition for hover effects */
+    margin: 20px;
+    /* Margin around the card */
+}
+
+.add-card:hover {
+    transform: translateY(-5px);
+    /* Slightly move up on hover */
+    box-shadow: 0 4px 12px rgba(0, 64, 133, 0.25);
+    /* Darker blue shadow on hover */
+}
+
+/* Layout adjustment for the grid */
+.grid-wrapper {
+    display: grid;
+    /* Use CSS Grid for layout */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    /* Responsive columns */
+    gap: 16px;
+    /* Space between grid items */
+    padding: 20px;
+    /* Padding for the grid */
+}
+
+/* Popup container for project info */
+.project-info-popup {
+    position: fixed;
+    /* Fixed positioning */
+    top: 50%;
+    /* Center vertically */
+    left: 50%;
+    /* Center horizontally */
+    transform: translate(-50%, -50%);
+    /* Offset by half its width and height */
+    width: 50%;
+    /* Width of the popup */
+    max-width: 600px;
+    /* Maximum width */
+    background-color: #ffffff;
+    /* White background */
+    padding: 24px;
+    /* Inner padding */
+    border-radius: 12px;
+    /* Rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 64, 133, 0.3), 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Enhanced shadow */
+    z-index: 1000;
+    /* Above other content */
+}
+
+/* Overlay background for popup */
+.project-info-popup::before {
+     position: fixed;
+    /* Fixed positioning */
+    top: 50%;
+    /* Center vertically */
+    left: 50%;
+    /* Center horizontally */
+    transform: translate(-50%, -50%);
+    /* Offset by half its width and height */
+    width: 50%;
+    /* Width of the popup */
+    max-width: 600px;
+    /* Maximum width */
+    background-color: #ffffff;
+    /* White background */
+    padding: 24px;
+    /* Inner padding */
+    border-radius: 12px;
+    /* Rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 64, 133, 0.3), 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Enhanced shadow */
+    z-index: 1000;
+    /* Above other content */
+}
+
+/* Popup content styling */
+.popup-content {
+    text-align: center;
+    /* Center the text */
+}
+
+/* Title styling within popup */
+.popup-content h2 {
+    font-size: 24px;
+    /* Larger font size for the title */
+    font-weight: 700;
+    /* Bold title */
+    color: #004085;
+    /* Dark blue color */
+    margin-bottom: 16px;
+    /* Space below the title */
+}
+
+/* Close button styling */
+.close-button {
+    background-color: #004085;
+    /* Dark blue background */
+    color: #ffffff;
+    /* White text */
+    border: none;
+    /* No border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 10px 20px;
+    /* Padding for the button */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    font-size: 16px;
+    /* Font size */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    /* Transition effects */
+}
+
+.close-button:hover {
+    background-color: #002a5b;
+    /* Darker blue on hover */
+    box-shadow: 0 2px 8px rgba(0, 64, 133, 0.25);
+    /* Subtle shadow on hover */
+}
+
+/* styles/workflow.css */
+
+/* Overlay for the popup */
+.new-workflow-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* Full width */
+    height: 100vh;
+    /* Full height */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    z-index: 999;
+    /* Above other elements */
+}
+
+/* Popup content */
+.popup-content {
+    background-color: #ffffff;
+    /* White background */
+    padding: 24px;
+    /* Inner padding */
+    border-radius: 12px;
+    /* Rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 64, 133, 0.3), 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Enhanced shadow */
+    z-index: 1000;
+    /* Above the overlay */
+    width: 50%;
+    height: 25%;
+    max-width: 600px;
+    /* Maximum width */
+}
+
+/* Button styles */
+.popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    /* Space between buttons */
+}
+
+/* Tracker step styling */
+.progress-tracker {
+    display: flex;
+    justify-content: center;
+    /* Center the tracker steps */
+    margin-top: 50px;
+    /* Margin above the tracker */
+}
+
+.tracker-step {
+    width: 12px;
+    /* Width of the tracker step */
+    height: 12px;
+    /* Height of the tracker step */
+    border-radius: 50%;
+    /* Circle shape */
+    background-color: #e2e8f0;
+    /* Light grey background */
+    margin: 0 4px;
+    /* Spacing between steps */
+}
+
+.tracker-step.active {
+    background-color: #004085;
+    /* Dark blue background for active step */
+}

@@ -1,0 +1,318 @@
+# ==========================================
+# GITIGNORE - Next.js / React / TypeScript / Rust / Python
+# ==========================================
+
+# ------------------------------------------
+# Dotfiles and Dot-folders (Global)
+# ------------------------------------------
+# Ignore all dot-files and dot-directories by default
+**/.*
+# Whitelist critical files and folders
+!.gitignore
+!.dockerignore
+!**/.dockerignore
+!.env.example
+!.env.template
+!.eslintrc*
+!.prettierrc*
+!.gitkeep
+!.github/
+!.npmrc
+!.nvmrc
+!.node-version
+
+# ------------------------------------------
+# Python and Virtual Environments
+# ------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+venv.bak/
+build_python/
+dist_python/
+rust-api/data/
+rust-api/scripts/
+# ------------------------------------------
+# Rust Build Artifacts
+# ------------------------------------------
+target/
+**/target/
+**/*.rs.bk
+*.pdb
+.claude/
+workflow_tests/
+# ------------------------------------------
+# Databases & Local Stores
+# ------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sql
+*.dump
+
+# ------------------------------------------
+# Dependencies
+# ------------------------------------------
+node_modules/
+.pnp/
+.pnp.js
+.yarn/install-state.gz
+
+# ------------------------------------------
+# Package manager caches
+# ------------------------------------------
+# npm
+.npm/
+.npm-cache/
+npm-cache/
+.npmrc.local
+.cache/npm/
+
+# yarn
+.yarn/
+.yarn-cache/
+.yarnrc.local
+
+# pnpm
+.pnpm-store/
+.pnpm/
+
+# ------------------------------------------
+# Build outputs
+# ------------------------------------------
+# Next.js
+.next/
+out/
+.next/cache/
+
+# Production build (keep build/reports if needed)
+# build/
+build/reports/
+
+# Compiled output
+dist/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ------------------------------------------
+# Environment variables (NEVER commit secrets)
+# ------------------------------------------
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+!.env.template
+
+# ------------------------------------------
+# Testing & Coverage
+# ------------------------------------------
+coverage/
+.coverage/
+.nyc_output/
+.jest-cache/
+jest-cache/
+*.lcov
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ------------------------------------------
+# Logs
+# ------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+server.log
+
+# ------------------------------------------
+# IDE & Editors
+# ------------------------------------------
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains (WebStorm, IntelliJ)
+.idea/
+*.iml
+
+# Cursor
+.cursor/
+.data/
+
+# Claude
+.claude/
+.claude-session
+claude.log
+claude-sessions/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------
+# OS-specific
+# ------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+
+# ------------------------------------------
+# Linter & Formatter caches
+# ------------------------------------------
+.eslintcache
+.stylelintcache
+.prettiercache
+.cache/
+
+# ------------------------------------------
+# Temporary files
+# ------------------------------------------
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+.temp/
+.tmp/
+
+# Project-specific temp directories
+tmp_uploads_ocr/
+/tmp_uploads_ocr/
+
+# ------------------------------------------
+# Secrets & Certificates
+# ------------------------------------------
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+.secrets/
+
+# ------------------------------------------
+# Docker (if used)
+# ------------------------------------------
+.docker/
+docker-compose.override.yml
+
+# ------------------------------------------
+# Vercel / Deployment
+# ------------------------------------------
+.vercel/
+.netlify/
+
+# ------------------------------------------
+# Miscellaneous
+# ------------------------------------------
+# Storybook
+storybook-static/
+
+# Turborepo
+.turbo/
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+
+# Debug files
+*.cpuprofile
+*.heapsnapshot
+
+# ------------------------------------------
+# Project-specific
+# ------------------------------------------
+# Session/context tracking (AI assistant notes)
+/context/
+
+# Ideas and personal notes
+/ideas/
+/content/
+
+# Test files with sensitive data
+script_testing/Lakeview.pdf
+script_testing/*.pdf
+!script_testing/README.md
+
+# Large binary files (if any)
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# SQLite databases (if used locally)
+*.sqlite
+*.sqlite3
+*.db
+
+# ==========================================
+# Rust backend docker container — exclude everything not needed to build/run rust-api
+# ==========================================
+
+# AI assistant / session notes (explicit — also covered above)
+.claude/
+/context/
+
+# Planning & smoke docs (not needed by the container)
+/README.md
+/PORT_PLAN.md
+/smoke_272.md
+/smoke_IB.md
+
+# Leftover non-rust assets from the old stack
+/templates/
+/workflow_tests/
+/rust-backend/
+
+# Runtime durable store written by the backend at runtime (mount as a volume / seed separately)
+/rust-api/data/document_store.json
+/rust-api/data/document_store.json.tmp
+
+# ------------------------------------------
+# Keep these files (overrides)
+# ------------------------------------------
+!.gitkeep
+!.npmrc
+!.nvmrc
+!.node-version

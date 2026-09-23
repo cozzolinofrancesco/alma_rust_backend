@@ -1,0 +1,116 @@
+/* LoadingScreen Component Styles */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeInAnimation {
+    animation: fadeIn 1.2s ease-out forwards;
+}
+
+.loadingContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F8F8F8;
+    padding: 2rem;
+}
+
+.contentContainer {
+    max-width: 80rem;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.quoteContainer {
+    margin-bottom: 4rem;
+}
+
+.quoteText {
+    font-size: 2.25rem;
+    color: #1A2B5B;
+    line-height: 1.625;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-style: italic;
+}
+
+@media (min-width: 768px) {
+    .quoteText {
+        font-size: 3.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .quoteText {
+        font-size: 4.5rem;
+    }
+}
+
+.cursor {
+    animation: pulse 1s infinite;
+    color: #8A2BE2;
+}
+
+.buttonContainer {
+    position: relative;
+}
+
+.skipButton {
+    padding: 2rem 5rem;
+    background-color: transparent;
+    border: 1px solid rgba(138, 43, 226, 0.4);
+    color: #8A2BE2;
+    font-size: 1.875rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    border-radius: 1rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.skipButton:hover {
+    border-color: rgba(138, 43, 226, 0.7);
+    opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+    .skipButton {
+        font-size: 2.25rem;
+    }
+}
+
+.continueButton {
+    padding: 2rem 5rem;
+    background-color: #1A2B5B;
+    color: white;
+    font-size: 1.875rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    border-radius: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.continueButton:hover {
+    background-color: #8A2BE2;
+}
+
+@media (min-width: 768px) {
+    .continueButton {
+        font-size: 2.25rem;
+    }
+}

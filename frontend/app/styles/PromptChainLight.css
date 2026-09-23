@@ -1,0 +1,1362 @@
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 99%;
+  height: 99%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 95%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  width: 80%;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.modal-collection-content {
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.5;
+  overflow: auto;
+}
+
+/* Prompt collapse/expand */
+/* Note: These styles seem intended for a different collapse mechanism than the current per-section toggles */
+.prompt-container {
+  position: relative;
+  width: 90%;
+}
+
+.prompt-wrapper {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  max-height: 1600px;
+  /* Adjust as needed */
+}
+
+.prompt-wrapper.collapsed {
+  max-height: 0;
+}
+
+.prompt-toggle {
+  display: block;
+  margin: 0.5rem auto;
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: top 0.3s ease;
+}
+
+.prompt-toggle.expanded {
+  top: 0;
+}
+
+.prompt-toggle.collapsed {
+  top: -100px;
+  /* This seems like an odd value, might need adjustment */
+}
+
+/* Overall container */
+.container {
+  width: 99%;
+  padding: 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #fff;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.agent-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  /* ensure items start at left */
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.agent-name {
+  flex: 0 auto;
+  /* don't grow to fill the container */
+  text-align: left;
+  /* text starts at left */
+  padding: 0;
+  /* adjust as needed */
+}
+
+/* If you still need spacing between name and save button: */
+.agent-header>.project-button {
+  margin-left: auto;
+  /* pushes Save to the far right, remove if you want both left */
+}
+
+.agent-name-input {
+  display: inline-block;
+  box-sizing: border-box;
+  width: auto;
+  margin: 0;
+}
+
+.toggle-arrow {
+  position: absolute;
+  right: 0.5rem;
+  cursor: pointer;
+}
+
+.agent-content {
+  width: 95%;
+}
+
+/* left-aligned variant of project-button */
+.project-button-left {
+  /* inherit all the same basics */
+  width: 100px;
+  height: 50px;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 1px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease;
+  margin: 0;
+  /* reset any auto-margins */
+  align-self: flex-start;
+  /* if in a flex container, hug the left */
+}
+
+.project-button-left:hover {
+  background-color: #e9e9e9;
+}
+
+/* Buttons */
+.project-button {
+  width: 100px;
+  height: 50px;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 1px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease;
+  margin-bottom: 0.rem;
+}
+
+.project-button:hover {
+  background-color: #e9e9e9;
+}
+
+.add-button {
+  margin-bottom: 0;
+  font-size: 0.8rem;
+}
+
+/* Node styles */
+.node-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 1px;
+  margin-bottom: 0.5rem;
+  margin-right: 50px;
+  background-color: #fff;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.node-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Detail sections */
+.node-details {
+  padding: 0.5rem;
+  /* Add padding to the details section */
+}
+
+.detail-section {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.detail-prompt {
+  width: 99.5%;
+  height: 100px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  background-color: #f9f9f9;
+  margin: 0 0.25%;
+  /* Small equal margins on both sides */
+}
+
+.detail-select {
+  /* Mobile-first responsive design for collection dropdowns */
+  width: 100%;
+  min-height: 44px;
+  /* Touch-friendly minimum */
+  padding: 0.75rem;
+  font-size: 1rem;
+  /* Readable on mobile */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.detail-select:focus {
+  outline: none;
+  border-color: #1E1C36;
+  box-shadow: 0 0 0 2px rgba(30, 28, 54, 0.2);
+}
+
+/* Tablet styles - 641px and up */
+@media (min-width: 641px) {
+  .detail-select {
+    width: auto;
+    min-width: 200px;
+    max-width: 300px;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Desktop styles - 1025px and up */
+@media (min-width: 1025px) {
+  .detail-select {
+    width: 220px;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+    min-height: 40px;
+  }
+}
+
+.step-name-input {
+  width: 99%;
+  font-size: 1.1rem;
+  padding: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Result */
+.chain-result {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.toggle-result-button {}
+
+/* Image paste */
+.image-paste-container {
+  margin-top: 0.5rem;
+  border: 1px dashed #ccc;
+  /* Added border */
+  padding: 1rem;
+  /* Added padding */
+  text-align: center;
+  /* Center content */
+  cursor: pointer;
+  /* Indicate it's interactive */
+  background-color: #f0f0f0;
+  /* Added light background */
+  border-radius: 4px;
+  display: flex;
+  /* Use flexbox for centering */
+  flex-direction: column;
+  /* Stack content vertically */
+  align-items: center;
+  /* Center items horizontally */
+  justify-content: center;
+  /* Center items vertically */
+}
+
+.image-paste-container:focus {
+  outline: 2px solid #007bff;
+  /* Added focus style */
+}
+
+.image-upload-area {
+  position: relative;
+  /* Added for positioning the remove button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  /* Space from the "Paste image..." text */
+}
+
+.pasted-image {
+  max-width: 100px;
+  max-height: 100px;
+  display: block;
+  /* Prevent extra space below image */
+}
+
+/* Added style for the image remove button */
+.remove-image-button {
+  position: absolute;
+  top: -10px;
+  /* Adjust position as needed */
+  right: -10px;
+  /* Adjust position as needed */
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  z-index: 1;
+  /* Ensure it's above the image */
+}
+
+
+/* Icon-button container */
+.icon-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Icon buttons (match project-button size + look) */
+.icon-btn {
+  width: 100px;
+  height: 50px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.icon-btn:hover {
+  background-color: #e9e9e9;
+}
+
+.icon-btn.active {
+  border-color: #1E1C36;
+}
+
+/* Tooltip bubble */
+.tooltip {
+  position: fixed;
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Added style for the inputs section container */
+.inputs-section {
+  border: 1px dashed #ddd;
+  /* Add a dashed border */
+  padding: 1rem;
+  /* Add padding inside the section */
+  /* Space it from the next element */
+  background-color: #fafafa;
+  /* Optional light background */
+  border-radius: 4px;
+}
+
+/* Style for the instruction text spans */
+.instruction-text {
+  display: block;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* Style for the copy button inside the pre wrapper */
+.copy-code-button {
+  position: absolute;
+  top: 8px;
+  /* Adjust position as needed */
+  right: 8px;
+  /* Adjust position as needed */
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Semi-transparent background */
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  color: rgb(7, 7, 7);
+  /* Icon color (adjust based on your theme) */
+  opacity: 0.8;
+  /* Slightly transparent by default */
+  transition: opacity 0.2s ease-in-out;
+  display: flex;
+  /* To center the icon if needed, or just better control */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover and Focus states for the button */
+.copy-code-button:hover,
+.copy-code-button:focus {
+  opacity: 1;
+  /* Fully opaque on hover/focus */
+  outline: none;
+  /* Remove default focus outline if desired */
+}
+
+/* Optional: Style for the icon inside the button */
+.copy-code-button svg {
+  display: block;
+  /* Ensure the SVG behaves predictably */
+}
+
+/* Add this to your CSS file */
+.copied-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Center the message */
+  background-color: rgba(0, 0, 0, 0.7);
+  /* Semi-transparent black background */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  z-index: 10;
+  /* Ensure it's above the code block */
+  pointer-events: none;
+  /* Allow clicks to pass through */
+  opacity: 1;
+  /* Start fully visible */
+  transition: opacity 0.5s ease-in-out;
+  /* Optional: Add a fade-out effect */
+}
+
+/* Optional: Adjust padding/margin if the button overlaps content */
+/* You might need to add some right padding to the <pre> or <code>
+   element to make space for the button, depending on your layout. */
+/* .chain-result pre code {
+    padding-right: 30px; // Example adjustment
+} */
+
+/* --- New Styles for Inputs Section Layout --- */
+
+/* Grouping container for label + input/textarea + instruction */
+.input-group {
+  margin-bottom: 1rem;
+  /* Add space between input groups */
+}
+
+.input-group label {
+  display: block;
+  /* Make labels block elements */
+  margin-bottom: 0.3rem;
+  /* Space between label and input */
+  font-weight: 600;
+  /* Make labels slightly bolder */
+  font-size: 0.85rem;
+  /* Match other detail labels */
+}
+
+/* Container for URL input and select to be side-by-side */
+.url-input-row {
+  display: flex;
+  /* Use flexbox */
+  gap: 0.5rem;
+  /* Space between input and select */
+  align-items: flex-start;
+  /* Align items to the top */
+}
+
+.url-input-row .url-input {
+  flex-grow: 1;
+  /* Allow the input to take up available space */
+  width: auto;
+  /* Override default width */
+  min-width: 150px;
+  /* Ensure input doesn't get too small */
+}
+
+.url-input-row .url-type-select {
+  flex-shrink: 0;
+  /* Prevent the select from shrinking */
+  width: auto;
+  /* Allow select to size based on content */
+  min-width: 120px;
+  /* Give select a minimum width */
+}
+
+/* Adjust detail-input style if needed, though url-input class is more specific */
+.detail-input {
+  width: 99.5%;
+  /* Keep default width for other inputs */
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  /* Include padding and border in element's total width and height */
+  background-color: #f9f9f9;
+}
+
+/* Adjust image paste container margin */
+.input-group .image-paste-container {
+  margin-top: 0;
+  /* Remove top margin if inside input-group */
+}
+
+/* Ensure instruction text below input groups has correct spacing */
+.input-group .instruction-text {
+  margin-top: 0.3rem;
+  /* Adjust top margin */
+  margin-bottom: 0;
+  /* Remove bottom margin if input-group handles spacing */
+}
+
+/* Add some bottom margin to the last input group if needed */
+.inputs-section .input-group:last-child {
+  margin-bottom: 0;
+}
+
+/* --- End New Styles --- */
+
+/* User Inputs Section Styles */
+.inputs-section {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-group:last-child {
+  margin-bottom: 0;
+}
+
+.input-group label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.input-group label svg {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.image-paste-container {
+  background: #ffffff;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-paste-container:hover {
+  border-color: #0C1C78;
+  background: #f8f9fa;
+}
+
+.image-paste-container:focus {
+  outline: none;
+  border-color: #0C1C78;
+  box-shadow: 0 0 0 2px rgba(12, 28, 120, 0.1);
+}
+
+.image-upload-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.pasted-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.remove-image-button {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dc3545;
+  color: white;
+  border: none;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.remove-image-button:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.inputs-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.inputs-toggle:hover {
+  background: #f8f9fa;
+  border-color: #0C1C78;
+}
+
+.inputs-toggle.active {
+  background: #0C1C78;
+  color: white;
+  border-color: #0C1C78;
+}
+
+.detail-prompt {
+  width: 95.5%;
+  /* Equal 2rem margins on both sides */
+  min-height: 100px;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #2c3e50;
+  margin: 0 0.25%;
+  /* Small equal margins on both sides */
+}
+
+.detail-prompt:focus {
+  outline: none;
+  border-color: #0C1C78;
+  box-shadow: 0 0 0 2px rgba(12, 28, 120, 0.1);
+}
+
+.detail-prompt::placeholder {
+  color: #adb5bd;
+}
+
+.instruction-text {
+  display: block;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* Image upload icon styles */
+.image-upload-area .icon-btn {
+  font-size: 2.5rem;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+}
+
+.image-upload-area .icon-btn:hover {
+  color: #0C1C78;
+  transform: scale(1.1);
+}
+
+/* Loading state for image upload */
+.image-paste-container.loading {
+  border-style: solid;
+  border-color: #0C1C78;
+  background: #f8f9fa;
+}
+
+.image-paste-container.loading::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #dee2e6;
+  border-top-color: #0C1C78;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Add a subtle animation for the image upload area */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.image-paste-container:hover {
+  animation: pulse 1s ease-in-out;
+}
+
+/* Style for the image upload text */
+.image-paste-container p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.image-paste-container p:first-of-type {
+  font-size: 1rem;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.image-paste-container p:last-of-type {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Toggle Button Styles */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: #f8f9fa;
+  border-color: #0C1C78;
+  transform: translateY(-1px);
+}
+
+.icon-btn.active {
+  background: #0C1C78;
+  color: white;
+  border-color: #0C1C78;
+}
+
+.icon-btn svg {
+  font-size: 18px;
+}
+
+.system-instruction-toggle,
+.inputs-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.system-instruction-toggle svg:last-child,
+.inputs-toggle svg:last-child {
+  margin-left: auto;
+}
+
+/* Add subtle animation for toggle buttons */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.icon-btn:hover {
+  animation: pulse 1s ease-in-out;
+}
+
+/* Focus state for accessibility */
+.icon-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(12, 28, 120, 0.1);
+}
+
+/* Remove old toggle button styles */
+.inputs-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.inputs-toggle:hover {
+  background: #f8f9fa;
+  border-color: #0C1C78;
+}
+
+.inputs-toggle.active {
+  background: #0C1C78;
+  color: white;
+  border-color: #0C1C78;
+}
+
+/* Test Input Section Heading */
+.test-input-heading {
+  margin: 3rem 0 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4a5568;
+  background: #f8f9fa;
+  border-left: 3px solid #12074A;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.test-input-heading svg {
+  color: #12074A;
+  opacity: 0.8;
+}
+
+/* Update active state for toggle buttons */
+.icon-btn.active {
+  background: #12074A;
+  color: white;
+  border-color: #12074A;
+}
+
+.icon-btn:hover {
+  background: #f8f9fa;
+  border-color: #12074A;
+  transform: translateY(-1px);
+}
+
+/* User Instruction Label */
+label[for^="prompt-"] {
+  display: block;
+  font-weight: 500;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* When right tab is open */
+.node-wrapper.has-right-tab {
+  margin-right: 50px;
+}
+
+.agent-step-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  margin-bottom: 20px;
+}
+
+.agent-step-controls select,
+.agent-step-controls button {
+  height: 42px;
+  min-height: 42px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.agent-step-controls select {
+  min-width: 180px;
+}
+
+.agent-step-controls select:focus,
+.agent-step-controls button:focus {
+  border-color: #10084F;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 8, 79, 0.1), 0 2px 8px rgba(16, 8, 79, 0.15);
+  transform: translateY(-1px);
+}
+
+.agent-step-controls select:hover,
+.agent-step-controls button:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.agent-step-controls .icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 42px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #10084F;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.agent-step-controls .icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.agent-step-controls .icon-btn:hover {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
+  border-color: #10084F;
+  color: #0d0642;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 8, 79, 0.2);
+}
+
+.agent-step-controls .icon-btn:hover::before {
+  left: 100%;
+}
+
+.agent-step-controls .icon-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.agent-step-controls .project-button {
+  min-width: 90px;
+  background: linear-gradient(135deg, #10084F 0%, #1e1b4b 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(16, 8, 79, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.agent-step-controls .project-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.agent-step-controls .project-button:hover {
+  background: linear-gradient(135deg, #0d0642 0%, #1a1654 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(16, 8, 79, 0.4);
+}
+
+.agent-step-controls .project-button:hover::before {
+  left: 100%;
+}
+
+.agent-step-controls .project-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 8, 79, 0.3);
+}
+
+.agent-step-controls .delete-button {
+  background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.agent-step-controls .delete-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.agent-step-controls .delete-button:hover {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-color: #dc2626;
+  color: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.agent-step-controls .delete-button:hover::before {
+  left: 100%;
+}
+
+.agent-step-controls .delete-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15);
+}
+
+.agent-step-loading {
+  pointer-events: none;
+  opacity: 0.5;
+  filter: grayscale(0.7);
+  position: relative;
+}
+
+.agent-step-loading-overlay {
+  position: absolute;
+  top: 10%;
+  /* Move higher */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-start;
+  /* Start higher */
+  justify-content: center;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.cube-spinner {
+  width: 100px;
+  height: 100px;
+  perspective: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cube {
+  width: 70px;
+  height: 70px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: cube-spin 2.5s infinite linear;
+  /* Slower spin */
+}
+
+.cube-face {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background: #110845;
+  opacity: 0.92;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(18, 7, 74, 0.15);
+}
+
+.cube-face.front {
+  transform: rotateY(0deg) translateZ(35px);
+  background: #110845;
+}
+
+.cube-face.back {
+  transform: rotateY(180deg) translateZ(35px);
+  background: #3a2e7a;
+}
+
+.cube-face.right {
+  transform: rotateY(90deg) translateZ(35px);
+  background: #4d3fa3;
+}
+
+.cube-face.left {
+  transform: rotateY(-90deg) translateZ(35px);
+  background: #6a5cc3;
+}
+
+.cube-face.top {
+  transform: rotateX(90deg) translateZ(35px);
+  background: #b3a8e6;
+}
+
+.cube-face.bottom {
+  transform: rotateX(-90deg) translateZ(35px);
+  background: #e0dbf7;
+}
+
+@keyframes cube-spin {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0;
+  background: #fff;
+  font-size: 1em;
+  box-shadow: 0 2px 8px rgba(18, 7, 74, 0.04);
+  border-radius: 8px;
+  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  text-align: left;
+}
+
+.markdown-body th {
+  background: #f4f6fa;
+  font-weight: 600;
+  color: #12074A;
+}
+
+.markdown-body tr:nth-child(even) {
+  background: #f8fafd;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Selected Project Files Styles */
+.selected-files-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  margin-bottom: 8px;
+}
+
+.selected-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.selected-file-item:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.selected-file-item:last-child {
+  margin-bottom: 0;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #1f2937;
+  margin-right: 8px;
+}
+
+.file-folder {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-right: auto;
+}
+
+.attach-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.attach-file-btn:hover {
+  background: #f8fafc;
+  border-color: #d1d5db;
+  color: #1e293b;
+}
+
+.attach-file-btn:active {
+  transform: translateY(1px);
+}
+
+.attach-file-btn.loading {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.attach-file-btn.loading:hover {
+  background-color: #6c757d;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 3D Spinning Logo Animation for Prompt Enhancement */
+@keyframes spin3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+
+  33% {
+    transform: rotateX(120deg) rotateY(120deg) rotateZ(0deg);
+  }
+
+  66% {
+    transform: rotateX(240deg) rotateY(240deg) rotateZ(120deg);
+  }
+
+  100% {
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+  }
+}

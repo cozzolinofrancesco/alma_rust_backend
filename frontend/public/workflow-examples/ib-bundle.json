@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "agent": {
+    "id": "ib-draft",
+    "name": "Synthetic Investigator Brochure Draft",
+    "layers": [
+      {
+        "id": "ib-summary",
+        "name": "1. Summary",
+        "userInstruction": "Summarize the supplied section outputs. Label this a synthetic incomplete IB draft. Retain missing-information flags. Do not invent findings or investigator guidance.",
+        "referencedSteps": ["ib-introduction", "ib-quality", "ib-nonclinical", "ib-human"],
+        "order": 0,
+        "isActive": true
+      },
+      {
+        "id": "ib-introduction",
+        "name": "2. Introduction",
+        "userInstruction": "Draft an introduction from the supplied source only. State the investigational product, rationale and scope only when provided. Mark every absent item as not supplied. This is a synthetic incomplete draft.",
+        "referencedSteps": [],
+        "order": 1,
+        "isActive": true
+      },
+      {
+        "id": "ib-quality",
+        "name": "3. Physical, Chemical And Pharmaceutical Properties",
+        "userInstruction": "Describe only the properties and formulation documented in the supplied source. Keep source identifiers. Missing composition, stability or storage information must remain not supplied; do not invent it.",
+        "referencedSteps": [],
+        "order": 2,
+        "isActive": true
+      },
+      {
+        "id": "ib-nonclinical",
+        "name": "4. Nonclinical Studies",
+        "userInstruction": "Summarize only supplied nonclinical pharmacology, exposure and toxicology evidence with exact source identifiers. Do not create missing findings, thresholds or interpretations. Mark missing domains not supplied.",
+        "referencedSteps": [],
+        "order": 3,
+        "isActive": true
+      },
+      {
+        "id": "ib-human",
+        "name": "5. Effects In Humans",
+        "userInstruction": "Summarize only supplied human exposure, pharmacokinetics and safety findings, preserving populations, units and study identifiers. No absent outcome may become zero. Mark missing information not supplied.",
+        "referencedSteps": [],
+        "order": 4,
+        "isActive": true
+      },
+      {
+        "id": "ib-guidance",
+        "name": "6. Summary Of Data And Investigator Guidance",
+        "userInstruction": "Combine the preceding evidence summaries and reproduce investigator guidance only if explicitly present in approved supplied material. Do not invent dosing, monitoring, risk advice or medical recommendations. List missing approved guidance for qualified review.",
+        "referencedSteps": ["ib-quality", "ib-nonclinical", "ib-human"],
+        "order": 5,
+        "isActive": true
+      },
+      {
+        "id": "ib-references",
+        "name": "7. References And Open Items",
+        "userInstruction": "List only supplied source identifiers cited by the preceding sections and their unresolved gaps. Do not fabricate bibliography entries. This is an incomplete synthetic drafting example, not an approved IB.",
+        "referencedSteps": ["ib-summary", "ib-guidance"],
+        "order": 6,
+        "isActive": true
+      }
+    ]
+  },
+  "sources": [
+    {
+      "sourceId": "ib-source",
+      "kind": "text",
+      "name": "synthetic-ib-source-inventory.txt",
+      "text": "Synthetic documentation example only. No product identity, quality package, nonclinical findings, clinical results or approved investigator guidance has been supplied. Each section must identify its gaps. This fixture tests workflow structure, not scientific content."
+    }
+  ],
+  "sharedSourceIds": ["ib-source"],
+  "bindings": {},
+  "skills": []
+}

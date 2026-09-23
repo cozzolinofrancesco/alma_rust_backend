@@ -1,0 +1,173 @@
+/* SystemInstructionsSelector.module.css */
+
+/*
+  Color Palette:
+  #fcfcfc - Very light background
+  #1e1c36 - Dark text, headings, borders for emphasis
+  #f0f4fc - Light blue/purple for selected states, hover backgrounds, outlines
+*/
+
+.system-instructions-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.system-instructions-section h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.system-instructions-section h5 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #1e1c36;
+    /* Use dark text color from palette */
+}
+
+.personalities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.personality-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: #2c3e50;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.personality-icon:hover {
+    background: #f8f9fa;
+    border-color: #0C1C78;
+    transform: translateY(-1px);
+}
+
+.personality-icon.selected {
+    background: #0C1C78;
+    color: white;
+    border-color: #0C1C78;
+}
+
+.personality-icon svg {
+    margin-bottom: 8px;
+    font-size: 24px;
+}
+
+.personality-icon span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.personality-icon.clear-selection {
+    background: #f8f9fa;
+    color: #dc3545;
+}
+
+.personality-icon.clear-selection:hover {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.coding-languages {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.coding-languages h5 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 12px 0;
+}
+
+.language-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.language-option {
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.language-option:hover {
+    background: #f8f9fa;
+    border-color: #0C1C78;
+    transform: translateY(-1px);
+}
+
+.language-option.selected {
+    background: #0C1C78;
+    color: white;
+    border-color: #0C1C78;
+}
+
+.language-option.clear-selection {
+    background: #f8f9fa;
+    color: #dc3545;
+}
+
+.language-option.clear-selection:hover {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* Add subtle animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.personality-icon:hover,
+.language-option:hover {
+    animation: pulse 1s ease-in-out;
+}
+
+/* Focus states for accessibility */
+.personality-icon:focus,
+.language-option:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(12, 28, 120, 0.1);
+}

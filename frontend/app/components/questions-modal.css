@@ -1,0 +1,299 @@
+/* Questions? contact modal — above navbar (z-index 9500) */
+.questions-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.55);
+  box-sizing: border-box;
+}
+
+.questions-modal-dialog {
+  position: relative;
+  width: min(880px, 100%);
+  max-height: min(90vh, 720px);
+  overflow: auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem 1.5rem 1.75rem;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(17, 7, 74, 0.06);
+}
+
+.questions-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.questions-modal-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.questions-modal-subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #4a4453;
+  font-weight: 500;
+}
+
+.questions-modal-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.questions-modal-training-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid #4338ca;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(67, 56, 202, 0.12);
+}
+
+.questions-modal-training-btn:hover {
+  background: #4338ca;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(67, 56, 202, 0.25);
+  transform: translateY(-1px);
+}
+
+.questions-modal-not-now {
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid #ced4da;
+  background: #fff;
+  color: #1e1c36;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.questions-modal-not-now:hover {
+  background: #f8f9fa;
+  border-color: #11074a;
+  color: #11074a;
+}
+
+.questions-modal-not-now:focus-visible {
+  outline: 2px solid #11074a;
+  outline-offset: 2px;
+}
+
+.questions-modal-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #11074a;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.questions-modal-close {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6c757d;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.questions-modal-close:hover {
+  background: #f1f3f5;
+  color: #11074a;
+}
+
+.questions-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .questions-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.questions-modal-card {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.25rem 1.35rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow:
+    0 0 0 1px rgba(17, 7, 74, 0.06),
+    0 8px 24px rgba(138, 127, 255, 0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.questions-modal-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(17, 7, 74, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(17, 7, 74, 0.08),
+    0 12px 28px rgba(17, 7, 74, 0.12);
+}
+
+.questions-modal-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 3px solid #11074a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.questions-modal-avatar-fallback {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 3px solid #11074a;
+  background: linear-gradient(
+    135deg,
+    rgba(17, 7, 74, 0.12) 0%,
+    rgba(138, 127, 255, 0.22) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #11074a;
+  letter-spacing: 0.04em;
+}
+
+.questions-modal-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.questions-modal-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #11074a;
+  line-height: 1.3;
+}
+
+.questions-modal-role {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #4a4453;
+}
+
+.questions-modal-bio {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.questions-modal-hire-note {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #11074a;
+}
+
+/* Homepage English thank-you — bold, similar visual weight to JA hire-me line */
+.questions-modal-hire-note--thank-you {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.45;
+  max-width: 22em;
+}
+
+.questions-modal-ask {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: #11074a;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  width: fit-content;
+  box-shadow: 0 2px 10px rgba(17, 7, 74, 0.28);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.questions-modal-ask:hover {
+  background: #1a0d6e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(17, 7, 74, 0.35);
+}
+
+.questions-modal-ask:focus-visible {
+  outline: 2px solid #11074a;
+  outline-offset: 3px;
+}
+
+/* Homepage: team contact cards below hero, above weekly updates */
+.home-team-contact-section {
+  width: 100%;
+  margin-top: 2rem;
+  margin-bottom: 1.75rem;
+  box-sizing: border-box;
+}
+
+.home-team-contact-title {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #11074a;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}

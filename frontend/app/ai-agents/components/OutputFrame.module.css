@@ -1,0 +1,134 @@
+.frame {
+  --output-accent: #15803d;
+  --output-tint: #ecfdf3;
+  --output-ink: #14532d;
+  --output-dot-ink: #fff;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+  border: 5px solid var(--output-accent);
+  border-radius: 6px;
+  background: #fff;
+  color: #24322b;
+  letter-spacing: 0;
+  overflow: hidden;
+}
+
+.frame[data-output-state='running'] {
+  --output-accent: #d97706;
+  --output-tint: #fffbeb;
+  --output-ink: #78350f;
+  --output-dot-ink: #171207;
+}
+
+.frame[data-output-state='older'] {
+  --output-accent: #1d4ed8;
+  --output-tint: #eff6ff;
+  --output-ink: #1e40af;
+}
+
+.frame[data-output-state='error'] {
+  --output-accent: #b91c1c;
+  --output-tint: #fff1f2;
+  --output-ink: #991b1b;
+}
+
+.frame[data-output-state='unversioned'] {
+  --output-accent: #69736d;
+  --output-tint: #f4f6f5;
+  --output-ink: #434c46;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 76px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--output-accent);
+  background: var(--output-tint);
+}
+
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  color: var(--output-ink);
+}
+
+.dot {
+  display: flex;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--output-accent);
+  color: var(--output-dot-ink);
+}
+
+.labels {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.labels strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.error {
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid #fecdd3;
+  background: #fff1f2;
+  color: #991b1b;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.spinner {
+  animation: outputSpin 1s linear infinite;
+}
+
+.fresh .header {
+  animation: outputArrived 900ms ease-out;
+}
+
+@keyframes outputSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes outputArrived {
+  from { background: #a7f3c5; }
+  to { background: var(--output-tint); }
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .fresh .header {
+    animation: none;
+  }
+}

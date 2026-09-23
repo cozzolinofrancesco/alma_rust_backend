@@ -1,0 +1,2432 @@
+/* app/styles/navbar.css */
+
+/*
+Z-INDEX HIERARCHY FOR NAVBAR ELEMENTS:
+- Modals/Overlays/Transitions: 10000+ (above navbar)
+- Bug popup: 9900 (highest navbar element)
+- Info dropdown: 9800 (high priority navbar popup)
+- Nested dropdown menus: 9700 (second-level dropdowns)
+- First-level dropdown menus: 9600 (main navigation dropdowns)
+- Navbar container & navbar: 9500 (base navbar level)
+- Normal content: 1-1000 (below navbar)
+*/
+
+/* Container with two columns: one for the navbar and one for the toggle button */
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: var(--alma-surface);
+  border-bottom: 0.0rem solid var(--alma-border);
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(0.8rem, 2vw, 1.2rem);
+  position: relative;
+  z-index: 9500;
+  flex-shrink: 0; /* Prevent navbar from shrinking; keep content below it */
+  /* Above content, below modals/transitions */
+}
+
+.navbar-container.navbar-redesigned {
+  display: block;
+  padding: 0;
+}
+
+.navbar-wrapper {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Navbar takes most of the space */
+.navbar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 9500;
+  /* Inherit navbar container z-index */
+  gap: 1rem;
+  min-width: 0; /* allow flex children to shrink instead of clipping the row */
+}
+
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--alma-on-accent);
+  text-decoration: none;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Toggle button placeholder */
+.navbar-toggle {
+  border: 1px solid var(--alma-border);
+  background: var(--alma-surface);
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: left 0.3s ease;
+  margin-left: 0rem;
+}
+
+/* Example closed state */
+.navbar.closed {
+  transform: translateX(-150%);
+}
+
+/* Nav list styling */
+.navList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0; /* designated shrink/clip zone so the right cluster stays reachable */
+  flex: 1 1 auto;
+}
+
+/* Project name display in navbar - deprecated, replaced by project switcher */
+
+/* Project switcher dropdown - always visible on desktop and mobile */
+.navbar-project-switcher {
+  position: relative;
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 0.5rem 0 0.2rem;
+  min-width: 0;
+}
+
+.navbar-project-switcher-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: var(--alma-text);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(32vw, 320px);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.navbar-project-switcher-trigger:hover {
+  background: var(--alma-accent-soft);
+  border-color: var(--alma-accent-soft);
+}
+
+.navbar-project-switcher-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar-project-switcher-trigger:not([aria-expanded="true"]) .navbar-project-switcher-text {
+  color: var(--alma-text-muted);
+}
+
+.navbar-project-switcher-chevron {
+  flex-shrink: 0;
+  color: var(--alma-text-muted);
+  transition: transform 0.2s;
+}
+
+.navbar-project-switcher-chevron.open {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown.navbar-project-dropdown {
+  left: 50%;
+  margin-left: 0;
+  min-width: 220px;
+  max-width: min(320px, 90vw);
+  transform: translateX(-50%);
+  animation: dropdownSlideInCenter 0.25s ease-out;
+}
+
+/* Scrollable project list in dropdown */
+.navbar-project-dropdown-list {
+  max-height: min(280px, 60vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 -4px;
+  padding-right: 2px;
+}
+
+.navbar-project-dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navbar-project-dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navbar-project-dropdown-list::-webkit-scrollbar-thumb {
+  background: var(--alma-border);
+  border-radius: 3px;
+}
+
+.navbar-project-dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: var(--alma-text-muted);
+}
+
+@keyframes dropdownSlideInCenter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.navItem {
+  text-align: center;
+  margin-right: 1rem;
+  min-width: 0; /* allow shrinking for ellipsis */
+}
+
+/* Visual grouping between primary nav sections */
+.navItem.nav-group-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.65rem;
+  padding: 0 0.15rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.nav-group-sep-line {
+  display: block;
+  width: 1px;
+  height: 1.15em;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--alma-border) 18%,
+    var(--alma-border) 82%,
+    transparent 100%
+  );
+  border-radius: 1px;
+}
+
+@media (max-width: 1550px) {
+  .navItem.nav-group-sep {
+    display: none;
+  }
+}
+
+/* Tutorial separated section with extra spacing */
+.navItem.tutorial-separated {
+  margin-left: 2rem;
+}
+
+/* Responsive: reduce spacing on mobile */
+@media (max-width: 768px) {
+  .navItem.tutorial-separated {
+    margin-left: 1rem;
+  }
+}
+
+/* Unified Navbar Items (links, buttons, spans) */
+.navList > .navItem > a,
+.navList > .navItem > button,
+.navList > .navItem > span,
+.navList > .navItem > .nav-link {
+  display: block;
+  text-decoration: none;
+  color: var(--alma-text);
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.navList > .navItem > a:hover,
+.navList > .navItem > button:hover,
+.navList > .navItem > span:hover,
+.navList > .navItem > .nav-link:hover {
+  color: var(--alma-text);
+  text-decoration: none;
+}
+
+/*
+  Responsive navbar strategy:
+  1) Full-size layout only above ~2200px, where the complete row truly fits
+     (navList ~1600px + switcher + right cluster need a ~2115px viewport;
+     below that the right cluster wraps to a second line)
+  2) 1551-2200px: compact paddings/fonts, full nav visible
+  3) <=1550px: hide nav items behind "..." compact menu
+*/
+@media (max-width: 2200px) {
+  .navbar-container {
+    padding: 0.5rem 0.5rem;
+  }
+
+  .navbar {
+    min-width: 0;
+    gap: 0.5rem;
+  }
+
+  /* Project switcher stays visible; adjust for compact layout */
+  .navbar-project-switcher {
+    flex: 0 1 auto;
+    margin: 0 0.35rem 0 0.15rem;
+    min-width: 0;
+  }
+
+  .navList {
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+
+  .navItem {
+    margin-right: 0.35rem;
+    flex: 0 1 auto; /* allow shrink for ellipsis */
+    min-width: 0;
+  }
+
+  .navList > .navItem > a,
+  .navList > .navItem > button,
+  .navList > .navItem > span,
+  .navList > .navItem > .nav-link {
+    padding: 0.4rem 0.45rem;
+    font-size: 0.95rem;
+  }
+
+  .communityWrapper {
+    margin-left: 0;
+  }
+
+  .headerContainer {
+    display: flex;
+  }
+
+  .logoSection {
+    gap: 0.5rem;
+  }
+
+  /* Scale ball down gracefully */
+  .aurora-ring-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Tighten inner ring proportionally */
+  .aurora-ring-icon::before {
+    inset: 5px;
+  }
+}
+
+/* Under ~1280px: hide nav items behind "..." compact menu */
+@media (max-width: 1550px) {
+  .navbar-container {
+    padding: 0.35rem 0.5rem;
+  }
+
+  .navbar {
+    gap: 0.35rem;
+  }
+
+  .rightContainer {
+    gap: 0.5rem;
+  }
+
+  .navList {
+    overflow-x: visible;
+  }
+
+  .navList > .navItem > a,
+  .navList > .navItem > button,
+  .navList > .navItem > span,
+  .navList > .navItem > .nav-link {
+    font-size: 0.9rem;
+    padding: 0.35rem 0.4rem;
+  }
+
+  .navList > .navItem {
+    display: none;
+  }
+
+  .navList > .navItem.activeTab,
+  .navList > .navItem.nav-mobile-more {
+    display: flex;
+  }
+
+  .nav-mobile-more {
+    display: flex;
+    position: relative;
+    margin-right: 0;
+  }
+
+  .nav-mobile-more-button {
+    border: 1px solid var(--alma-border);
+    background: var(--alma-surface);
+    color: var(--alma-text);
+    border-radius: 8px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.35rem 0.55rem;
+    min-width: 2rem;
+  }
+
+  .mobile-nav-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: auto;
+    min-width: 180px;
+    max-width: calc(100vw - 1rem);
+    background: var(--alma-surface);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px var(--alma-shadow);
+    border: 1px solid var(--alma-border);
+    z-index: 9650;
+    padding: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    /* Extend hit-area upward to bridge the 6px gap between button and menu */
+    padding-top: calc(0.35rem + 6px);
+    margin-top: -6px;
+  }
+
+  .mobile-nav-menu a {
+    color: var(--alma-text);
+    text-decoration: none;
+    padding: 0.45rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .mobile-nav-menu a:hover {
+    background: var(--alma-surface-sunken);
+  }
+
+  .mobile-nav-menu-questions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--alma-text);
+    padding: 0.45rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    white-space: nowrap;
+    white-space: nowrap;
+  }
+
+  .mobile-nav-menu-questions:hover {
+    background: var(--alma-surface-sunken);
+  }
+
+  .headerContainer {
+    display: flex !important;
+  }
+
+  .logoSection {
+    gap: 0.25rem;
+  }
+
+  .logoImage {
+    max-height: 2.4rem;
+  }
+
+  .logoLabel,
+  .logoHowlTrigger,
+  .logoSettingsTrigger {
+    display: none !important;
+  }
+
+  .logoRocheLink {
+    display: none;
+  }
+
+  /* Scale ball down at this breakpoint */
+  .aurora-ring-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Tighten inner ring proportionally */
+  .aurora-ring-icon::before {
+    inset: 5px;
+  }
+}
+
+@media (min-width: 1551px) {
+  .nav-mobile-more {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .aurora-ring-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .aurora-ring-icon::before {
+    inset: 4px;
+  }
+
+  .aurora-ring-button {
+    margin-right: 6px !important;
+  }
+}
+
+/* Phone tier: keep the single row fitting ~320px without clipping the right cluster */
+@media (max-width: 640px) {
+  .navbar-container {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .navbar {
+    gap: 0.25rem;
+  }
+
+  .rightContainer {
+    gap: 0.4rem;
+  }
+
+  /* Active tab ellipsizes instead of shoving controls off-screen */
+  .navList > .navItem.activeTab {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 42vw;
+  }
+
+  .navList > .navItem.activeTab > a,
+  .navList > .navItem.activeTab > button,
+  .navList > .navItem.activeTab > span,
+  .navList > .navItem.activeTab > .nav-link {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar-project-switcher-trigger {
+    max-width: 34vw;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  /* Keep the hamburger a comfortable touch target */
+  .nav-mobile-more-button {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0.3rem 0.45rem;
+  }
+
+  /* Voice modal must fit the viewport (size also clamped in JS at render) */
+  .voice-modal {
+    min-width: 0;
+    min-height: 0;
+    max-width: 96vw;
+    max-height: 88vh;
+    padding: 2.5rem 1rem 1rem;
+  }
+}
+
+
+.nav-questions-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-questions-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.2rem;
+  border-radius: 50%;
+  background: var(--alma-accent);
+  color: var(--alma-on-accent);
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.nav-questions-badge--compact {
+  min-width: 1rem;
+  height: 1rem;
+  font-size: 0.6rem;
+}
+
+/* Active tab underline */
+.navList > .navItem.activeTab > a,
+.navList > .navItem.activeTab > button,
+.navList > .navItem.activeTab > span,
+.navList > .navItem.activeTab > .nav-link {
+  border-bottom: 0.2rem solid var(--alma-accent);
+}
+
+/* Header container aligns header content within navbar */
+.headerContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* Right container groups project info, login, and logo */
+.rightContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative; /* Positioning context for main settings dropdown */
+  min-width: 0;
+}
+
+/* Project container styling */
+.projectContainer {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.projectContainer .project-name,
+.projectContainer .project-id,
+.projectContainer .project-details,
+.projectContainer .user-info {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Logo section styling */
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.logoHowlLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.howlLogoRow {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.howlLogoStack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.aurora-ring-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: transform 0.35s ease;
+}
+
+.aurora-ring-button--thinking {
+  animation: auroraRingButtonBreathe 2.1s ease-in-out infinite;
+}
+
+@keyframes auroraRingButtonBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+.aurora-ring-icon {
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  position: relative;
+  background:
+    radial-gradient(circle at 36% 32%, rgba(190, 234, 255, 0.98) 0%, rgba(131, 204, 255, 0.8) 28%, rgba(118, 111, 255, 0.42) 55%, rgba(188, 110, 255, 0.24) 74%, rgba(241, 120, 204, 0.12) 88%, rgba(36, 8, 91, 0) 100%),
+    radial-gradient(circle at 68% 66%, rgba(146, 220, 255, 0.74) 0%, rgba(122, 155, 255, 0.46) 40%, rgba(211, 122, 255, 0.3) 67%, rgba(255, 139, 208, 0.2) 82%, rgba(30, 7, 82, 0) 100%);
+  box-shadow:
+    0 0 0 1px rgba(195, 214, 255, 0.72),
+    0 0 14px rgba(120, 191, 255, 0.68),
+    0 0 24px rgba(0, 0, 0, 0),
+    0 0 30px rgba(0, 0, 0, 0);
+  animation:
+    auroraRingPulse 4.2s ease-in-out infinite,
+    auroraSpectrumShift 16s linear infinite;
+  will-change: transform, filter;
+  transition:
+    box-shadow 420ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.aurora-ring-icon::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(236, 244, 255, 0.9),
+    inset 0 0 10px rgba(171, 223, 255, 0.78),
+    inset 0 0 18px rgba(0, 0, 0, 0);
+  opacity: 0.95;
+}
+
+/* Listening: same aurora with violet slightly stronger */
+.aurora-ring-icon--listening {
+  box-shadow:
+    0 0 0 1px rgba(195, 214, 255, 0.76),
+    0 0 14px rgba(118, 175, 255, 0.7),
+    0 0 24px rgba(0, 0, 0, 0),
+    0 0 32px rgba(0, 0, 0, 0);
+}
+
+/* Silence / muted: same aurora, just more transparent (no animation) */
+.aurora-ring-icon--silence {
+  opacity: 0.5;
+  animation: none;
+  filter: none;
+}
+
+/* Thinking: same aurora base; aurora-borealis red (soft rose) accent inside the ball, fluctuating */
+.aurora-ring-icon--thinking {
+  box-shadow:
+    0 0 0 1px rgba(195, 214, 255, 0.72),
+    0 0 14px rgba(120, 191, 255, 0.68),
+    0 0 24px rgba(0, 0, 0, 0),
+    0 0 30px rgba(0, 0, 0, 0);
+  animation:
+    auroraThinkingPulse 1.55s cubic-bezier(0.42, 0, 0.58, 1) infinite,
+    auroraSpectrumShift 10s linear infinite;
+  isolation: isolate;
+}
+.aurora-ring-icon--thinking::before {
+  z-index: 1;
+  box-shadow:
+    inset 0 0 0 1px rgba(236, 244, 255, 0.9),
+    inset 0 0 10px rgba(171, 223, 255, 0.78),
+    inset 0 0 18px rgba(0, 0, 0, 0),
+    inset 0 0 20px rgba(0, 0, 0, 0),
+    inset 0 0 36px rgba(0, 0, 0, 0);
+  animation: auroraThinkingInnerGlow 2.2s ease-in-out infinite;
+}
+
+/* Rotating color wash — only non-ja (ja uses flat disc rules below). */
+.aurora-ring-icon--thinking::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  z-index: 0;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0),
+    rgba(150, 210, 255, 0.55),
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0),
+    rgba(150, 230, 255, 0.4),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0.72;
+  filter: blur(3px);
+  animation: auroraThinkingConicSpin 2.6s linear infinite;
+}
+
+/*
+ * Japanese UI: 日章旗 (Hinomaru) — flat, uniform crimson disc (#BC002D).
+ * No gradients or inner gloss: matches the flag’s solid red circle on white.
+ */
+.aurora-ring-icon:lang(ja),
+html[lang='ja'] .aurora-ring-icon {
+  background: #bc002d;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 0 14px rgba(188, 0, 45, 0.5);
+  animation: auroraRingPulse 4.2s ease-in-out infinite;
+  filter: none;
+}
+.aurora-ring-icon:lang(ja)::before,
+html[lang='ja'] .aurora-ring-icon::before {
+  /* Hide inner ring so the disc stays one solid color like the flag */
+  opacity: 0;
+  box-shadow: none;
+}
+.aurora-ring-icon:lang(ja).aurora-ring-icon--listening,
+html[lang='ja'] .aurora-ring-icon.aurora-ring-icon--listening {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 0 18px rgba(188, 0, 45, 0.58),
+    0 0 32px rgba(188, 0, 45, 0.35);
+}
+.aurora-ring-icon:lang(ja).aurora-ring-icon--silence,
+html[lang='ja'] .aurora-ring-icon.aurora-ring-icon--silence {
+  opacity: 0.5;
+  animation: none;
+  filter: none;
+}
+.aurora-ring-icon:lang(ja).aurora-ring-icon--thinking,
+html[lang='ja'] .aurora-ring-icon.aurora-ring-icon--thinking {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 0 14px rgba(188, 0, 45, 0.52),
+    0 0 28px rgba(188, 0, 45, 0.32);
+  animation: auroraThinkingPulse 1.35s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  filter: none;
+}
+.aurora-ring-icon:lang(ja).aurora-ring-icon--thinking::before,
+html[lang='ja'] .aurora-ring-icon.aurora-ring-icon--thinking::before {
+  opacity: 0;
+  box-shadow: none;
+  animation: none;
+}
+
+.aurora-ring-icon:lang(ja).aurora-ring-icon--thinking::after,
+html[lang='ja'] .aurora-ring-icon.aurora-ring-icon--thinking::after {
+  content: none;
+  animation: none;
+}
+
+@keyframes auroraThinkingInnerGlow {
+  0%, 100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes auroraRingPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes auroraThinkingPulse {
+  0%,
+  100% {
+    transform: scale(0.97);
+  }
+  35% {
+    transform: scale(1.09);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  65% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes auroraThinkingConicSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes auroraSpectrumShift {
+  0% {
+    filter: hue-rotate(-8deg) saturate(1.08);
+  }
+  25% {
+    filter: hue-rotate(4deg) saturate(1.12);
+  }
+  50% {
+    filter: hue-rotate(14deg) saturate(1.16);
+  }
+  75% {
+    filter: hue-rotate(4deg) saturate(1.12);
+  }
+  100% {
+    filter: hue-rotate(-8deg) saturate(1.08);
+  }
+}
+
+.voice-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+  z-index: 10010;
+}
+
+:root {
+  --voice-modal-bg-alpha: 0.68;
+  --voice-modal-border-alpha: 0.72;
+  --voice-modal-shadow-alpha: 0.16;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --voice-modal-bg-alpha: 0.58;
+    --voice-modal-border-alpha: 0.64;
+    --voice-modal-shadow-alpha: 0.13;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --voice-modal-bg-alpha: 0.94;
+    --voice-modal-border-alpha: 0.92;
+    --voice-modal-shadow-alpha: 0.24;
+  }
+}
+
+html.dark,
+body.dark,
+html.dark-mode,
+body.dark-mode,
+html[data-theme="dark"],
+body[data-theme="dark"],
+html[data-dark-mode="true"],
+body[data-dark-mode="true"],
+html[data-darkreader-scheme="dark"],
+body[data-darkreader-scheme="dark"] {
+  --voice-modal-bg-alpha: 0.94;
+  --voice-modal-border-alpha: 0.92;
+  --voice-modal-shadow-alpha: 0.24;
+}
+
+html[data-theme="light"],
+body[data-theme="light"],
+html[data-dark-mode="false"],
+body[data-dark-mode="false"] {
+  --voice-modal-bg-alpha: 0.58;
+  --voice-modal-border-alpha: 0.64;
+  --voice-modal-shadow-alpha: 0.13;
+}
+
+.voice-modal {
+  /* Query container so the immersive layout (orb/wave/subtitles) scales to the
+     window at ANY size — compact is just a smaller fullscreen, identical look. */
+  container-type: size;
+  width: min(860px, 93vw);
+  height: min(600px, 86vh);
+  min-width: 620px;
+  min-height: 460px;
+  max-width: 96vw;
+  max-height: 92vh;
+  background: var(--alma-surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  position: fixed;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 2.75rem 2rem 1rem;
+  overflow: hidden;
+  pointer-events: auto;
+  transition: box-shadow 280ms ease, border-color 280ms ease, transform 280ms ease;
+  isolation: isolate;
+  animation: voiceModalBorderPulse 3.2s ease-in-out infinite;
+}
+
+.voice-modal::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.45), transparent 42%),
+    radial-gradient(circle at 80% 25%, rgba(245, 242, 255, 0.36), transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(225, 232, 255, 0.28), transparent 50%);
+  filter: blur(12px);
+}
+
+.voice-modal.thinking {
+  border-color: rgba(154, 177, 255, 0.52);
+  box-shadow:
+    0 24px 64px rgba(43, 58, 127, 0.18),
+    0 0 0 1px rgba(176, 198, 255, 0.35),
+    0 0 24px rgba(127, 178, 255, 0.4),
+    0 0 44px rgba(0, 0, 0, 0);
+  animation: voiceModalBorderPulseThinking 1.15s ease-in-out infinite;
+}
+
+.voice-modal.thinking::before {
+  opacity: 0;
+  animation: none;
+}
+
+.voice-modal.thinking .voice-modal-ball-trigger {
+  animation: auroraRingButtonBreathe 2.1s ease-in-out infinite;
+}
+
+@keyframes voiceModalAuraGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.66;
+    filter: blur(10px) saturate(1.02);
+  }
+  50% {
+    transform: scale(1.01);
+    opacity: 1;
+    filter: blur(12px) saturate(1.14);
+  }
+}
+
+@keyframes voiceModalBorderPulse {
+  0%, 100% {
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  }
+  50% {
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.14),
+      0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  }
+}
+
+@keyframes voiceModalBorderPulseThinking {
+  0%, 100% {
+    border-color: rgba(168, 190, 255, 0.78);
+  }
+  45% {
+    border-color: rgba(201, 162, 255, 0.96);
+  }
+  70% {
+    border-color: rgba(146, 214, 255, 0.92);
+  }
+}
+
+.voice-modal.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.voice-modal-drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 70px;
+  height: 34px;
+  cursor: grab;
+}
+
+.voice-modal-settings-wrap {
+  position: absolute;
+  top: 8px;
+  right: 38px;
+  z-index: 3;
+}
+
+.voice-modal-settings-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--alma-text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.voice-modal-settings-trigger:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--alma-text-muted);
+}
+
+.voice-modal-settings-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  min-width: 160px;
+  padding: 10px 12px;
+  background: var(--alma-surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.voice-modal-settings-section {
+  margin-bottom: 10px;
+}
+
+.voice-modal-settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.voice-modal-settings-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--alma-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+
+.voice-modal-settings-levels {
+  display: flex;
+  gap: 4px;
+}
+
+.voice-modal-settings-level-btn {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--alma-surface-sunken);
+  color: var(--alma-text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.voice-modal-settings-level-btn:hover {
+  background: var(--alma-surface-sunken);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: var(--alma-text);
+}
+
+.voice-modal-settings-level-btn.active {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: var(--alma-text);
+}
+
+.voice-modal-settings-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.voice-modal-settings-clear-btn {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--alma-text-muted);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.voice-modal-settings-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--alma-danger);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.voice-modal-resize-grip {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  cursor: se-resize;
+  z-index: 2;
+  background: linear-gradient(135deg, transparent 50%, rgba(67, 82, 159, 0.2) 50%);
+  border-radius: 0 0 20px 0;
+}
+.voice-modal-resize-grip:hover {
+  background: linear-gradient(135deg, transparent 50%, rgba(67, 82, 159, 0.35) 50%);
+}
+
+.voice-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: var(--alma-text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.voice-modal-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--alma-text-muted);
+}
+
+.voice-modal-content {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.7rem;
+  min-height: 0;
+}
+
+.voice-modal-ball-section {
+  position: relative;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.voice-modal-click-hint {
+  position: absolute;
+  left: 50%;
+  top: 0.35rem;
+  z-index: 4;
+  max-width: min(92%, 340px);
+  padding: 0.6rem 1rem;
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--alma-text);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(67, 82, 159, 0.22);
+  border-radius: 12px;
+  box-shadow: 0 8px 26px var(--alma-shadow);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: voiceModalClickHintEnter 0.4s ease-out;
+}
+
+@keyframes voiceModalClickHintEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.voice-modal-ball-trigger {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: opacity 0.2s ease;
+}
+.voice-modal-ball-trigger:hover {
+  opacity: 0.9;
+}
+.voice-modal-ball-trigger--paused .voice-modal-aurora-icon {
+  opacity: 0.5;
+}
+.voice-modal-ball-trigger--paused .voice-wave-canvas {
+  opacity: 0.5;
+}
+.voice-modal-status--paused {
+  color: var(--alma-text-muted);
+  font-style: italic;
+  margin: 0.25rem 0;
+}
+
+.voice-modal-aurora-wrap {
+  --voice-amp: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.1rem;
+  flex: 0 0 auto;
+  min-height: 182px;
+  overflow: visible;
+  /* Live voice amplitude scales the whole orb. Kept on the wrap (not the icon)
+     so it composes with the icon's keyframe scale instead of overriding it. */
+  transform: scale(calc(1 + var(--voice-amp) * 0.16));
+  transform-origin: center top;
+  transition: transform 80ms linear;
+}
+
+.voice-modal-aurora-icon {
+  width: 170px;
+  height: 170px;
+  /* Amplitude-driven glow. Uses box-shadow (not filter) because filter is
+     animated by auroraSpectrumShift and would override a var-based filter. */
+  box-shadow:
+    0 0 calc(14px + var(--voice-amp) * 40px) rgba(140, 150, 255, calc(0.28 + var(--voice-amp) * 0.5)),
+    0 0 calc(24px + var(--voice-amp) * 26px) rgba(0, 0, 0, 0);
+  transition: box-shadow 80ms linear;
+}
+
+.voice-modal-title {
+  margin: 0;
+  color: var(--alma-accent);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.voice-wave-lines {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 0.1rem;
+  flex: 0 0 120px;
+}
+
+.voice-wave-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.voice-debug-controls {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.voice-debug-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--alma-surface);
+  color: var(--alma-text-muted);
+  border-radius: 7px;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.voice-debug-btn:hover {
+  background: var(--alma-surface-sunken);
+}
+
+.voice-chat-feed {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.35rem 0.45rem 0.35rem 0.35rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  padding-right: 0.2rem;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+.voice-chat-item {
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.voice-chat-item--pending {
+  background: transparent;
+  border-left: none;
+  padding-left: 0;
+  opacity: 0.9;
+}
+
+.voice-chat-item--success {
+  background: transparent;
+  border-left: none;
+}
+
+.voice-chat-item--error {
+  background: transparent;
+  border-left: none;
+}
+
+.voice-chat-heard,
+.voice-chat-reply,
+.voice-chat-meta,
+.voice-chat-empty {
+  margin: 0;
+  color: var(--alma-text-muted);
+}
+
+.voice-chat-heard,
+.voice-chat-reply {
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.voice-chat-meta {
+  margin-top: 0.22rem;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.voice-chat-empty {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.voice-chat-input {
+  width: 100%;
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+}
+
+.voice-chat-input-field {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: var(--alma-surface);
+  color: var(--alma-text);
+  font-size: 0.86rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.voice-chat-input-field:disabled {
+  opacity: 0.4;
+  background: var(--alma-surface-sunken);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.voice-chat-input--voice-mode .voice-chat-input-field {
+  opacity: 0.38;
+  background: var(--alma-surface-sunken);
+  color: var(--alma-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+  border-color: rgba(0, 0, 0, 0.07);
+}
+
+/* Working: extra mute on pill when waiting on ALMA (text mode uses :disabled; voice mode stays pill-muted). */
+.voice-chat-input--busy .voice-chat-input-field {
+  opacity: 0.45;
+  background: var(--alma-border);
+  color: var(--alma-text-muted);
+}
+
+.voice-chat-input--busy.voice-chat-input--voice-mode .voice-chat-input-field {
+  opacity: 0.48;
+  background: var(--alma-border);
+}
+
+/* Single 1px progress line under the input (reuses voiceCommandProgress from think countdown). */
+.voice-chat-input-timer {
+  width: 100%;
+  height: 1px;
+  margin-top: 6px;
+  border-radius: 1px;
+  background: var(--alma-accent-soft);
+  overflow: hidden;
+}
+
+.voice-chat-input-timer-fill {
+  display: block;
+  height: 1px;
+  border-radius: 1px;
+  background: var(--alma-accent);
+  transition: width 0.18s linear;
+}
+
+.voice-debug-area {
+  display: none;
+}
+
+.voice-debug-log {
+  width: 100%;
+  margin: 0.2rem 0 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--alma-surface);
+  color: var(--alma-text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  max-height: 180px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.voice-modal-status {
+  margin: 0;
+  color: var(--alma-text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.voice-modal-status-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.voice-modal-countdown-line {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--alma-accent-soft);
+  overflow: hidden;
+}
+
+.voice-modal-countdown-line-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--alma-accent) 0%, var(--alma-accent) 100%);
+  transition: width 180ms linear;
+}
+
+/* Logo image styling */
+.logoImage {
+  max-height: 3.5rem;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Dropdown container styling */
+.dropdown {
+  position: relative;
+  flex: 1;
+  text-align: center;
+}
+
+/* Dropdown toggle styling */
+.dropdown-toggle {
+  cursor: pointer;
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  color: var(--alma-text);
+  transition: color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+  color: var(--alma-accent);
+}
+
+/* First-level dropdown menu */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--alma-surface);
+  border: 0.1rem solid var(--alma-border);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 9600;
+  /* Above navbar, below modals */
+  min-width: 200px;
+}
+
+/* Dropdown menu items */
+.dropdown-item {
+  padding: 0;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.dropdown-item a {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  text-decoration: none;
+  color: var(--alma-text);
+  line-height: 1.5;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-align: left;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.dropdown-item a:hover {
+  color: var(--alma-accent);
+  background-color: var(--alma-surface-sunken);
+}
+
+.dropdown-button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  background: none;
+  border: none;
+  color: var(--alma-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-align: left;
+  text-decoration: none;
+  line-height: 1.5;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.dropdown-button:hover {
+  color: var(--alma-accent);
+  background-color: var(--alma-surface-sunken);
+}
+
+/* Show the first-level dropdown menu on hover */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Add space before "Community" */
+.communityWrapper {
+  margin-left: 2rem;
+}
+
+/* ---------- Second-level submenu (Projects) ---------- */
+
+/* Position nested dropdown relative inside first-level menu */
+.dropdown-menu .dropdown {
+  position: relative;
+}
+
+/* Style "Projects ▸" toggle */
+.dropdown-menu .dropdown-toggle {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: inherit;
+}
+
+.dropdown-menu .dropdown-toggle:hover {
+  background-color: var(--alma-surface-sunken);
+}
+
+/* Position nested submenu to the right */
+.dropdown-menu .dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-left: 0.1rem;
+  display: none;
+  position: absolute;
+  background-color: var(--alma-surface);
+  border: 0.1rem solid var(--alma-border);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 9700;
+  /* Above first-level dropdown, below modals */
+  min-width: 200px;
+}
+
+/* Reveal second-level menu on hover */
+.dropdown-menu .dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+
+/* Adjust nested submenu items' padding */
+.dropdown-menu .dropdown-submenu .dropdown-item {
+  padding: 0.5rem 1rem;
+}
+
+/* Flip arrow when "Projects" hovered */
+.dropdown-menu .dropdown-submenu:hover>.dropdown-toggle::after {
+  content: ' ▼';
+}
+
+/* Submenu toggle for hackathons */
+.dropdown-submenu-toggle {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: var(--alma-text);
+}
+
+.dropdown-submenu-toggle:hover {
+  background-color: var(--alma-surface-sunken);
+  color: var(--alma-accent);
+}
+
+/* Position submenu menu to the right */
+.dropdown-submenu-menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 0.1rem;
+  background-color: var(--alma-surface);
+  border: 0.1rem solid var(--alma-border);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 16rem;
+  z-index: 1001;
+}
+
+/* Show submenu on hover */
+.dropdown-submenu:hover .dropdown-submenu-menu {
+  display: block;
+}
+
+/* Info dropdown (project & login) */
+.info-dropdown {
+  position: absolute;
+  right: 10px;
+  top: 50px;
+  background: var(--alma-surface);
+  border: 1px solid var(--alma-border);
+  padding: 10px;
+  box-shadow: 0 4px 8px var(--alma-shadow);
+  z-index: 9800;
+  /* High priority navbar element, below modals */
+  border-radius: 4px;
+  width: 320px;
+}
+
+/* Bug popup styling */
+.bug-popup {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  background: var(--alma-surface);
+  border: 1px solid var(--alma-text);
+  border-radius: 15px;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  z-index: 9900;
+  /* Highest navbar element, below modals */
+  white-space: nowrap;
+  box-shadow: 4px 4px 0 rgba(30, 28, 54, 0.3);
+}
+
+/* Bug popup tail border */
+.bug-popup::before {
+  content: "";
+  position: absolute;
+  background: var(--alma-surface);
+  left: 85px;
+  bottom: 40px;
+  right: 190px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent var(--alma-text) transparent;
+}
+
+/* Bug popup tail fill */
+.bug-popup::after {
+  content: "";
+  position: absolute;
+  bottom: -16px;
+  right: 33px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent transparent var(--alma-surface) transparent;
+}
+
+/* ---------- Recent Items Dropdown Navigation ---------- */
+.nav-dropdown-container {
+  position: relative;
+}
+
+/* Add invisible bridge area to make hover easier */
+.nav-dropdown-container::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: transparent;
+}
+
+
+.nav-dropdown {
+  /* Shared control height for every button inside a dropdown so primary
+     buttons, the icon button and the FAQ button all align (scales with vw). */
+  --nav-dd-control-h: clamp(2rem, 2.4vw, 2.25rem);
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  min-width: 200px;
+  max-width: 280px;
+  background: var(--alma-surface);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--alma-shadow), 0 2px 8px rgba(0, 0, 0, 0.08);
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+  z-index: 9600;
+  overflow: hidden;
+}
+
+/* Projects dropdown: keep action row visible and scroll only project list */
+.nav-projects-scroll-list {
+  max-height: min(52vh, 360px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-right: -2px;
+  padding-right: 2px;
+}
+
+.nav-projects-scroll-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nav-projects-scroll-list::-webkit-scrollbar-thumb {
+  background: var(--alma-border);
+  border-radius: 3px;
+}
+
+.nav-projects-scroll-list::-webkit-scrollbar-thumb:hover {
+  background: var(--alma-text-muted);
+}
+
+.nav-dropdown-container:hover .nav-dropdown {
+  display: block;
+  animation: dropdownSlideIn 0.25s ease-out;
+}
+
+/* Show dropdown when explicitly opened via click */
+.nav-dropdown.dropdown-visible {
+  display: block;
+  animation: dropdownSlideIn 0.25s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--alma-text-muted);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-dropdown-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--alma-accent);
+  transform: scaleY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-dropdown-item:hover {
+  background: linear-gradient(90deg, var(--alma-accent-soft) 0%, var(--alma-accent-soft) 100%);
+  color: var(--alma-accent);
+  transform: translateX(4px);
+}
+
+.nav-dropdown-item:hover::before {
+  transform: scaleY(1);
+}
+
+.nav-dropdown-item-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 12px;
+}
+
+.nav-dropdown-item-badge {
+  padding: 4px 10px;
+  background: linear-gradient(135deg, var(--alma-accent) 0%, var(--alma-accent-hover) 100%);
+  color: var(--alma-on-accent);
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px var(--alma-shadow);
+}
+
+.nav-dropdown-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--alma-border) 50%, transparent 100%);
+  margin: 8px 0;
+}
+
+.nav-dropdown-empty {
+  padding: 1.5rem 1rem;
+  color: var(--alma-text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  border-radius: 8px;
+  background: rgba(156, 163, 175, 0.05);
+}
+
+.nav-dropdown-button {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--nav-dd-control-h);
+  padding: 0 0.9rem;
+  color: var(--alma-on-accent) !important;
+  font-weight: 600;
+  font-size: clamp(0.78rem, 1.6vw, 0.9rem);
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  background: var(--alma-accent);
+  transition: background 0.2s ease;
+  margin-top: 4px;
+  border: none;
+}
+
+.nav-dropdown-button:hover {
+  background: var(--alma-accent-hover);
+  color: var(--alma-on-accent) !important;
+}
+
+/* Per-section FAQ / Tutorial link inside a dropdown — lighter than the primary
+   filled button so it reads as a secondary "learn more" affordance. */
+.nav-dropdown-faq {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: var(--nav-dd-control-h);
+  margin-top: 6px;
+  padding: 0 1rem;
+  font-size: clamp(0.74rem, 1.5vw, 0.82rem);
+  font-weight: 600;
+  color: var(--alma-text);
+  background: transparent;
+  border: 1px solid var(--alma-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-dropdown-faq:hover {
+  background: var(--alma-surface-sunken);
+  color: var(--alma-accent);
+  border-color: var(--alma-border);
+}
+
+.nav-dropdown-faq svg {
+  opacity: 0.75;
+}
+
+/* Mobile "more" menu: per-section FAQ group */
+.mobile-nav-menu-faq-label {
+  padding: 0.4rem 0.75rem 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--alma-text-muted);
+}
+
+.mobile-nav-menu-faq-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-nav-menu-faq-item svg {
+  opacity: 0.7;
+}
+
+/* Dropdown Actions Container */
+.nav-dropdown-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid var(--alma-border);
+  margin-top: 0.25rem;
+  position: relative;
+}
+
+.nav-dropdown-icon-button {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: var(--nav-dd-control-h);
+  height: var(--nav-dd-control-h);
+  padding: 0;
+  background-color: var(--alma-surface);
+  border: 2px solid var(--alma-accent);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  color: var(--alma-accent);
+}
+
+.nav-dropdown-icon-button:hover:not(:disabled) {
+  background-color: var(--alma-surface-sunken);
+  border-color: var(--alma-accent-hover);
+}
+
+.nav-dropdown-icon-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nav-dropdown-icon-button svg {
+  color: var(--alma-accent);
+}
+
+.nav-dropdown-icon-button.spinning svg {
+  animation: spin 1s linear infinite;
+}
+
+.nav-dropdown-actions .nav-dropdown-button {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* Upload Dropdown Styles */
+.nav-dropdown-upload {
+  min-width: 280px;
+}
+
+.nav-dropdown-dropzone {
+  padding: 2rem 1.5rem;
+  border: 2px dashed var(--alma-border);
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  background: var(--alma-surface-sunken);
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.nav-dropdown-dropzone:hover {
+  border-color: var(--alma-accent);
+  background: var(--alma-accent-soft);
+}
+
+.nav-dropdown-dropzone.dragging {
+  border-color: var(--alma-accent);
+  background: var(--alma-accent-soft);
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px var(--alma-accent-soft);
+}
+
+.nav-dropdown-dropzone svg {
+  color: var(--alma-accent);
+}
+
+.nav-dropdown-dropzone-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--alma-accent);
+  margin-bottom: 4px;
+}
+
+.nav-dropdown-dropzone-hint {
+  font-size: 0.75rem;
+  color: var(--alma-text-muted);
+}
+
+/* Background Upload Progress Animations */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============ Immersive fullscreen voice mode ============ */
+
+/* Top-right toggle button (compact: left of the close button). */
+.voice-modal-fullscreen-toggle {
+  position: absolute;
+  top: 8px;
+  right: 66px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--alma-text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 999px;
+  z-index: 4;
+}
+.voice-modal-fullscreen-toggle:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--alma-text-muted);
+}
+
+/* Darkened, blurred, interactive backdrop (base overlay is transparent + no pointer events). */
+/* Dark full-page backdrop — only when maximized (compact floats over the app). */
+.voice-modal-overlay--fullscreen {
+  pointer-events: auto;
+  background: var(--alma-overlay);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* =================================================================
+   Shared immersive layout — applied at BOTH window sizes. Sized with
+   CSS container-query units (cqh/cqw, relative to .voice-modal) so the
+   compact window is just a smaller fullscreen with an identical look.
+   ================================================================= */
+.voice-modal--immersive {
+  background: #0b0a1f;
+  color: rgba(228, 232, 255, 0.92);
+}
+.voice-modal--immersive::before { display: none; }
+.voice-modal--immersive .voice-modal-click-hint { display: none; }
+
+/* Vertical stage: status (top) → orb region (flex middle) → chat → input (bottom).
+   The orb lives in its own flex region above the chat, never overlapping it. */
+.voice-modal--immersive .voice-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  gap: 0.4rem;
+}
+.voice-modal--immersive .voice-modal-ball-section {
+  order: 2;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: visible;
+}
+.voice-modal--immersive .voice-modal-ball-trigger {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+/* Waveform spans full width, vertically centered → flanks the orb. */
+.voice-modal--immersive .voice-wave-lines {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: min(46cqh, 520px);
+  flex: none;
+  margin: 0;
+  overflow: visible;
+  z-index: 1;
+}
+.voice-modal--immersive .voice-wave-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Orb centered, on top of the waveform. Enlarge via icon size (the wrap keeps the
+   --voice-amp scale transform). */
+.voice-modal--immersive .voice-modal-aurora-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  transform: translate(-50%, -50%) scale(calc(1 + var(--voice-amp) * 0.16));
+  transform-origin: center center;
+  z-index: 2;
+}
+.voice-modal--immersive .voice-modal-aurora-icon {
+  width: min(24cqh, 220px);
+  height: min(24cqh, 220px);
+  transition: width 0.35s ease, height 0.35s ease;
+}
+
+/* Listening (mic active, non-live): orb dominates, chat fades. */
+.voice-modal--immersive-listening .voice-modal-aurora-icon {
+  width: min(40cqh, 360px);
+  height: min(40cqh, 360px);
+}
+.voice-modal--immersive-listening .voice-chat-feed,
+.voice-modal--immersive-listening .voice-chat-input {
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+/* Status at the top of the stage, readable on the dark box. */
+.voice-modal--immersive .voice-modal-status,
+.voice-modal--immersive .voice-modal-status-wrap {
+  order: 1;
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: rgba(226, 230, 255, 0.92);
+}
+.voice-modal--immersive .voice-modal-status--paused {
+  color: rgba(226, 230, 255, 0.6);
+}
+
+/* Chat transcript panel (non-live), dark + readable. */
+.voice-modal--immersive .voice-chat-feed {
+  order: 3;
+  position: relative;
+  z-index: 3;
+  width: min(760px, 92cqw);
+  margin: 0 auto;
+  max-height: 28cqh;
+  flex: 0 1 auto;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: rgba(16, 14, 38, 0.55);
+  border: 1px solid rgba(150, 160, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.4s ease;
+}
+.voice-modal--immersive .voice-chat-heard,
+.voice-modal--immersive .voice-chat-reply,
+.voice-modal--immersive .voice-chat-empty {
+  color: rgba(228, 232, 255, 0.92);
+}
+.voice-modal--immersive .voice-chat-heard strong,
+.voice-modal--immersive .voice-chat-reply strong {
+  color: #c7b6ff;
+}
+
+/* Input, dark-themed. */
+.voice-modal--immersive .voice-chat-input {
+  order: 4;
+  position: relative;
+  z-index: 3;
+  width: min(760px, 92cqw);
+  margin: 0.6rem auto 0;
+  flex: 0 0 auto;
+  transition: opacity 0.4s ease;
+}
+.voice-modal--immersive .voice-chat-input-field {
+  background: rgba(20, 18, 44, 0.85);
+  color: #eef0ff;
+  border-color: rgba(150, 160, 255, 0.28);
+}
+.voice-modal--immersive .voice-chat-input-field::placeholder {
+  color: rgba(200, 205, 255, 0.5);
+}
+
+/* Controls light on the dark box. */
+.voice-modal--immersive .voice-modal-fullscreen-toggle,
+.voice-modal--immersive .voice-modal-close {
+  color: rgba(220, 224, 255, 0.85);
+}
+.voice-modal--immersive .voice-modal-fullscreen-toggle:hover,
+.voice-modal--immersive .voice-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+/* ===== Live mode: Netflix-style subtitles + wave under the ball (both sizes). ===== */
+.voice-modal--live .voice-modal-aurora-icon {
+  width: min(40cqh, 360px);
+  height: min(40cqh, 360px);
+}
+.voice-modal--live .voice-wave-lines {
+  top: calc(50% + min(19cqh, 178px));
+  bottom: auto;
+  transform: none;
+  height: 14cqh;
+}
+.voice-modal--live .voice-wave-canvas {
+  filter: hue-rotate(135deg) saturate(1.25) brightness(1.1);
+}
+.voice-modal--live .voice-chat-feed {
+  order: 4;
+  background: none;
+  border: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  width: min(900px, 90cqw);
+  max-height: 24cqh;
+  overflow: hidden;
+  text-align: center;
+  margin: 0 auto;
+  padding: 0 0 1.5cqh;
+  opacity: 1;
+  pointer-events: none;
+}
+.voice-modal--live .voice-chat-item {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.25rem 0;
+}
+.voice-modal--live .voice-chat-item:nth-last-child(-n + 3) {
+  display: block;
+}
+.voice-modal--live .voice-chat-heard,
+.voice-modal--live .voice-chat-reply {
+  text-align: center;
+  margin: 0.2rem 0;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75);
+}
+.voice-modal--live .voice-chat-heard {
+  font-size: clamp(0.95rem, 3.2cqw, 1.45rem);
+  color: rgba(206, 212, 255, 0.66);
+}
+.voice-modal--live .voice-chat-reply {
+  font-size: clamp(1.2rem, 4.6cqw, 2.25rem);
+  font-weight: 600;
+  color: #ffffff;
+}
+.voice-modal--live .voice-chat-heard strong,
+.voice-modal--live .voice-chat-reply strong,
+.voice-modal--live .voice-chat-empty {
+  display: none;
+}
+.voice-modal--live .voice-chat-input {
+  display: none;
+}
+
+/* ===== Maximized: fill the viewport, strip window chrome (dark backdrop is on the overlay). ===== */
+.voice-modal--maximized {
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  min-width: 0;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  padding: clamp(2.5rem, 5vh, 4rem) clamp(1rem, 6vw, 5rem) clamp(1rem, 3vh, 2rem);
+  animation: none;
+  cursor: default;
+}
+.voice-modal--maximized .voice-modal-settings-wrap { right: 56px; }
+.voice-modal--maximized .voice-modal-fullscreen-toggle { right: 88px; }
+.voice-modal--maximized .voice-modal-close { right: 18px; }

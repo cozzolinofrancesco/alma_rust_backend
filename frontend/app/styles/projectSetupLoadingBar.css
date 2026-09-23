@@ -1,0 +1,30 @@
+/* components/projectSetupLoadingBar.css */
+.project-setup-loading-bar {
+    margin: 1rem 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+  
+  .progress-bar-container {
+    width: 100%;
+    background-color: var(--alma-border);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 10px;
+    background-color: var(--alma-accent);
+    width: 0;
+    transition: width 0.3s;
+  }
+  
+  .loading-bar-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--alma-surface-sunken);
+    border: 1px solid var(--alma-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  

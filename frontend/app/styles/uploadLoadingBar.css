@@ -1,0 +1,79 @@
+/* Container for the loading bar */
+.upload-loading-bar {
+    padding: 10px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Completed pages list */
+.completed-pages-list {
+    margin-top: 10px;
+}
+
+/* Individual completed page */
+.completed-page {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--alma-success);
+    /* Green color for completed pages */
+}
+
+/* Progress bar container */
+.progress-bar-container {
+    width: 100%;
+    background-color: var(--alma-border);
+    border-radius: 8px;
+    height: 16px;
+    margin: 8px 0;
+    position: relative;
+}
+
+/* Progress bar */
+.progress-bar {
+    height: 100%;
+    background-color: var(--alma-accent);
+    border-radius: 8px;
+    transition: width 0.4s ease;
+}
+
+/* Green progress bar for completed pages */
+.progress-bar.completed {
+    background-color: var(--alma-success);
+}
+
+/* Green checkmark */
+.checkmark {
+    color: var(--alma-success);
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .upload-loading-bar {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .progress-bar-container {
+        height: 12px;
+    }
+
+    .completed-page {
+        font-size: 12px;
+    }
+
+    .checkmark {
+        font-size: 16px;
+    }
+}
+
+.upload-loading-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--alma-surface-sunken);
+  border: 1px solid var(--alma-border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
