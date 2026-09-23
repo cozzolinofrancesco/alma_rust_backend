@@ -296,7 +296,6 @@ script_testing/*.pdf
 /context/
 
 # Planning & smoke docs (not needed by the container)
-/README.md
 /PORT_PLAN.md
 /smoke_272.md
 /smoke_IB.md
