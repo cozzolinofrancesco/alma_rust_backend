@@ -1,0 +1,115 @@
+/* General Popup Overlay */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+/* Popup Content */
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 70%;
+    height: 70%;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    resize: both;
+    /* Enables resizable behavior */
+    position: relative;
+    min-width: 300px;
+    /* Prevent shrinking too small */
+    min-height: 200px;
+    /* Prevent shrinking too small */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Popup Header (Contains the Add to Context button and Close button) */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+/* Popup Body Content */
+.popup-content-body {
+    overflow-y: auto;
+    /* Allow vertical scrolling */
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling */
+    max-height: calc(100% - 60px);
+    /* Adjust for header height */
+    white-space: pre-wrap;
+    /* Ensure long text wraps */
+    word-wrap: break-word;
+    /* Wrap long words */
+    padding-right: 10px;
+    margin-top: 10px;
+}
+
+/* Copy Button inside Popup */
+.copy-button-popup {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: #1E1C36;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.1s ease;
+}
+
+.copy-button-popup:hover {
+    opacity: 1;
+    transform: scale(1.05);
+    color: #357ae8;
+}
+
+.copy-button-popup:active {
+    transform: scale(0.98);
+}
+
+/* Ensure Workflow Popup Doesn't Conflict */
+.workflow-info-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    /* Dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Ensure it’s on top */
+}
+
+/* General Popup Close Button */
+.close-button {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    /* Space above the button */
+    transition: background 0.3s ease;
+}
+
+.close-button:hover {
+    background: #0056b3;
+    /* Darken on hover */
+}

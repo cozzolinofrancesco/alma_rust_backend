@@ -1,0 +1,86 @@
+[
+    {
+        "value": "gemini-3.6-flash",
+        "label": "Gemini 3.6 Flash",
+        "description": "Gemini 3.6 Flash",
+        "capabilities": [
+            "Audio",
+            "Images",
+            "Videos",
+            "Text",
+            "PDF"
+        ],
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 65536
+    },
+    {
+        "value": "gemini-3.5-flash",
+        "label": "Gemini 3.5 Flash",
+        "description": "Gemini 3.5 Flash",
+        "capabilities": [
+            "Audio",
+            "Images",
+            "Videos",
+            "Text",
+            "PDF"
+        ],
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 65536
+    },
+    {
+        "value": "gemini-3.1-pro-preview",
+        "label": "Gemini 3.1 Pro Preview",
+        "description": "Gemini 3.1 Pro Preview",
+        "capabilities": [
+            "Audio",
+            "Images",
+            "Videos",
+            "Text",
+            "PDF"
+        ],
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 65536
+    },
+    {
+        "value": "gemini-3-flash-preview",
+        "label": "Gemini 3 Flash Preview",
+        "description": "Gemini 3 Flash Preview",
+        "capabilities": [
+            "Audio",
+            "Images",
+            "Videos",
+            "Text",
+            "PDF"
+        ],
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 65536
+    },
+    {
+        "value": "gemini-3.1-flash-lite",
+        "label": "Gemini 3.1 Flash Lite",
+        "description": "Gemini 3.1 Flash Lite",
+        "capabilities": [
+            "Audio",
+            "Images",
+            "Videos",
+            "Text",
+            "PDF"
+        ],
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 65536
+    },
+    {
+        "value": "gemini-3.1-flash-image-preview",
+        "label": "Nano Banana 2",
+        "description": "Gemini 3.1 Flash Image Preview (Nano Banana 2)",
+        "capabilities": [
+            "Audio",
+            "Images",
+            "Videos",
+            "Text",
+            "PDF"
+        ],
+        "maxInputTokens": 65536,
+        "maxOutputTokens": 65536
+    }
+]

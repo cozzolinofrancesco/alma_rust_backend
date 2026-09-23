@@ -1,0 +1,23 @@
+[package]
+name = "alma-bootstrap"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "alma-bootstrap"
+path = "src/main.rs"
+
+[dependencies]
+alma-domain = { path = "../domain" }
+alma-application = { path = "../application" }
+alma-infrastructure = { path = "../infrastructure" }
+alma-http = { path = "../http" }
+axum = { workspace = true }
+tokio = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+reqwest = { workspace = true }

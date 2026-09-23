@@ -1,0 +1,19 @@
+[package]
+name = "alma-domain"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+# agentnodes engine: canonical-JSON planHash (sha2), insertion-order dedup
+# (indexmap), and the portable IntoResponse error contract (axum). The port plan
+# places `AgentExecutionError` with its own `IntoResponse` in the domain crate.
+axum = { workspace = true }
+indexmap = { workspace = true }
+sha2 = { workspace = true }

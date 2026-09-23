@@ -1,0 +1,180 @@
+/* Bigger and fixed-size input box */
+.pageInput {
+    width: 300px;
+    /* Fixed width */
+    height: 50px;
+    /* Fixed height */
+    padding: 10px;
+    /* Adjusted padding */
+    font-size: 18px;
+    /* Larger font size */
+    border-radius: 15px;
+    /* Rounded corners for a modern look */
+    border: 1px solid var(--alma-border);
+    /* Subtle border */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+    /* Slightly stronger shadow */
+    margin-right: 12px;
+    /* Adjusted margin */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    /* Smooth transitions */
+}
+
+/* Add focus effect */
+.pageInput:focus {
+    border-color: var(--alma-accent);
+    /* Highlight border on focus */
+    box-shadow: 0px 4px 8px var(--alma-accent-soft);
+    /* Stronger shadow on focus */
+    outline: none;
+    /* Remove default outline */
+}
+
+/* Smaller control styling */
+.controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.google-style-input {
+    width: 40%;
+    /* Reduced width */
+    padding: 10px;
+    font-size: 16px;
+    /* Smaller font */
+    border-radius: 25px;
+    border: 1px solid var(--alma-border);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 8px;
+}
+
+.google-style-button {
+    padding: 10px 20px;
+    /* Original padding remains */
+    font-size: 16px;
+    border-radius: 25px;
+    background-color: var(--alma-accent);
+    color: var(--alma-on-accent);
+    border: none;
+    cursor: pointer;
+    margin-bottom: 2px;
+    /* Adds space below each button */
+}
+
+.google-style-button:hover {
+    background-color: var(--alma-accent-hover);
+}
+
+.chat-input-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.google-style-button:disabled {
+    background-color: var(--alma-border);
+    /* Light gray background */
+    color: var(--alma-text-muted);
+    /* Gray text */
+    cursor: not-allowed;
+    /* Show not-allowed cursor */
+    opacity: 0.6;
+    /* Add transparency */
+}
+/* Optional: Change hover effect for disabled buttons */
+.google-style-button:disabled:hover {
+    background-color: var(--alma-border);
+    /* Keep background unchanged */
+    color: var(--alma-text-muted);
+    /* Keep text unchanged */
+    cursor: not-allowed;
+    /* Keep not-allowed cursor */
+}
+/* Responsive styling for mobile devices */
+@media (max-width: 768px) {
+
+    .pageInput,
+    .google-style-input {
+        width: 90%;
+        /* Almost full width on mobile */
+        padding: 10px;
+        /* Keep padding compact */
+        font-size: 14px;
+    }
+
+    .google-style-button {
+        width: 90%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .chat-input-wrapper {
+        flex-direction: column;
+    }
+}
+
+/* Further styling for extra small screens */
+@media (max-width: 480px) {
+
+    .pageInput,
+    .google-style-input {
+        font-size: 12px;
+    }
+
+    .google-style-button {
+        font-size: 12px;
+    }
+}
+
+.analysis-button {
+    padding: 10px 20px;
+    font-size: 10px;
+    border-radius: 25px;
+    background-color: var(--alma-accent);
+    /* Blue background to match google-style */
+    color: var(--alma-on-accent);
+    border: none;
+    cursor: pointer;
+    margin-bottom: 2px;
+    width: 150px;
+    /* Fixed width */
+    height: 40px;
+        display: block;
+    /* Fixed height */
+}
+
+.analysis-button:hover {
+    background-color: var(--alma-accent-hover);
+    /* Darker blue on hover */
+}
+
+.analysis-button:disabled {
+    background-color: var(--alma-border);
+    /* Light gray background */
+    color: var(--alma-text-muted);
+    /* Gray text */
+    cursor: not-allowed;
+    /* Show not-allowed cursor */
+    opacity: 0.6;
+    /* Add transparency */
+}
+
+/* Optional: Change hover effect for disabled buttons */
+.analysis-button:disabled:hover {
+    background-color: var(--alma-border);
+    /* Keep background unchanged */
+    color: var(--alma-text-muted);
+    /* Keep text unchanged */
+    cursor: not-allowed;
+    /* Keep not-allowed cursor */
+}

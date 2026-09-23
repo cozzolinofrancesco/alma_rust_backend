@@ -1,0 +1,41 @@
+{
+  "agentName": "Synthetic 272 workflow example",
+  "sources": [
+    {
+      "sourceId": "sample-study",
+      "kind": "text",
+      "name": "sample-study.txt",
+      "text": "Synthetic workflow data, not clinical evidence. Study DEMO-001 compares document processing: method A processed ten files in twenty minutes; method B processed ten files in fifteen minutes. No other outcomes were measured."
+    }
+  ],
+  "templates": {
+    "study-summary": {
+      "id": "study-summary",
+      "user_instruction": "Summarize [INSERT STUDY ID] from the supplied source. Preserve counts and units, mark missing information and label the output synthetic."
+    }
+  },
+  "studies": [
+    {
+      "id": "sample-study",
+      "fileName": "sample-study.txt",
+      "docTitle": "Synthetic processing comparison",
+      "protocolNumber": "DEMO-001",
+      "templateId": "study-summary",
+      "sourceIds": ["sample-study"]
+    }
+  ],
+  "sec3Steps": [
+    {
+      "id": "synthesis",
+      "name": "Cross-source synthesis",
+      "instruction": "Summarize the preceding source-derived findings and list information not supplied. Do not infer clinical findings from this synthetic processing example."
+    }
+  ],
+  "sec1Steps": [
+    {
+      "id": "overview",
+      "name": "Overview",
+      "instruction": "Write a short overview of the synthetic findings and unresolved gaps. Do not add missing outcomes, study designs or recommendations."
+    }
+  ]
+}

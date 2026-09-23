@@ -1,0 +1,102 @@
+/* Shared terminal / quant-board theme (the "mock-dashboard" style, generalized).
+   Apply by adding class `term-ui` to a container. Tokens are CSS vars; helpers are
+   scoped so they never leak. See app/mock-dashboard/README.md for the design spec.
+
+   NOTE: app/globals.css forces `* { font-family: var(--font-primary) !important }`,
+   so the monospace rule below MUST use !important to win (also affects SVG <text>;
+   canvas text is set separately via ctx.font). */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+
+.term-ui,
+.term-ui * {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.term-ui {
+  --term-bg: #f6f6f3;
+  --term-panel: #ffffff;
+  --term-border: #e3e3dd;
+  --term-hair: #d7d7d0;
+  --term-grid: #ededea;
+  --term-ink: #1a1a1a;
+  --term-muted: #8c8c86;
+  --term-faint: #b6b6af;
+  --term-red: #b91c1c;
+  --term-green: #16a34a;
+  --term-gray: #b9b9b3;
+  --term-hub: #111111;
+
+  color: var(--term-ink);
+}
+
+.term-ui .term-panel {
+  background: var(--term-panel);
+  border: 1px solid var(--term-border);
+  border-radius: 2px;
+  position: relative;
+}
+
+.term-ui .term-uc {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.term-ui .term-muted {
+  color: var(--term-muted);
+}
+.term-ui .term-pos {
+  color: var(--term-green);
+}
+.term-ui .term-neg {
+  color: var(--term-red);
+}
+
+.term-ui .term-pill {
+  border: 1px solid var(--term-hair);
+  border-radius: 2px;
+  padding: 2px 8px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--term-panel);
+  color: var(--term-ink);
+}
+
+.term-ui .term-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: #111;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 2px;
+  padding: 4px 7px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transform: translate(-50%, -120%);
+  z-index: 20;
+}
+
+.term-ui .term-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--term-green);
+  margin-right: 5px;
+  vertical-align: middle;
+  animation: term-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes term-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

@@ -1,0 +1,463 @@
+/* Tutorial System Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Overlay */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    animation: tutorialFadeIn 0.3s ease-out;
+}
+
+@keyframes tutorialFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Main Modal */
+.tutorial-modal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    width: 98vw;
+    height: 95vh;
+    max-width: 1400px;
+    max-height: 900px;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    animation: tutorialSlideIn 0.4s ease-out;
+    overflow: hidden;
+}
+
+@keyframes tutorialSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Header */
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #11074A 0%, #1a0d5c 100%);
+    color: white;
+}
+
+.tutorial-title-section {
+    flex: 1;
+}
+
+.tutorial-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: white;
+    line-height: 1.2;
+}
+
+.tutorial-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+}
+
+.tutorial-close-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: 300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 24px;
+}
+
+.tutorial-close-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Progress */
+.tutorial-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 40px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tutorial-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.tutorial-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #11074A 0%, #6366f1 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.tutorial-progress-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+/* Content Area */
+.tutorial-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Step Styles */
+.tutorial-step {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tutorial-step-header {
+    margin-bottom: 32px;
+}
+
+.tutorial-step-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #11074A;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+}
+
+.tutorial-step-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.tutorial-step-content {
+    flex: 1;
+    margin-bottom: 32px;
+}
+
+.tutorial-section-header {
+    font-size: 20px;
+    font-weight: 600;
+    color: #11074A;
+    margin: 24px 0 16px 0;
+    line-height: 1.4;
+}
+
+.tutorial-paragraph {
+    font-size: 16px;
+    font-weight: 400;
+    color: #374151;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+
+.tutorial-list {
+    margin: 16px 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.tutorial-list-item {
+    font-size: 16px;
+    color: #374151;
+    line-height: 1.6;
+    margin: 8px 0;
+    padding-left: 24px;
+    position: relative;
+}
+
+.tutorial-list-item::before {
+    content: '•';
+    color: #11074A;
+    font-weight: bold;
+    position: absolute;
+    left: 8px;
+}
+
+.tutorial-bold {
+    font-weight: 600;
+    color: #11074A;
+}
+
+/* Step Actions */
+.tutorial-step-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.tutorial-action-button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    min-height: 48px;
+}
+
+.tutorial-action-primary {
+    background: #11074A;
+    color: white;
+}
+
+.tutorial-action-primary:hover {
+    background: #1a0d5c;
+    transform: translateY(-1px);
+}
+
+.tutorial-action-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.tutorial-action-secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.tutorial-action-outline {
+    background: transparent;
+    color: #11074A;
+    border: 2px solid #11074A;
+}
+
+.tutorial-action-outline:hover {
+    background: #11074A;
+    color: white;
+}
+
+.tutorial-action-icon {
+    font-size: 18px;
+}
+
+/* Navigation */
+.tutorial-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    border-top: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+.tutorial-nav-button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    min-width: 100px;
+}
+
+.tutorial-nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tutorial-nav-primary {
+    background: #11074A;
+    color: white;
+}
+
+.tutorial-nav-primary:hover:not(:disabled) {
+    background: #1a0d5c;
+}
+
+.tutorial-nav-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.tutorial-nav-secondary:hover:not(:disabled) {
+    background: #e5e7eb;
+}
+
+.tutorial-nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* Step Indicators */
+.tutorial-step-indicators {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.tutorial-step-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tutorial-step-indicator.active {
+    background: #11074A;
+    border-color: #11074A;
+}
+
+.tutorial-step-indicator.completed {
+    background: #10b981;
+    border-color: #10b981;
+}
+
+.tutorial-step-indicator:hover {
+    border-color: #11074A;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .tutorial-modal {
+        width: 95vw;
+        height: 90vh;
+        max-width: 1000px;
+    }
+
+    .tutorial-content {
+        max-width: 700px;
+        padding: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tutorial-modal {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        max-width: none;
+        max-height: none;
+    }
+
+    .tutorial-header {
+        padding: 24px 20px 20px;
+    }
+
+    .tutorial-title {
+        font-size: 24px;
+    }
+
+    .tutorial-subtitle {
+        font-size: 16px;
+    }
+
+    .tutorial-progress-container {
+        padding: 16px 20px;
+    }
+
+    .tutorial-content {
+        padding: 24px 20px;
+        max-width: none;
+    }
+
+    .tutorial-step-title {
+        font-size: 22px;
+    }
+
+    .tutorial-step-subtitle {
+        font-size: 16px;
+    }
+
+    .tutorial-navigation {
+        padding: 20px;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .tutorial-nav-center {
+        order: -1;
+    }
+
+    .tutorial-step-actions {
+        flex-direction: column;
+    }
+
+    .tutorial-action-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .tutorial-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .tutorial-close-button {
+        align-self: flex-end;
+        margin-left: 0;
+    }
+
+    .tutorial-step-indicators {
+        gap: 6px;
+    }
+
+    .tutorial-step-indicator {
+        width: 10px;
+        height: 10px;
+    }
+}

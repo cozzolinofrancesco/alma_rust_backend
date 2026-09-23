@@ -1,0 +1,25 @@
+
+.pdfPreview,
+.imagePreview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 75%;
+    padding: 10px;
+    overflow: auto;
+    border: 0;
+}
+
+.imagePreview img {
+    width: 75%;
+    height: 50%;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.contentBelowPreview {
+    flex: 1;
+    overflow-y: auto;
+}

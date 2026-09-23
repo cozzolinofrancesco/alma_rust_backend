@@ -1,0 +1,315 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Inter font as default */
+:root {
+  --font-primary: 'Inter', sans-serif;
+  --font-mono: 'Inter', sans-serif;
+  /* Viewport-safe app height (handles mobile browser UI better than plain 100vh) */
+  --app-height: 100vh;
+}
+
+@supports (height: 100svh) {
+  :root {
+    --app-height: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --app-height: 100dvh;
+  }
+}
+
+/* ===== Alma unified design tokens (light defaults + dark overrides) =====
+   Semantic tokens for the editorial neutral-slate system. Reskinned surfaces consume
+   these via var(--alma-*); flipping [data-theme="dark"] on <html> retones them
+   with no per-component dark: variants. --workflow-* alias the docs system. */
+:root {
+  /* surfaces */
+  --alma-bg: #fcfcfc;
+  --alma-surface: #ffffff;
+  --alma-surface-sunken: #f5f7f7;
+  --alma-code: #f1f4f5;
+  /* text */
+  --alma-text: #24252a;
+  --alma-text-muted: #5e646c;
+  /* lines */
+  --alma-border: #dfe3e5;
+  /* accent (neutral slate) */
+  --alma-accent: #3a4753;
+  --alma-accent-hover: #29323b;
+  --alma-accent-soft: #e8ecee;
+  --alma-on-accent: #ffffff;
+  /* status */
+  --alma-success: #1f8a4c;
+  --alma-danger: #c0392b;
+  --alma-warning: #b7791f;
+  /* elevation / overlay */
+  --alma-overlay: rgba(0, 0, 0, 0.5);
+  --alma-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --alma-shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
+  /* radii */
+  --alma-radius-sm: 4px;
+  --alma-radius-md: 6px;
+  /* docs aliases (keep app/docs unchanged) */
+  --workflow-ink: var(--alma-text);
+  --workflow-muted: var(--alma-text-muted);
+  --workflow-rule: var(--alma-border);
+  --workflow-link: var(--alma-accent);
+}
+
+:root[data-theme='dark'] {
+  --alma-bg: #16181b;
+  --alma-surface: #1e2125;
+  --alma-surface-sunken: #24282c;
+  --alma-code: #1b1e21;
+  --alma-text: #e7e9ea;
+  --alma-text-muted: #9aa1a8;
+  --alma-border: #333a3d;
+  --alma-accent: #c3cad1;
+  --alma-accent-hover: #d6dbe0;
+  --alma-accent-soft: rgba(195, 202, 209, 0.16);
+  --alma-on-accent: #16181b;
+  --alma-success: #4bbe77;
+  --alma-danger: #e06c5b;
+  --alma-warning: #d6a75e;
+  --alma-overlay: rgba(0, 0, 0, 0.6);
+  --alma-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --alma-shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  font-family: var(--font-primary) !important;
+}
+
+/* Japanese UI: prefer system Gothic stack while keeping Inter metrics where loaded */
+html[lang='ja'] * {
+  font-family: 'Inter', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Meiryo', sans-serif !important;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hover effects for medium articles */
+.medium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+html {
+  /* transform: scale(0.70); */
+  /* transform-origin: top left; */
+  /* width: 133.33%; */
+}
+
+/* Ensure proper viewport sizing and layout */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-primary) !important;
+}
+
+body {
+  /* Make app containers with h-full/height:100% reliable across all routes */
+  height: var(--app-height);
+  min-height: var(--app-height);
+}
+
+/* App shell: navbar + main area */
+.app-shell {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-main {
+  flex: 1;
+  min-height: 0; /* critical for nested flex layouts to avoid clipping */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative; /* Ensure content stacks below navbar */
+}
+
+/* Admin debug route: scrollable wrapper (same pattern as projects / rag-corpus) */
+.admin-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Projects route: scrollable wrapper (overrides app-main overflow:hidden) */
+.projects-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Upload route: scrollable wrapper (overrides app-main overflow:hidden) */
+.upload-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* RAG Corpus route: scrollable wrapper (overrides app-main overflow:hidden) */
+.rag-corpus-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Claim Validation route: scrollable wrapper (overrides app-main overflow:hidden) */
+.claim-validation-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* Reserve space for scrollbar so it doesn’t overlap table content (avoids vertical line artifact) */
+  scrollbar-gutter: stable;
+}
+
+/* RAG Optimization route: scrollable wrapper (overrides app-main overflow:hidden) */
+.rag-optimization-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+/* Proof Validation Flow route: scrollable wrapper (overrides app-main overflow:hidden) */
+.proof-validation-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Home route: scrollable wrapper (overrides app-main overflow:hidden) */
+.home-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Integrity Archive route: scrollable wrapper (overrides app-main overflow:hidden) */
+.integrity-archive-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Verification Archive route: scrollable wrapper */
+.claims-archive-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure main content takes full viewport height */
+#__next {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Disable decorative canvas backdrops on phone screens to improve readability and layout stability */
+@media (max-width: 640px) {
+  canvas.vanta-canvas,
+  canvas[class*="vanta"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Hide large decorative dashboard hero blocks that use the same inline style signature */
+  div[style*="padding: 4rem 2rem"][style*="min-height: 360px"][style*="align-items: center"][style*="justify-content: center"] {
+    display: none !important;
+  }
+}
+
+/* Next.js dev tools portal - reset fixed positioning */
+nextjs-portal {
+  left: unset;
+  top: unset;
+}
+
+/* Shared refresh button style used across pages (Projects, AI Agents, etc.) */
+.alma-refresh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  background-color: var(--alma-accent);
+  color: var(--alma-on-accent);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.alma-refresh-button:hover:not(:disabled) {
+  background-color: var(--alma-accent-hover);
+  transform: scale(1.02);
+}
+
+.alma-refresh-button:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.alma-refresh-button:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.alma-refresh-button.loading svg {
+  animation: spin 1s linear infinite;
+}
+
+/* Small square icon-only variant (e.g. AI Agents dashboard) */
+.alma-refresh-button--icon-only {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+}

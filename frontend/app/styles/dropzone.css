@@ -1,0 +1,51 @@
+/* Dropzone Styling */
+.dropzone {
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f0f0;
+    color: #666;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.dropzone:hover {
+    border-color: #0070f3;
+    background-color: #F5F5F5;
+}
+
+.dropzone-content {
+    padding: 10px;
+}
+
+/* Mobile friendly adjustments */
+@media (max-width: 768px) {
+    .dropzone {
+        padding: 15px;
+        /* Reduce padding for smaller screens */
+        font-size: 14px;
+        /* Smaller font size for better text fit */
+        width: 90%;
+        /* Slightly reduce width to fit better on mobile */
+        margin: 0 auto;
+        /* Center it */
+    }
+
+    .dropzone-content {
+        padding: 8px;
+        /* Smaller padding for mobile */
+    }
+}
+
+/* Further adjustments for very small screens */
+@media (max-width: 480px) {
+    .dropzone {
+        padding: 12px;
+        /* Further reduce padding for extra small screens */
+        font-size: 12px;
+        /* Reduce font size even more */
+        width: 100%;
+        /* Full width for tiny screens */
+    }
+}

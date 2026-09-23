@@ -1,0 +1,45 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/domain",
+    "crates/application",
+    "crates/infrastructure",
+    "crates/http",
+    "crates/macros",
+    "crates/bootstrap",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.95"
+publish = false
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+axum = { version = "0.7" }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["trace", "cors"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+async-trait = "0.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+futures-core = "0.3"
+futures-util = "0.3"
+http = "1"
+mockall = "0.13"
+trybuild = "1"
+
+# --- Phase 0 additions: Gemini/File Search HTTP client, hashing, templates, QC maps ---
+# reqwest: default-features off so ONLY rustls-tls is compiled (avoids the native-tls/OpenSSL
+# C build hazard called out in the plan's C11). File Search uses raw X-Goog-Upload-* headers,
+# so the `multipart` feature is intentionally omitted. Pinned >=0.12 for hyper 1.x alignment.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "stream"] }
+bytes = "1"                                             # resumable-upload byte buffers
+base64 = "0.22"                                         # inline small-file source encoding
+sha2 = "0.10"                                           # canonical-JSON planHash + digest verify
+serde_yaml = "0.9"                                      # inline 272 templatesYamlText only
+indexmap = { version = "2", features = ["serde"] }      # insertion-order maps (QC comparisonTable / diffs)
+icu_collator = "1.5"                                    # Unicode-aware localeCompare-equivalent sort (comparisonTable)

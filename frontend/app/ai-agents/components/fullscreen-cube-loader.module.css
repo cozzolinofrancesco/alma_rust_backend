@@ -1,0 +1,270 @@
+/* Agent Loading Animation - Based on DOI Pattern */
+.agent-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    135deg,
+    rgba(252, 252, 252, 0.95) 0%,
+    rgba(240, 244, 252, 0.92) 50%,
+    rgba(175, 168, 186, 0.90) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483647; /* Maximum z-index to ensure it's above everything */
+  animation: fadeIn 0.3s ease;
+}
+
+.agent-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem;
+  background: rgba(252, 252, 252, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(175, 168, 186, 0.3);
+  box-shadow: 0 20px 60px rgba(17, 7, 74, 0.15);
+  text-align: center;
+  max-width: 400px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.agent-loading-cube {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: agentCubeRotate 4s ease-in-out infinite;
+}
+
+.agent-loading-cube-face {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px solid rgba(175, 168, 186, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Agent-themed cube faces with white-gray gradients */
+.agent-loading-cube-front {
+  background: linear-gradient(135deg, #fcfcfc 0%, #f0f4fc 100%);
+  transform: translateZ(40px);
+  animation: agentFrontFace 4s ease-in-out infinite;
+}
+
+.agent-loading-cube-back {
+  background: linear-gradient(135deg, #AFA8BA 0%, #fcfcfc 100%);
+  transform: rotateY(180deg) translateZ(40px);
+  animation: agentBackFace 4s ease-in-out infinite;
+}
+
+.agent-loading-cube-right {
+  background: linear-gradient(135deg, #f0f4fc 0%, #AFA8BA 100%);
+  transform: rotateY(90deg) translateZ(40px);
+  animation: agentRightFace 4s ease-in-out infinite;
+}
+
+.agent-loading-cube-left {
+  background: linear-gradient(135deg, #AFA8BA 0%, #f0f4fc 100%);
+  transform: rotateY(-90deg) translateZ(40px);
+  animation: agentLeftFace 4s ease-in-out infinite;
+}
+
+.agent-loading-cube-top {
+  background: linear-gradient(135deg, #fcfcfc 0%, #AFA8BA 100%);
+  transform: rotateX(90deg) translateZ(40px);
+  animation: agentTopFace 4s ease-in-out infinite;
+}
+
+.agent-loading-cube-bottom {
+  background: linear-gradient(135deg, #AFA8BA 0%, #fcfcfc 100%);
+  transform: rotateX(-90deg) translateZ(40px);
+  animation: agentBottomFace 4s ease-in-out infinite;
+}
+
+.agent-loading-text h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #11074A;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.agent-loading-text p {
+  margin: 0;
+  font-size: 1rem;
+  color: #4A4453;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Cube rotation animation - Enhanced for agent preview */
+@keyframes agentCubeRotate {
+  0% { 
+    transform: rotateX(0deg) rotateY(0deg) scale(1);
+  }
+  25% { 
+    transform: rotateX(45deg) rotateY(45deg) scale(1.1);
+  }
+  50% { 
+    transform: rotateX(90deg) rotateY(90deg) scale(1.2);
+  }
+  75% { 
+    transform: rotateX(135deg) rotateY(135deg) scale(1.1);
+  }
+  100% { 
+    transform: rotateX(180deg) rotateY(180deg) scale(1);
+  }
+}
+
+/* Individual face animations */
+@keyframes agentFrontFace {
+  0%, 100% { transform: translateZ(40px); }
+  50% { transform: translateZ(60px); }
+}
+
+@keyframes agentBackFace {
+  0%, 100% { transform: rotateY(180deg) translateZ(40px); }
+  50% { transform: rotateY(180deg) translateZ(60px); }
+}
+
+@keyframes agentRightFace {
+  0%, 100% { transform: rotateY(90deg) translateZ(40px); }
+  50% { transform: rotateY(90deg) translateZ(60px); }
+}
+
+@keyframes agentLeftFace {
+  0%, 100% { transform: rotateY(-90deg) translateZ(40px); }
+  50% { transform: rotateY(-90deg) translateZ(60px); }
+}
+
+@keyframes agentTopFace {
+  0%, 100% { transform: rotateX(90deg) translateZ(40px); }
+  50% { transform: rotateX(90deg) translateZ(60px); }
+}
+
+@keyframes agentBottomFace {
+  0%, 100% { transform: rotateX(-90deg) translateZ(40px); }
+  50% { transform: rotateX(-90deg) translateZ(60px); }
+}
+
+/* Fade in animation for overlay */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+  .agent-loading-container {
+    padding: 2rem;
+    margin: 1rem;
+    max-width: 320px;
+  }
+
+  .agent-loading-cube {
+    width: 60px;
+    height: 60px;
+  }
+
+  .agent-loading-cube-face {
+    width: 60px;
+    height: 60px;
+  }
+
+  .agent-loading-cube-front {
+    transform: translateZ(30px);
+  }
+
+  .agent-loading-cube-back {
+    transform: rotateY(180deg) translateZ(30px);
+  }
+
+  .agent-loading-cube-right {
+    transform: rotateY(90deg) translateZ(30px);
+  }
+
+  .agent-loading-cube-left {
+    transform: rotateY(-90deg) translateZ(30px);
+  }
+
+  .agent-loading-cube-top {
+    transform: rotateX(90deg) translateZ(30px);
+  }
+
+  .agent-loading-cube-bottom {
+    transform: rotateX(-90deg) translateZ(30px);
+  }
+
+  .agent-loading-text h3 {
+    font-size: 1.25rem;
+  }
+
+  .agent-loading-text p {
+    font-size: 0.9rem;
+  }
+
+  /* Mobile face animations */
+  @keyframes agentFrontFace {
+    0%, 100% { transform: translateZ(30px); }
+    50% { transform: translateZ(45px); }
+  }
+
+  @keyframes agentBackFace {
+    0%, 100% { transform: rotateY(180deg) translateZ(30px); }
+    50% { transform: rotateY(180deg) translateZ(45px); }
+  }
+
+  @keyframes agentRightFace {
+    0%, 100% { transform: rotateY(90deg) translateZ(30px); }
+    50% { transform: rotateY(90deg) translateZ(45px); }
+  }
+
+  @keyframes agentLeftFace {
+    0%, 100% { transform: rotateY(-90deg) translateZ(30px); }
+    50% { transform: rotateY(-90deg) translateZ(45px); }
+  }
+
+  @keyframes agentTopFace {
+    0%, 100% { transform: rotateX(90deg) translateZ(30px); }
+    50% { transform: rotateX(90deg) translateZ(45px); }
+  }
+
+  @keyframes agentBottomFace {
+    0%, 100% { transform: rotateX(-90deg) translateZ(30px); }
+    50% { transform: rotateX(-90deg) translateZ(45px); }
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .agent-loading-cube {
+    animation: agentCubeSimple 2s ease-in-out infinite;
+  }
+  
+  .agent-loading-cube-face {
+    animation: none;
+  }
+  
+  @keyframes agentCubeSimple {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+} 

@@ -1,0 +1,151 @@
+/* General Google-style button (applied to all buttons) */
+.button-small,
+.select-all-button,
+.info-button {
+    background-color: transparent;
+    color: var(--alma-accent);
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 50px;
+    border: 0px solid var(--alma-accent);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease, color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* Hover state with blue background */
+.button-small:hover,
+.select-all-button:hover,
+.info-button:hover {
+    background-color: transparent;
+    color: var(--alma-surface);
+}
+
+/* Active state */
+.button-small:active,
+.select-all-button:active,
+.info-button:active {
+    transform: scale(0.98);
+}
+
+/* Disabled state */
+.button-small:disabled,
+.select-all-button:disabled,
+.info-button:disabled {
+    background-color: transparent;
+    color: var(--alma-text-muted);
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+    border-color: var(--alma-border);
+}
+
+.add-to-context-button {
+    width: 150px;
+    /* Fixed width */
+    height: 50px;
+    /* Fixed height */
+    padding: 0;
+    /* Remove padding to ensure fixed size */
+    font-size: 16px;
+    /* Font size */
+    border-radius: 25px;
+    /* Rounded corners */
+    background-color: var(--alma-accent);
+    /* Google-style blue background */
+    color: var(--alma-on-accent);
+    /* White text */
+    border: none;
+    /* No border */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    /* Smooth transitions */
+    display: inline-flex;
+    /* Flexbox for centering content */
+    align-items: center;
+    /* Center content vertically */
+    justify-content: center;
+    /* Center content horizontally */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+}
+/* Hover effect */
+.add-to-context-button:hover {
+    background-color: var(--alma-accent-hover);
+    /* Darker blue on hover */
+}
+
+/* Active effect */
+.add-to-context-button:active {
+    transform: scale(0.98);
+    /* Slight shrink effect */
+}
+
+/* Disabled state */
+.add-to-context-button:disabled {
+    background-color: var(--alma-border);
+    /* Gray background */
+    color: var(--alma-text-muted);
+    /* Dimmed text */
+    cursor: not-allowed;
+    /* Prevent interaction */
+    pointer-events: none;
+    /* Disable pointer events */
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .add-to-context-button {
+        width: 90%;
+        /* Full width on mobile */
+        padding: 10px;
+        font-size: 14px;
+        /* Smaller font */
+    }
+}
+
+@media (max-width: 480px) {
+    .add-to-context-button {
+        font-size: 12px;
+        /* Adjust for smaller screens */
+    }
+}
+
+
+.popup-add-to-context-button:active {
+    transform: scale(0.98);
+}
+
+
+.popup-add-to-context-button {
+    padding: 10px 20px;
+    /* Original padding remains */
+    font-size: 16px;
+    border-radius: 25px;
+    background-color: var(--alma-accent);
+    color: var(--alma-on-accent);
+    border: none;
+    cursor: pointer;
+    margin-bottom: 2px;
+    /* Adds space below each button */
+}
+
+.popup-add-to-context-button:hover {
+    background-color: var(--alma-accent-hover);
+}
+
+.popup-add-to-context-button:disabled {
+    background-color: var(--alma-border);
+    /* Light gray background */
+    color: var(--alma-text-muted);
+    /* Gray text */
+    cursor: not-allowed;
+    /* Show not-allowed cursor */
+    opacity: 0.6;
+    /* Add transparency */
+}

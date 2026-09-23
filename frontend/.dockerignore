@@ -1,0 +1,305 @@
+# ==========================================
+# DOCKERIGNORE - Next.js Production Build
+# ==========================================
+# Excludes files not needed in Docker container
+# Reduces build context size and improves security
+
+# ------------------------------------------
+# Dependencies (reinstalled in container)
+# ------------------------------------------
+node_modules/
+.pnp/
+.pnp.js
+.yarn/
+
+# ------------------------------------------
+# Package manager caches
+# ------------------------------------------
+.npm/
+.npm-cache/
+npm-cache/
+.yarn-cache/
+.pnpm-store/
+.pnpm/
+.cache/
+.env.local
+# ------------------------------------------
+# Build outputs (rebuilt in container)
+# ------------------------------------------
+.next/
+out/
+dist/
+.swc/
+build/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+archive/
+# ------------------------------------------
+# Environment files
+# ------------------------------------------
+# SECURITY: Don't bake secrets into Docker image!
+# Runtime vars should be injected via: docker run --env-file .env.local
+#
+# EXCEPTION: .env.docker is allowed for build-time NEXT_PUBLIC_* vars
+# (these are public anyway and needed at build time)
+
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production.local
+
+# KEEP these for build (public vars only, no secrets!)
+!.env.docker
+!.env.production
+!.env.example
+!.env.template
+
+# ------------------------------------------
+# Git (not needed in container)
+# ------------------------------------------
+.git/
+.gitignore
+.gitattributes
+.gitmodules
+
+# ------------------------------------------
+# Testing (not needed in production)
+# ------------------------------------------
+tests/
+__tests__/
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+coverage/
+.nyc_output/
+.jest-cache/
+jest.config.js
+jest.config.ts
+jest.setup.js
+jest.setup.ts
+playwright.config.ts
+playwright/
+cypress/
+cypress.config.js
+test-results/
+
+# ------------------------------------------
+# Development tools & scripts
+# ------------------------------------------
+dev-tools/
+script_testing/
+scripts/
+*.sh
+!docker-entrypoint.sh
+
+# ------------------------------------------
+# Documentation (not needed in production)
+# ------------------------------------------
+*.md
+!README.md
+/docs/
+LICENSE
+CHANGELOG.md
+CHANGELOG.ja.md
+
+# ------------------------------------------
+# IDE & Editors
+# ------------------------------------------
+.vscode/
+.idea/
+*.code-workspace
+.cursor/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------
+# OS files
+# ------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ------------------------------------------
+# Logs
+# ------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+server.log
+
+# ------------------------------------------
+# Linter & Formatter caches
+# ------------------------------------------
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# ------------------------------------------
+# Temporary files
+# ------------------------------------------
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+tmp_uploads_ocr/
+
+# ------------------------------------------
+# Secrets & Certificates (security!)
+# ------------------------------------------
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+client_secret*.json
+**/client_secret*.json
+application_default_credentials.json
+**/application_default_credentials.json
+secrets/
+.secrets/
+
+# ------------------------------------------
+# Docker files (prevent recursion)
+# ------------------------------------------
+Dockerfile
+Dockerfile.*
+.dockerignore
+docker-compose*.yml
+docker-compose*.yaml
+
+# ------------------------------------------
+# CI/CD (not needed in container)
+# ------------------------------------------
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+azure-pipelines.yml
+Jenkinsfile
+bitbucket-pipelines.yml
+
+# ------------------------------------------
+# Vercel / Netlify (not needed in Docker)
+# ------------------------------------------
+.vercel/
+.netlify/
+vercel.json
+netlify.toml
+
+# ------------------------------------------
+# Project-specific exclusions
+# ------------------------------------------
+# Dev-only assets & specs — NOT imported by app code (light-build).
+# templates/ is intentionally NOT here: app/lib/templateLoader.ts reads
+# templates/study-types.yaml at runtime via process.cwd().
+assets/
+openapi/
+fixtures/
+config/
+test-mocks/
+
+# AI context tracking
+context/
+
+# Ideas and notes
+ideas/
+content/
+
+# Backup files
+*.backup
+*.backup.*
+
+# Python test scripts
+*.py
+!app/**/*.py
+
+# Large binary files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.pdf
+
+# SQLite databases
+*.sqlite
+*.sqlite3
+*.db
+
+# ------------------------------------------
+# Debug & Profiling
+# ------------------------------------------
+*.cpuprofile
+*.heapsnapshot
+
+# ------------------------------------------
+# Storybook (not for production)
+# ------------------------------------------
+.storybook/
+storybook-static/
+*.stories.tsx
+*.stories.ts
+*.stories.js
+
+# ------------------------------------------
+# Turborepo
+# ------------------------------------------
+.turbo/
+
+# ------------------------------------------
+# Miscellaneous
+# ------------------------------------------
+.node_repl_history
+*.tgz
+.yarn-integrity
+.npmrc.local
+.nvmrc
+.node-version
+
+# ------------------------------------------
+# Files to KEEP (explicit includes)
+# ------------------------------------------
+# These are NOT ignored (overrides above patterns)
+!package.json
+!package-lock.json
+!next.config.mjs
+!next.config.js
+!tsconfig.json
+!tailwind.config.js
+!tailwind.config.ts
+!postcss.config.js
+!postcss.config.mjs
+!middleware.ts
+!app/
+!pages/
+!public/
+!components/
+!lib/
+!styles/
+!hooks/
+
+# Local-only credentials, run receipts, and developer caches
+.venv/
+.data/
+.security/
+.claude/
+**/.local/
+**/__pycache__/

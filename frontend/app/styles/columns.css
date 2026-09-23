@@ -1,0 +1,95 @@
+/* Left Column - File Upload */
+.column-left {
+    flex: 0 0 350px;
+    max-width: 350px;
+    background: #ffffff;
+    box-shadow: -20px 0 190px rgba(0, 0, 0, 0.80);
+    border-left: 1px solid #e5e7eb;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.column-left.closed {
+    transform: translateX(-110%);
+}
+
+/* Scrollbar styling */
+.column-left::-webkit-scrollbar {
+    width: 6px;
+}
+
+.column-left::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.column-left::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.column-left::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Middle Column - PDF/Image Preview */
+.column-middle {
+    flex: 1;
+    /* Takes the remaining space proportionally */
+    max-width: 70%;
+    background: linear-gradient(to right, #ffffff, #f8e4e0);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    overflow-x: hidden;
+    /* Hide horizontal scroll */
+    height: 100vh;
+    /* Full height to enable scrolling */
+    padding: 10px;
+}
+
+/* Right Column - Chatbox and Flows */
+.column-right {
+    flex: 0 0 30%;
+    max-width: 35%;
+    background-color: #f8e4e0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    overflow-x: hidden;
+    /* Hide horizontal scroll */
+    height: 100vh;
+    /* Full height to enable scrolling */
+    padding: 10px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+
+    .column-left,
+    .column-right {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .column-middle {
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .column-left,
+    .column-right {
+        flex: 0 0 30%;
+        max-width: 30%;
+    }
+
+    .column-middle {
+        max-width: 40%;
+    }
+}

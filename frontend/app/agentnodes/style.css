@@ -1,0 +1,4015 @@
+/* /agentnodes — reuses canvas-272 palette and utility classes.
+   Thin additions live here; shared surface lives in app/canvas-272/style.css. */
+
+.an-graph-hydration-banner {
+  margin: 0 12px 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #5c4a00;
+  background: #fff8e1;
+  border: 1px solid #f0d060;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * TOOLBAR — Professional ALMA layout
+ * Three logical sections separated by hairline dividers:
+ *   [LEFT: agent context]  [RIGHT: tools | run | save]
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+/* Override the shared .c272-toolbar when scoped under .an-toolbar */
+.c272-toolbar.an-toolbar {
+  height: 56px;
+  padding: 0 18px;
+  gap: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f9f9fc 100%);
+  border-bottom: 1px solid #e5e5ea;
+  box-shadow: 0 1px 0 rgba(26, 43, 91, 0.02);
+}
+
+.an-toolbar__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.an-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.an-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+/* Browser fullscreen on .c272-root — hide agents rail so only stage shows */
+.c272-root.c272-root--stage-fs .c272-sidebar,
+.c272-root.c272-root--stage-fs .c272-reopen-handle {
+  display: none !important;
+}
+.an-toolbar__group:first-child { padding-left: 0; }
+.an-toolbar__group:last-child  { padding-right: 0; }
+
+.an-toolbar__divider {
+  width: 1px;
+  height: 22px;
+  background: #e5e5ea;
+  flex-shrink: 0;
+}
+
+.an-toolbar-filter {
+  flex-wrap: wrap;
+  row-gap: 6px;
+  max-width: min(520px, 42vw);
+  min-width: 0;
+}
+
+.an-toolbar-filter__count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1a2b5b;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.an-toolbar-filter__search {
+  min-width: 0;
+  flex: 1 1 120px;
+  max-width: 220px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d0d0dc;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #ffffff;
+}
+
+.an-toolbar-filter__search:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+}
+
+.an-toolbar-filter__hint {
+  font-size: 11px;
+  color: #b45309;
+  white-space: nowrap;
+}
+
+.an-toolbar-filter__tags {
+  flex-shrink: 0;
+}
+
+.an-toolbar-filter__tag-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.an-toolbar__title-text {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1a2b5b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+  letter-spacing: -0.01em;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+/* Common base — all toolbar buttons share these dimensions */
+.an-btn-ghost,
+.an-btn-soft,
+.an-btn-outline,
+.an-btn-primary,
+.an-btn-cancel,
+.an-btn-back {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition:
+    background 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 140ms cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+.an-btn-ghost:disabled,
+.an-btn-soft:disabled,
+.an-btn-outline:disabled,
+.an-btn-primary:disabled,
+.an-btn-cancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.an-btn-icon {
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Ghost: invisible until hover. Used for tertiary actions. */
+.an-btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #4a4a60;
+}
+.an-btn-ghost:hover:not(:disabled) {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+
+/* Back: subtle chevron + label, sits at the far left */
+.an-btn-back {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #6b7280;
+  padding-left: 8px;
+}
+.an-btn-back:hover:not(:disabled) {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+.an-btn-back__chevron {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  margin-top: -2px;
+}
+
+/* Soft: neutral secondary. Used for Simulate and other secondary actions. */
+.an-btn-soft {
+  background: #f5f5f7;
+  border: 1px solid #e0e0e6;
+  color: #374151;
+  font-weight: 600;
+}
+.an-btn-soft:hover:not(:disabled) {
+  background: #ececf0;
+  border-color: #c8c8d4;
+  color: #1f2937;
+}
+
+/* Outline: neutral border. Used for save / version actions. */
+.an-btn-outline {
+  background: #ffffff;
+  border: 1px solid #d5d5dc;
+  color: #374151;
+  font-weight: 600;
+}
+.an-btn-outline:hover:not(:disabled) {
+  background: #f9f9fc;
+  border-color: #9ca3af;
+  color: #1f2937;
+  box-shadow: 0 1px 3px rgba(26, 43, 91, 0.08);
+}
+
+/* Primary: filled navy. The single most important action (Run all). */
+.an-btn-primary {
+  background: #1a2b5b;
+  border: 1px solid #1a2b5b;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(26, 43, 91, 0.18);
+}
+.an-btn-primary:hover:not(:disabled) {
+  background: #2d3f73;
+  border-color: #2d3f73;
+  box-shadow: 0 2px 6px rgba(26, 43, 91, 0.28);
+  transform: translateY(-1px);
+}
+.an-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Stop / cancel — neutral outline */
+.an-btn-cancel {
+  background: #ffffff;
+  border: 1px solid #d5d5dc;
+  color: #374151;
+  font-weight: 600;
+  box-shadow: none;
+}
+.an-btn-cancel:hover:not(:disabled) {
+  background: #f5f5f7;
+  border-color: #9ca3af;
+  color: #1f2937;
+  box-shadow: 0 1px 3px rgba(26, 43, 91, 0.06);
+}
+
+/* Icon-only: square-ish, used for edge-mode and help */
+.an-btn-icon-only {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #5a5a78;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.an-btn-icon-only:hover {
+  background: #f5f5f8;
+  border-color: transparent;
+  color: #1a2b5b;
+}
+
+/* Current-version pill — sits in .an-toolbar-version-cluster next to bump */
+.an-toolbar-version-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 0;
+  padding: 0 2px 0 4px;
+  margin-left: 2px;
+  border-left: 1px solid #e8e8ef;
+}
+
+.an-version-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(26, 43, 91, 0.18);
+  background: linear-gradient(180deg, #f4f6fb 0%, #eef1f8 100%);
+  color: #1a2b5b;
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  user-select: none;
+  flex-shrink: 0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.an-toolbar-version-bump {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d8dce8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1a2b5b;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.an-toolbar-version-bump:hover:not(:disabled) {
+  background: #f4f1ff;
+  border-color: #7c3aed;
+  color: #243570;
+  box-shadow: 0 1px 3px rgba(26, 43, 91, 0.08);
+}
+
+.an-toolbar-version-bump:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.an-toolbar-version-bump__spin {
+  animation: an-version-bump-spin 0.85s linear infinite;
+}
+
+@keyframes an-version-bump-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Auto-save status — quiet text, no chrome */
+.an-autosave-status {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  color: #8a8a9e;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  user-select: none;
+  transition: color 120ms ease;
+  flex-shrink: 0;
+}
+.an-autosave-status--saving {
+  color: #1a2b5b;
+}
+.an-autosave-status::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 999px;
+  background: #c4cdd5;
+  flex-shrink: 0;
+}
+.an-autosave-status--saving::before {
+  background: #8a8a9e;
+  animation: an-autosave-pulse 1.2s ease-in-out infinite;
+}
+@keyframes an-autosave-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50%      { opacity: 1;   transform: scale(1.15); }
+}
+
+.an-empty-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* ── Sidebar "New agent" create area ────────────────────────────────────── */
+.an-sidebar-create {
+  flex-shrink: 0;
+  padding: 8px 10px 10px;
+  border-top: 1px solid #e5e5ea;
+}
+
+.an-sidebar-create__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 32px;
+  border: 1.5px dashed #d0cedd;
+  border-radius: 8px;
+  background: transparent;
+  color: #7070a8;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+.an-sidebar-create__btn:hover {
+  border-color: #7c3aed;
+  background: #f5f5f9;
+  color: #1a2b5b;
+}
+
+.an-sidebar-create__form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.an-sidebar-create__input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 10px;
+  border: 1.5px solid #d0cedd;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #1a2b5b;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.an-sidebar-create__input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  background: #ffffff;
+}
+.an-sidebar-create__input:disabled {
+  opacity: 0.55;
+}
+
+.an-sidebar-create__error {
+  font-size: 11.5px;
+  color: #c0392b;
+  padding: 0 2px;
+}
+
+.an-sidebar-create__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.an-sidebar-create__confirm {
+  flex: 1;
+  height: 28px;
+  border: 0;
+  border-radius: 7px;
+  background: #1a2b5b;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.an-sidebar-create__confirm:hover:not(:disabled) {
+  background: #243570;
+}
+.an-sidebar-create__confirm:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.an-sidebar-create__cancel {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid #d5d5dc;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #555;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.an-sidebar-create__cancel:hover:not(:disabled) {
+  background: #f5f5f8;
+  border-color: #d0cedd;
+}
+.an-sidebar-create__cancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Sidebar list row: open + rename (agentnodes) */
+.c272-sidebar__item.an-sidebar__agent-tile {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.an-sidebar__agent-tile__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 6px 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.an-sidebar__name-btn {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  width: auto;
+  max-width: 100%;
+  align-self: flex-start;
+  display: inline-flex;
+  cursor: text;
+  min-width: 0;
+  overflow: hidden;
+}
+.an-sidebar__name-btn .c272-sidebar__name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.an-sidebar__name-btn:hover:not(:disabled) .c272-sidebar__name {
+  text-decoration: underline;
+  text-decoration-color: rgba(124, 58, 237, 0.45);
+}
+.an-sidebar__name-btn:disabled {
+  cursor: default;
+}
+.an-sidebar__agent-tile__main .c272-sidebar__meta {
+  pointer-events: none;
+}
+.c272-sidebar__item--rename {
+  padding: 10px 12px;
+}
+.an-sidebar__rename-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.an-sidebar__rename-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1.5px solid #d0cedd;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #1a2b5b;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.an-sidebar__rename-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  background: #ffffff;
+}
+.an-sidebar__rename-input:disabled {
+  opacity: 0.55;
+}
+
+/* Step editor popup must clear the navbar (z-index: 9500). */
+.an-step-popup-backdrop {
+  z-index: 10000;
+}
+
+/* Graph-native step popup — overrides the shared .c272-modal sizing so the
+ * editor feels like a focused popup over the graph instead of a full-page
+ * takeover. The embedded /ai-agents/edit page fills the modal body. */
+.an-popup {
+  width: min(1100px, 94vw) !important;
+  height: min(820px, 88vh) !important;
+  max-width: 1100px !important;
+  max-height: 88vh !important;
+  border-radius: 14px !important;
+}
+
+.an-popup__header {
+  background: linear-gradient(180deg, #f9f9fc 0%, #ffffff 100%);
+}
+
+.an-frame-modal__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: #f7f7fb;
+}
+.an-frame-modal__iframe {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #ffffff;
+}
+
+/* Native step editor popup — owned by /agentnodes, no iframe. */
+.an-step-popup {
+  display: flex;
+  flex-direction: column;
+}
+
+.an-step-popup__title-block {
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.an-step-popup__title-input {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a2b5b;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin: -2px -6px;
+  outline: none;
+  min-width: 0;
+  width: 100%;
+  max-width: 600px;
+}
+.an-step-popup__title-input:hover,
+.an-step-popup__title-input:focus {
+  border-color: #e6e6eb;
+  background: #ffffff;
+}
+
+.an-step-popup__runbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #e6e6eb;
+  background: #f9f9fb;
+  flex-wrap: wrap;
+}
+.an-step-popup__field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #444;
+}
+.an-step-popup__field-label {
+  font-weight: 600;
+  color: #555;
+}
+.an-step-popup__select {
+  padding: 6px 8px;
+  border: 1px solid #d5d5dc;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  color: #1a2b5b;
+  cursor: pointer;
+}
+.an-step-popup__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #444;
+  user-select: none;
+  cursor: pointer;
+}
+/* ===== Tag picker in runbar ===== */
+.an-step-popup__tag-field {
+  display: inline-flex;
+  align-items: center;
+}
+.an-step-popup__tag-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7070a8;
+  background: transparent;
+  border: 1.5px dashed #d0cedd;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.an-step-popup__tag-add:hover {
+  border-color: #7070a8;
+  color: #5252a0;
+}
+.an-step-popup__tag-input {
+  width: 110px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid #7070a8;
+  border-radius: 999px;
+  outline: none;
+  text-align: center;
+}
+.an-step-popup__tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.an-step-popup__tag-pill-clear {
+  font-size: 10px;
+  opacity: 0.8;
+  cursor: pointer;
+  line-height: 1;
+}
+.an-step-popup__tag-pill-clear:hover {
+  opacity: 1;
+}
+
+/* ===== Tag picker dropdown ===== */
+.an-step-popup__tag-picker {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+  border: 1.5px solid #d5d5dc;
+  border-radius: 10px;
+  padding: 8px;
+  min-width: 150px;
+  box-shadow: 0 4px 16px rgba(80, 60, 160, 0.13);
+}
+.an-step-popup__tag-picker-option {
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  text-align: left;
+}
+.an-step-popup__tag-picker-option:hover {
+  filter: brightness(0.95);
+}
+.an-step-popup__tag-picker-new {
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7070a8;
+  background: transparent;
+  border: 1.5px dashed #d0cedd;
+  border-radius: 999px;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 2px;
+}
+.an-step-popup__tag-picker-new:hover {
+  border-color: #7070a8;
+}
+
+.an-step-popup__run {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #11074a;
+  color: #ffffff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.an-step-popup__run:hover:not(:disabled) {
+  background: #1a118d;
+}
+.an-step-popup__run:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.an-step-popup__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #ffffff;
+}
+.an-step-popup__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.an-step-popup__group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.an-step-popup__textarea {
+  width: 100%;
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #1a2b5b;
+  resize: vertical;
+  background: #fafafa;
+  min-height: 84px;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.an-step-popup__textarea:focus {
+  border-color: #b4aaff;
+  box-shadow: 0 0 0 3px rgba(180, 170, 255, 0.25);
+  background: #ffffff;
+}
+
+.an-step-popup__tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #e6e6eb;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.an-step-popup__tab {
+  border: 0;
+  background: transparent;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.an-step-popup__tab:hover {
+  color: #1a2b5b;
+}
+.an-step-popup__tab--active {
+  color: #11074a;
+  border-bottom-color: #11074a;
+  font-weight: 600;
+}
+.an-step-popup__tab-placeholder {
+  padding: 16px;
+  border: 1px dashed #d5d5dc;
+  border-radius: 10px;
+  background: #f9f9fb;
+  color: #555;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.an-step-popup__retry-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: 1px solid #b0b0bf;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.an-step-popup__retry-btn:hover {
+  background: #f0f0f5;
+}
+
+.an-step-popup__result {
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 10px 12px;
+  min-height: 72px;
+  max-height: 280px;
+  overflow: auto;
+}
+.an-step-popup__result-md {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1a2b5b;
+  word-break: break-word;
+}
+.an-step-popup__result-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.an-step-popup__result-images img {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 8px;
+  border: 1px solid #e6e6eb;
+}
+.an-step-popup__result-md > :first-child { margin-top: 0; }
+.an-step-popup__result-md > :last-child { margin-bottom: 0; }
+.an-step-popup__result-md p { margin: 0.5em 0; }
+.an-step-popup__result-md h1,
+.an-step-popup__result-md h2,
+.an-step-popup__result-md h3,
+.an-step-popup__result-md h4 { font-weight: 700; margin: 0.9em 0 0.4em; }
+.an-step-popup__result-md h1 { font-size: 1.4em; }
+.an-step-popup__result-md h2 { font-size: 1.2em; }
+.an-step-popup__result-md h3 { font-size: 1.08em; }
+.an-step-popup__result-md ul,
+.an-step-popup__result-md ol { padding-left: 1.4em; margin: 0.4em 0; }
+.an-step-popup__result-md code {
+  background: #eef0f6;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.92em;
+  font-family: 'SFMono-Regular', Menlo, monospace;
+}
+.an-step-popup__result-md pre {
+  background: #0d1a3b;
+  color: #eceaf7;
+  padding: 10px 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.7em 0;
+}
+.an-step-popup__result-md pre code { background: transparent; color: inherit; padding: 0; }
+.an-step-popup__result-md table {
+  border-collapse: collapse;
+  margin: 0.7em 0;
+  width: 100%;
+}
+.an-step-popup__result-md th,
+.an-step-popup__result-md td {
+  border: 1px solid #d8dae4;
+  padding: 5px 9px;
+  font-size: 12.5px;
+  text-align: left;
+}
+.an-step-popup__result-md th { background: #eef0f6; font-weight: 600; }
+.an-step-popup__result-md blockquote {
+  border-left: 3px solid #6366f1;
+  padding: 2px 12px;
+  color: #555;
+  margin: 0.5em 0;
+}
+.an-step-popup__result-md .katex { font-size: 1.02em; }
+.an-step-popup__result-md .katex-display { overflow-x: auto; overflow-y: hidden; }
+.an-step-popup__result-empty {
+  color: #888;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.an-step-popup__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid #e6e6eb;
+  background: #f9f9fb;
+}
+
+.an-step-popup__toast {
+  position: absolute;
+  left: 50%;
+  bottom: 72px;
+  transform: translateX(-50%);
+  background: rgba(26, 43, 91, 0.92);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.an-step-popup__hint {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+/* Referenced-steps checklist. Graph-linked rows are visually distinct so the
+ * user knows those ticks are driven by the graph edges and cannot be
+ * unchecked here. */
+.an-step-popup__refs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 8px 10px;
+  max-height: 180px;
+  overflow: auto;
+}
+.an-step-popup__ref {
+  display: flex;
+}
+.an-step-popup__ref-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #1a2b5b;
+  padding: 4px 6px;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+}
+.an-step-popup__ref-row:hover {
+  background: #f1ecff;
+}
+.an-step-popup__ref-row--linked {
+  background: #ecfbef;
+  cursor: default;
+}
+.an-step-popup__ref-row--linked:hover {
+  background: #ecfbef;
+}
+.an-step-popup__ref-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.an-step-popup__ref-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1b6b2e;
+  background: #cdeccf;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+
+/* Shared chip list used by Upload file chips and ragKnowledge readout. */
+.an-step-popup__chips {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.an-step-popup__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #1a2b5b;
+  background: #ffffff;
+  border: 1px solid #d5d5dc;
+  border-radius: 999px;
+}
+.an-step-popup__chip--static {
+  background: #f4f1ff;
+}
+.an-step-popup__chip-x {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 0 2px;
+}
+.an-step-popup__chip-x:hover {
+  color: #b00020;
+}
+
+.an-step-popup__upload,
+.an-step-popup__corpus,
+.an-step-popup__rag {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.an-step-popup__corpus-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.an-step-popup__corpus-pdfs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.an-step-popup__corpus-pdf-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid #e6e6eb;
+  border-radius: 8px;
+  background: #fafafc;
+  font-size: 12px;
+}
+
+.an-step-popup__corpus-pdf-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #ececf2;
+}
+
+.an-step-popup__corpus-pdf-item:last-child {
+  border-bottom: 0;
+}
+
+.an-step-popup__corpus-pdf-name {
+  color: #1a2b5b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.an-step-popup__corpus-pdf-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #64748b;
+}
+
+/* ─── Right-click context menu ───────────────────────────────────────────── */
+.an-ctx-menu {
+  background: #ffffff;
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  box-shadow:
+    0 4px 16px rgba(26, 43, 91, 0.14),
+    0 1px 4px rgba(26, 43, 91, 0.08);
+  padding: 6px;
+  min-width: 160px;
+  font-size: 13px;
+  animation: an-ctx-fade-in 80ms ease;
+}
+@keyframes an-ctx-fade-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-2px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+.an-ctx-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  color: #1a2b5b;
+  font-size: 13px;
+  text-align: left;
+  transition: background 80ms ease;
+}
+.an-ctx-menu__item:hover {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+.an-ctx-menu__item--danger {
+  color: #b00020;
+}
+.an-ctx-menu__item--danger:hover {
+  background: #fff0f0;
+  color: #b00020;
+}
+.an-ctx-menu__icon {
+  font-size: 14px;
+  line-height: 1;
+}
+.an-ctx-menu__sep {
+  height: 1px;
+  background: #e6e6eb;
+  margin: 4px 6px;
+}
+.an-ctx-menu__section-label {
+  padding: 6px 10px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaaacc;
+}
+.an-ctx-menu__item--small {
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #555;
+}
+.an-ctx-menu__tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px 6px;
+  max-width: 220px;
+}
+.an-ctx-menu__tag-pill {
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.an-ctx-menu__tag-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.an-ctx-menu__tag-pill--active {
+  outline: 2px solid #1a2b5b;
+  outline-offset: 1px;
+}
+.an-ctx-menu__tag-input-row {
+  display: flex;
+  gap: 4px;
+  padding: 4px 8px 6px;
+  align-items: center;
+}
+.an-ctx-menu__tag-input {
+  flex: 1;
+  height: 26px;
+  border: 1px solid #d0cedd;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #1a2b5b;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+.an-ctx-menu__tag-input:focus {
+  border-color: #8a2be2;
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+  background: #ffffff;
+}
+.an-ctx-menu__tag-input-confirm {
+  height: 26px;
+  border: 1px solid #1a2b5b;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #1a2b5b;
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+.an-ctx-menu__tag-input-confirm:hover {
+  background: #243570;
+  border-color: #243570;
+}
+
+/* ─── Step-type picker menu ──────────────────────────────────────────────── */
+.an-step-picker {
+  background: #ffffff;
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  box-shadow:
+    0 4px 24px rgba(26, 43, 91, 0.18),
+    0 1px 4px  rgba(26, 43, 91, 0.08);
+  min-width: 240px;
+  font-size: 13px;
+  animation: an-ctx-fade-in 80ms ease;
+  display: flex;
+  flex-direction: column;
+  /* max-height is NOT set here — the scroll body's inline maxHeight keeps the
+     menu within the viewport; the container flexes around it automatically. */
+}
+.an-step-picker__header {
+  padding: 8px 12px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a8aaa;
+  border-bottom: 1px solid #e6e6eb;
+  flex-shrink: 0;
+}
+.an-step-picker__scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 4px 6px;
+  flex: 1;
+  /* max-height is injected inline by StepPickerMenu to match available
+     viewport space, so the menu never gets clipped or goes off-screen. */
+  scrollbar-width: thin;
+  scrollbar-color: #d0cedd transparent;
+}
+.an-step-picker__section-label {
+  padding: 5px 10px 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #aaaacc;
+}
+.an-step-picker__sep {
+  height: 1px;
+  background: #e6e6eb;
+  margin: 4px 8px 3px;
+}
+.an-step-picker__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  color: #1a2b5b;
+  font-size: 13px;
+  text-align: left;
+  transition: background 80ms ease;
+}
+.an-step-picker__item:hover:not(:disabled) {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+.an-step-picker__item--disabled,
+.an-step-picker__item:disabled {
+  cursor: default;
+  color: #c0c0d8;
+}
+.an-step-picker__item--primary {
+  background: #f5f5f8;
+  color: #1a2b5b;
+  font-weight: 600;
+  border-radius: 6px;
+}
+.an-step-picker__label {
+  flex: 1;
+}
+.an-step-picker__item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.an-step-picker__desc {
+  font-size: 10px;
+  line-height: 1.35;
+  color: #a0a0bc;
+  white-space: normal;
+}
+.an-step-picker__item:disabled .an-step-picker__desc {
+  color: #c8c8d8;
+}
+.an-step-picker__item--has-desc {
+  align-items: flex-start;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.an-step-picker__wip {
+  font-size: 10px;
+  font-weight: 500;
+  color: #c0c0d8;
+  background: #f4f4f8;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ─── Larger handle hit-area so dragging a connection is easier ───────────── */
+/* The visible dot stays small; an invisible pseudo-element expands the click
+   target so users don't have to pixel-hunt.                                   */
+.c272-canvas .react-flow__handle {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 50%;
+}
+.c272-canvas .react-flow__handle::before {
+  content: '';
+  position: absolute;
+  inset: -8px;     /* expands the interactive area by 8 px in every direction */
+  border-radius: 50%;
+}
+
+/* ─── Run-all progress bar in toolbar ─────────────────────────────────────── */
+.an-run-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.an-run-progress__label {
+  font-size: 12px;
+  color: #1a2b5b;
+  white-space: nowrap;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ─── GIF recording toggle ─────────────────────────────────────────────────── */
+.an-gif-toggle {
+  font-size: 13px;
+  color: #7c7c9a;
+  border: 1px solid #e2e2ef;
+  background: transparent;
+  transition: color 120ms, background 120ms, border-color 120ms;
+}
+.an-gif-toggle:hover {
+  color: #e53e3e;
+  border-color: #feb2b2;
+  background: #fff5f5;
+}
+.an-gif-toggle--active {
+  color: #e53e3e !important;
+  border-color: #fc8181 !important;
+  background: #fff5f5 !important;
+  animation: an-rec-pulse 1.4s ease-in-out infinite;
+}
+
+/* ─── REC badge shown inside the simulation progress label ─────────────────── */
+.an-rec-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #e53e3e;
+  letter-spacing: 0.02em;
+  animation: an-rec-pulse 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes an-rec-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* ─── GIF encoding progress bar ────────────────────────────────────────────── */
+.an-gif-encoding {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  min-width: 180px;
+  max-width: 260px;
+  background: #f0effe;
+  border: 1px solid #d0cedd;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 0 10px;
+}
+.an-gif-encoding__label {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4c3fa0;
+  white-space: nowrap;
+}
+.an-gif-encoding__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, #d0cedd 0%, #a78bfa 100%);
+  opacity: 0.45;
+  transition: width 200ms ease;
+  z-index: 0;
+}
+
+/* ─── Running-state keyframe animations ───────────────────────────────────── */
+
+/* Pulsing ring for the node that is currently executing */
+@keyframes an-node-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 3px #7c3aed,
+      0 0 16px rgba(124, 58, 237, 0.4),
+      0 4px 20px rgba(124, 58, 237, 0.2);
+    transform: scale(1.03);
+  }
+  50% {
+    box-shadow:
+      0 0 0 7px #7c3aed,
+      0 0 36px rgba(124, 58, 237, 0.75),
+      0 6px 32px rgba(124, 58, 237, 0.35);
+    transform: scale(1.06);
+  }
+}
+
+/* Spinner in the top-right corner of a running node */
+@keyframes an-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Sweeping progress bar at the bottom of a running node card */
+@keyframes an-bar-sweep {
+  0%   { left: -45%; }
+  100% { left: 110%; }
+}
+
+/* Factorio conveyor belt — dashes flowing along the edge path */
+@keyframes an-belt-flow {
+  from { stroke-dashoffset: 24; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Gentle waiting ring for nodes whose predecessor is currently running */
+@keyframes an-node-queued {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.75), 0 0 20px rgba(59, 130, 246, 0.35); }
+}
+
+/* ─── Running node ─────────────────────────────────────────────────────────── */
+.c272-canvas .react-flow__node.an-rf-node--running {
+  z-index: 10 !important;
+}
+.c272-canvas .react-flow__node.an-rf-node--running .c272-node {
+  position: relative;          /* needed for ::before / ::after */
+  overflow: hidden;            /* clip the sweep bar to card bounds */
+  border: 2.5px solid #7c3aed !important;
+  background: linear-gradient(135deg, #f8f8fc 0%, #f3e8ff 100%) !important;
+  animation: an-node-pulse 1.0s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+/* Corner spinner */
+.c272-canvas .react-flow__node.an-rf-node--running .c272-node::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid rgba(124, 58, 237, 0.22);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: an-spin 0.55s linear infinite;
+  z-index: 1;
+}
+
+/* Sweeping bottom bar */
+.c272-canvas .react-flow__node.an-rf-node--running .c272-node::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, #7c3aed 50%, #a855f7 80%, transparent);
+  border-radius: 0 3px 3px 0;
+  animation: an-bar-sweep 1.0s ease-in-out infinite;
+}
+
+/* ─── Completed node ───────────────────────────────────────────────────────── */
+.c272-canvas .react-flow__node.an-rf-node--done .c272-node {
+  border-color: #16a34a !important;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.28), 0 2px 6px rgba(22, 163, 74, 0.12);
+}
+
+/* ─── Failed node ──────────────────────────────────────────────────────────── */
+.c272-canvas .react-flow__node.an-rf-node--failed .c272-node {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3);
+}
+
+/* ─── Queued node (next in line) ───────────────────────────────────────────── */
+.c272-canvas .react-flow__node.an-rf-node--queued .c272-node {
+  border-color: rgba(59, 130, 246, 0.8) !important;
+  animation: an-node-queued 1.8s ease-in-out infinite;
+}
+
+/* ─── Flowing edge (Factorio belt) ─────────────────────────────────────────── */
+/* stroke color + width are set inline via JS; we add the dash animation + glow */
+.c272-canvas .react-flow__edge.an-rf-edge--flowing .react-flow__edge-path {
+  stroke-dasharray: 14 7;
+  filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.7));
+  animation: an-belt-flow 0.3s linear infinite;
+}
+
+/* Simulate mode: lighter emphasis on nodes; belt uses chunkier dashes + faster offset so motion reads clearly */
+@keyframes an-node-pulse-sim {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(124, 58, 237, 0.45),
+      0 0 12px rgba(124, 58, 237, 0.2),
+      0 3px 14px rgba(124, 58, 237, 0.12);
+    transform: scale(1.02);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(124, 58, 237, 0.55),
+      0 0 18px rgba(124, 58, 237, 0.28),
+      0 4px 18px rgba(124, 58, 237, 0.16);
+    transform: scale(1.035);
+  }
+}
+
+@keyframes an-node-queued-sim {
+  0%, 100% {
+    box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.45);
+    transform: scale(1.01);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(59, 130, 246, 0.55),
+      0 0 12px rgba(59, 130, 246, 0.22);
+    transform: scale(1.02);
+  }
+}
+
+/* Period matches dasharray (12+9); faster duration than before so motion is easy to see */
+@keyframes an-belt-flow-sim {
+  from { stroke-dashoffset: 21; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.c272-canvas .an-simulating .react-flow__node.an-rf-node--running {
+  z-index: 20 !important;
+}
+.c272-canvas .an-simulating .react-flow__node.an-rf-node--running .c272-node {
+  border-width: 2.5px !important;
+  animation: an-node-pulse-sim 2.5s ease-in-out infinite;
+}
+.c272-canvas .an-simulating .react-flow__node.an-rf-node--running .c272-node::before {
+  top: 6px;
+  right: 6px;
+  width: 17px;
+  height: 17px;
+  border-width: 2.5px;
+  animation-duration: 1.4s;
+}
+.c272-canvas .an-simulating .react-flow__node.an-rf-node--running .c272-node::after {
+  height: 4px;
+  animation: an-bar-sweep 2.5s ease-in-out infinite;
+}
+
+.c272-canvas .an-simulating .react-flow__node.an-rf-node--queued .c272-node {
+  border-width: 2px !important;
+  animation: an-node-queued-sim 3.8s ease-in-out infinite;
+}
+
+.c272-canvas .an-simulating .react-flow__edge.an-rf-edge--flowing .react-flow__edge-path {
+  stroke-dasharray: 12 9 !important;
+  stroke-linecap: round;
+  filter:
+    drop-shadow(0 0 3px rgba(124, 58, 237, 0.85))
+    drop-shadow(0 0 1.5px rgba(168, 85, 247, 0.75));
+  animation: an-belt-flow-sim 0.95s linear infinite;
+}
+
+/* Simulation paused: freeze motion; highlights stay for inspection */
+.c272-canvas .an-simulation-paused .react-flow__node.an-rf-node--running .c272-node,
+.c272-canvas .an-simulation-paused .react-flow__node.an-rf-node--queued .c272-node {
+  animation-play-state: paused !important;
+}
+.c272-canvas .an-simulation-paused .react-flow__node.an-rf-node--running .c272-node::before {
+  animation-play-state: paused !important;
+}
+.c272-canvas .an-simulation-paused .react-flow__node.an-rf-node--running .c272-node::after {
+  animation-play-state: paused !important;
+}
+.c272-canvas .an-simulation-paused .react-flow__edge.an-rf-edge--flowing .react-flow__edge-path {
+  animation-play-state: paused !important;
+}
+
+/* While simulation is playing (not paused), de-emphasize steps/edges not on the active path.
+   pointer-events: none ensures dimmed nodes don't intercept drag gestures so pane pan still works. */
+.c272-canvas .an-simulating:not(.an-simulation-paused) .react-flow__node:not(.an-rf-node--running):not(.an-rf-node--queued) {
+  opacity: 0.25;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.c272-canvas .an-simulating:not(.an-simulation-paused) .react-flow__edge:not(.an-rf-edge--flowing) {
+  opacity: 0.25;
+  transition: opacity 200ms ease;
+}
+
+/* ── ReactFlow inline-height override: allow nodes to grow with content ─────── */
+/* ReactFlow v11 applies node.height as an inline style after measurement.
+   That inline value gets stale when content grows. `auto !important` lets the
+   card dictate its own height so multi-line titles expand the node correctly. */
+.c272-canvas .react-flow__node {
+  height: auto !important;
+}
+
+/* ── Node height scales with connection count ──────────────────────────────── */
+/* AgentNodesDiagram injects --connections = max(incoming, outgoing) edges.
+   Formula: CARD_CHROME (72px) + (connections - 1) × LANE_STEP (20px).
+   Must stay in sync with LANE_STEP in OffsetEdge.tsx and tidyLayout.ts.
+   Examples: 1→72px  4→132px  8→212px  12→292px                          */
+.c272-canvas .react-flow__node .c272-node {
+  min-height: max(72px, calc((var(--connections, 1) - 1) * 20px + 72px));
+}
+
+/* Hover a step: show transitive upstream inputs + edges that land on this node. */
+.c272-canvas .react-flow__node.an-rf-node--dimmed {
+  opacity: 0.25;
+  transition: opacity 100ms ease;
+}
+.c272-canvas .react-flow__node.an-rf-node--hover-target .c272-node {
+  box-shadow:
+    0 0 0 3px rgba(109, 40, 217, 0.65),
+    0 6px 18px rgba(109, 40, 217, 0.22);
+}
+.c272-canvas .react-flow__node.an-rf-node--upstream .c272-node {
+  box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.5);
+}
+
+/* ── Selection 1-degree downstream (green) ───────────────────────────────── */
+.c272-canvas .react-flow__node.an-rf-node--downstream .c272-node {
+  background: #f0fdf8 !important;
+  border-color: #059669 !important;
+  box-shadow:
+    0 0 0 2px rgba(5, 150, 105, 0.6),
+    0 4px 16px rgba(5, 150, 105, 0.18);
+}
+
+/* ── Selection 1-degree upstream (purple) ────────────────────────────────── */
+.c272-canvas .react-flow__node.an-rf-node--sel-upstream .c272-node {
+  background: #f8f8fc !important;
+  border-color: #7c3aed !important;
+  box-shadow:
+    0 0 0 2px rgba(124, 58, 237, 0.6),
+    0 4px 16px rgba(124, 58, 237, 0.16);
+}
+.c272-canvas .react-flow__edge.an-rf-edge--dimmed {
+  opacity: 0.18;
+}
+
+/* Wrapper for ReactFlow so toolbar export can query `.react-flow` */
+.an-react-flow-mount {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.an-react-flow-mount > .react-flow {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Layout dropdown ────────────────────────────────────────────────────── */
+.an-layout-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.an-layout-menu__trigger {
+  gap: 5px !important;
+}
+
+.an-layout-menu__trigger--open {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+
+.an-layout-menu__caret {
+  font-size: 9px;
+  line-height: 1;
+  opacity: 0.6;
+  margin-left: 1px;
+}
+
+.an-layout-menu__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 300;
+  background: #ffffff;
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  box-shadow:
+    0 4px 16px rgba(26, 43, 91, 0.13),
+    0 1px 4px  rgba(26, 43, 91, 0.07);
+  padding: 5px;
+  min-width: 210px;
+  animation: an-ctx-fade-in 80ms ease;
+}
+
+/* Run all + chevron: primary split; Simulate lives in the chevron menu */
+.an-run-split__buttons {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(26, 43, 91, 0.18);
+}
+.an-run-split__buttons .an-btn-primary {
+  box-shadow: none;
+}
+.an-run-split__buttons:hover .an-btn-primary:not(:disabled) {
+  background: #2d3f73;
+  border-color: #2d3f73;
+}
+.an-run-split__main {
+  border-radius: 0;
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
+}
+.an-run-split__caret {
+  border-radius: 0;
+  border: none;
+  padding: 0 9px;
+  min-width: 34px;
+  justify-content: center;
+}
+.an-run-split__caret--open {
+  background: #2d3f73;
+}
+.an-run-split__panel {
+  min-width: 220px;
+}
+
+.an-layout-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 80ms ease;
+}
+.an-layout-menu__item:hover {
+  background: #f5f5f8;
+}
+
+.an-layout-menu__item-icon {
+  font-size: 14px;
+  line-height: 1;
+  color: #7070a8;
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+}
+
+.an-layout-menu__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.an-layout-menu__item-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a2b5b;
+  line-height: 1.2;
+}
+
+.an-layout-menu__item-desc {
+  font-size: 11px;
+  color: #8a8aaa;
+  line-height: 1.3;
+}
+
+.an-layout-menu__sep {
+  height: 1px;
+  background: #e5e5ea;
+  margin: 4px 8px;
+}
+
+/* ── Top-of-panel direction picker (Auto / ←→ V / ↕ H) — V=tall TB, H=wide LR ─ */
+
+.an-layout-menu__dir-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 4px;
+}
+
+.an-layout-menu__dir-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #9898b8;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Segmented-control wrapper — single outer border, pills share inner borders */
+.an-layout-menu__dir-pills {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  border: 1px solid #d4d4e4;
+  border-radius: 6px;
+  overflow: hidden;
+  direction: ltr;
+}
+
+.an-layout-menu__dir-pill {
+  flex: 1;
+  padding: 4px 6px;
+  border: 0;
+  border-left: 1px solid #d4d4e4;
+  background: transparent;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #5a5a78;
+  cursor: pointer;
+  text-align: center;
+  transition: background 80ms ease, color 80ms ease;
+  line-height: 1.3;
+}
+.an-layout-menu__dir-pill:first-child {
+  border-left: 0;
+}
+.an-layout-menu__dir-pill:hover:not(.an-layout-menu__dir-pill--active) {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+.an-layout-menu__dir-pill--active {
+  background: #1a2b5b;
+  color: #ffffff;
+  font-weight: 600;
+}
+.an-layout-menu__dir-pill--active:hover {
+  background: #243570;
+}
+
+/* ── Direction sub-menu (Compact / Relax → H / V / All) ─────────────────── */
+
+/* Expand chevron sitting at the far right of a parent item */
+.an-layout-menu__item-expand {
+  margin-left: auto;
+  font-size: 10px;
+  color: #aaaacc;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Parent item — keeps regular hover but gains a tint when expanded */
+.an-layout-menu__item--parent {
+  /* no extra base style needed — the button already has full-width flex */
+}
+.an-layout-menu__item--expanded {
+  background: #f0f0f8;
+}
+.an-layout-menu__item--expanded .an-layout-menu__item-label {
+  color: #7c3aed;
+}
+.an-layout-menu__item--expanded .an-layout-menu__item-icon {
+  color: #7c3aed;
+}
+.an-layout-menu__item--expanded .an-layout-menu__item-expand {
+  color: #7c3aed;
+}
+
+/* Sub-item list — indented, left-bordered, inline accordion */
+.an-layout-menu__sub {
+  margin: 1px 5px 4px 30px;
+  padding: 2px 0;
+  border-left: 2px solid #e0ddf7;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.an-layout-menu__sub-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 5px 9px;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 80ms ease;
+}
+.an-layout-menu__sub-item:hover {
+  background: #f5f5f8;
+}
+
+.an-layout-menu__sub-icon {
+  font-size: 12px;
+  color: #7070a8;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.an-layout-menu__sub-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1a2b5b;
+  line-height: 1.2;
+}
+
+.an-layout-menu__sub-desc {
+  font-size: 10.5px;
+  color: #8a8aaa;
+  margin-left: 2px;
+  white-space: nowrap;
+}
+
+/* Toggle row inside the layout menu (e.g. RAG sources) */
+.an-layout-menu__item--toggle {
+  cursor: pointer;
+  color: #4a4a70;
+}
+.an-layout-menu__item--toggle-on .an-layout-menu__item-label {
+  color: #7c3aed;
+}
+.an-layout-menu__item--toggle-on .an-layout-menu__item-icon {
+  color: #7c3aed;
+}
+.an-layout-menu__item-check {
+  margin-left: auto;
+  font-size: 13px;
+  color: #7c3aed;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+/* hide the native checkbox — interaction handled by the label */
+.an-layout-menu__item--toggle input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.an-layout-menu__lint {
+  margin: 4px 8px 3px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.an-layout-menu__lint--ok {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.an-layout-menu__lint--warn {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+/* Right-align panel (toolbar controls near the right edge) */
+.an-layout-menu--align-end .an-layout-menu__panel {
+  left: auto;
+  right: 0;
+}
+
+/* Upward-opening panel (e.g. footer dropdowns) */
+.an-layout-menu--upward .an-layout-menu__panel {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+/* Export dropdown — denser product menu (icons + sections) */
+.an-export-menu__trigger {
+  gap: 6px !important;
+  border: 1px solid transparent;
+}
+.an-export-menu__trigger:hover:not(:disabled),
+.an-layout-menu__trigger--open.an-export-menu__trigger {
+  border-color: #dcdce6;
+  background: #f6f6f9;
+}
+.an-export-menu__trigger-icon {
+  flex-shrink: 0;
+  color: #60607a;
+  opacity: 0.92;
+}
+.an-export-menu__trigger-chevron {
+  flex-shrink: 0;
+  margin-left: -1px;
+  color: #78788e;
+  transition: transform 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.an-export-menu__trigger-chevron--open {
+  transform: rotate(180deg);
+}
+
+.an-export-menu__panel {
+  min-width: 280px;
+  padding: 6px 6px 8px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e8;
+  box-shadow:
+    0 10px 40px rgba(26, 43, 91, 0.10),
+    0 2px 10px rgba(26, 43, 91, 0.05);
+}
+
+.an-export-menu__section + .an-export-menu__section {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #ebebf0;
+}
+
+.an-export-menu__section-title {
+  padding: 6px 10px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8b849e;
+  line-height: 1.2;
+  user-select: none;
+}
+
+.an-export-menu__item.an-layout-menu__item {
+  padding: 8px 10px;
+  gap: 12px;
+  border-radius: 8px;
+}
+
+.an-export-menu__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin: -2px 0;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f5f5f8 0%, #eeeeF3 100%);
+  border: 1px solid #e2e2ea;
+  color: #5a5a78;
+  font-size: 0;
+  line-height: 0;
+}
+
+.an-export-menu__item:hover .an-export-menu__glyph,
+.an-export-menu__item:focus-visible .an-export-menu__glyph {
+  background: linear-gradient(180deg, #ededf3 0%, #e6e6ef 100%);
+  border-color: #d8d8e4;
+  color: #42426a;
+}
+
+.an-export-menu__panel .an-layout-menu__item-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.an-export-menu__panel .an-layout-menu__item-desc {
+  font-size: 11px;
+  color: #7d7890;
+  line-height: 1.35;
+}
+
+/* Badge variant — sits inside the trigger button */
+.an-layout-lint {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+}
+.an-layout-lint--badge { /* inside trigger */
+  line-height: 1;
+}
+.an-layout-lint--ok {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.an-layout-lint--warn {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+/* ─── Simulate-or-Record modal ───────────────────────────────────────────── */
+.an-sim-record-modal-backdrop {
+  z-index: 1100;
+}
+
+.an-sim-record-modal.c272-modal {
+  width: min(420px, 94vw);
+  height: auto;
+  max-height: none;
+}
+
+/* ─── Run all confirmation ───────────────────────────────────────────────── */
+.an-run-all-confirm-backdrop {
+  z-index: 1100;
+}
+
+.an-run-all-confirm-modal.c272-modal {
+  width: min(440px, 94vw);
+  height: auto;
+  max-height: none;
+}
+
+.an-run-all-confirm-modal__icon {
+  font-size: 16px;
+  line-height: 1;
+  margin-right: 2px;
+}
+
+.an-run-all-confirm-modal__body {
+  padding: 16px 20px 18px;
+}
+
+.an-run-all-confirm-modal__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #1a2b5b;
+}
+
+.an-run-all-confirm-modal__text strong {
+  font-weight: 700;
+}
+
+.an-run-all-confirm-modal__sub {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #4a4a60;
+}
+
+.an-run-all-confirm-modal__footer {
+  justify-content: flex-start;
+}
+
+.an-sim-record-modal__icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.an-sim-record-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 18px 20px;
+}
+
+.an-sim-record-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e2ef;
+  background: #fafafa;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 140ms, background 140ms, box-shadow 140ms;
+  width: 100%;
+}
+.an-sim-record-option:hover {
+  border-color: #c0c0cc;
+  background: #f5f5f8;
+  box-shadow: 0 2px 8px rgba(26, 43, 91, 0.06);
+}
+.an-sim-record-option:focus-visible {
+  outline: 2px solid #1a2b5b;
+  outline-offset: 2px;
+}
+
+.an-sim-record-option--record {
+  border-color: #fca5a5;
+  background: #fff8f8;
+}
+.an-sim-record-option--record:hover {
+  border-color: #e53e3e;
+  background: #fff5f5;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.1);
+}
+
+.an-sim-record-option__icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+  color: #4a4a70;
+}
+.an-sim-record-option--record .an-sim-record-option__icon {
+  color: #e53e3e;
+}
+
+.an-sim-record-option__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.an-sim-record-option__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a2b5b;
+  line-height: 1.3;
+}
+.an-sim-record-option__desc {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * RAG SOURCES — toolbar toggle + virtual corpus node + dashed feed edges
+ * Drives the optional database visualisation that surfaces which steps
+ * are grounded by which RAG corpus.
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+/* Toolbar checkbox: an opt-in pill, defaulted off. Sits in the Tools group
+   next to the rigid/smooth edge-mode toggle so all "view" affordances live
+   together. Mirrors the dimensions of the icon-only toolbar buttons so the
+   group reads as a single visual block. */
+.an-rag-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #4a4a60;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 140ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.an-rag-toggle:hover {
+  background: #f5f5f8;
+  color: #1a2b5b;
+}
+.an-rag-toggle--on {
+  background: #eef1f8;
+  border-color: #c5cfe8;
+  color: #1a2b5b;
+}
+.an-rag-toggle--on:hover {
+  background: #e4e9f4;
+}
+.an-rag-toggle__input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  border: 1.5px solid #d5d5dc;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.an-rag-toggle__input:checked {
+  background: #1a2b5b;
+  border-color: #1a2b5b;
+}
+.an-rag-toggle__input:checked::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 3px;
+  height: 7px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.an-rag-toggle__input:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+.an-rag-toggle__icon {
+  font-size: 13px;
+  line-height: 1;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.an-rag-toggle__label {
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+/* ── Virtual corpus node ─────────────────────────────────────────────────── */
+
+/* The "database" card. Deliberately distinct from editable step cards:
+   slate palette, dashed border, softer shadow, and a pointer cursor so the
+   user knows it's clickable. The slight transparency reinforces "annotation,
+   not a first-class node". */
+.an-corpus-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  min-width: 170px;
+  max-width: 220px;
+  background: #f1f5f9;                    /* slate-100 */
+  border: 2px dashed #64748b;             /* slate-500 */
+  border-radius: 10px;
+  color: #1e293b;                         /* slate-900 */
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+.an-corpus-node:hover {
+  background: #e2e8f0;
+  border-color: #4338ca;
+  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.18);
+  transform: translateY(-1px);
+}
+.an-corpus-node:focus-visible {
+  outline: 2px solid #4338ca;
+  outline-offset: 2px;
+}
+.an-corpus-node__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #475569;
+  transition: color 140ms ease;
+}
+.an-corpus-node:hover .an-corpus-node__icon {
+  color: #4338ca;
+}
+.an-corpus-node__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.an-corpus-node__label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 1px;
+}
+.an-corpus-node__name {
+  font-weight: 600;
+  font-size: 12px;
+  color: #1a2b5b;
+  line-height: 1.35;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.an-corpus-node__sub {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 2px;
+}
+.an-corpus-node__inspect-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #94a3b8;
+  transition: color 140ms ease;
+  line-height: 1;
+}
+.an-corpus-node:hover .an-corpus-node__inspect-hint {
+  color: #4338ca;
+}
+
+/* ReactFlow node wrapper — defeat selection ring on read-only nodes */
+.an-rf-node--corpus.react-flow__node {
+  cursor: pointer;
+}
+.an-rf-node--corpus.react-flow__node.selected,
+.an-rf-node--corpus.react-flow__node.selected:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ── Dashed RAG feed edges ───────────────────────────────────────────────── */
+
+.react-flow__edge.an-rf-edge--corpus,
+.react-flow__edge.an-rf-edge--corpus.selected,
+.react-flow__edge.an-rf-edge--corpus:focus {
+  pointer-events: none;
+}
+.react-flow__edge.an-rf-edge--corpus .react-flow__edge-path {
+  opacity: 0.7;
+}
+
+/* ── Corpus inspect flyout ───────────────────────────────────────────────── */
+
+/* Read-only panel that slides in at top-right when a corpus node is clicked.
+   Shows each consumer step and the document subset it queries. */
+.an-corpus-inspect {
+  width: 320px;
+  max-height: 480px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.14);
+  overflow: hidden;
+}
+.an-corpus-inspect__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+.an-corpus-inspect__icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #475569;
+}
+.an-corpus-inspect__heading {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.an-corpus-inspect__label {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.an-corpus-inspect__name {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #1a2b5b;
+  line-height: 1.35;
+  word-break: break-word;
+}
+.an-corpus-inspect__close {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: #94a3b8;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.an-corpus-inspect__close:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+.an-corpus-inspect__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+}
+.an-corpus-inspect__empty {
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #64748b;
+}
+.an-corpus-inspect__consumer {
+  padding: 8px 14px 10px;
+  border-bottom: 1px solid #f8fafc;
+}
+.an-corpus-inspect__consumer:last-child {
+  border-bottom: none;
+}
+.an-corpus-inspect__consumer-name {
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #1a2b5b;
+  margin-bottom: 4px;
+}
+.an-corpus-inspect__docs-note {
+  font-size: 11.5px;
+  color: #64748b;
+  font-style: italic;
+}
+.an-corpus-inspect__docs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.an-corpus-inspect__doc {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: #334155;
+}
+.an-corpus-inspect__doc-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.an-corpus-inspect__doc-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #1a2b5b;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * REVIEW COMMITTEE — ReviewerPicker, ReviewPanel, ReviewPanelModal
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.an-review-readonly-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #166534;
+  white-space: nowrap;
+}
+
+/* ── ReviewerPicker ──────────────────────────────────────────────────────── */
+.an-review-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fc;
+  border: 1px solid #e5e5ea;
+  border-radius: 10px;
+}
+.an-review-picker__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.an-review-picker__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a2b5b;
+}
+.an-review-picker__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.an-review-picker__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.an-review-picker__item:hover { border-color: #a78bfa; background: #f9f9fb; }
+.an-review-picker__checkbox { margin-top: 2px; flex-shrink: 0; }
+.an-review-picker__item-body { display: flex; flex-direction: column; gap: 2px; }
+.an-review-picker__item-name { font-size: 13px; font-weight: 600; color: #1a2b5b; }
+.an-review-picker__item-anchor { font-size: 11px; color: #7c3aed; font-weight: 500; }
+.an-review-picker__item-desc { font-size: 11.5px; color: #64748b; line-height: 1.4; }
+.an-review-picker__error {
+  padding: 8px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #b91c1c;
+}
+.an-review-picker__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.an-review-picker__count { font-size: 12px; color: #64748b; }
+
+/* ── ReviewPanel ─────────────────────────────────────────────────────────── */
+.an-review-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.an-review-panel__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f9fc;
+  border: 1px solid #e5e5ea;
+  border-radius: 10px 10px 0 0;
+  font-size: 12px;
+}
+.an-review-panel__meta--stale { background: #fffbeb; border-color: #fde68a; }
+.an-review-panel__readonly-badge { font-weight: 600; color: #166534; }
+.an-review-panel__timestamp { color: #64748b; }
+.an-review-panel__stale-badge {
+  padding: 2px 8px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #92400e;
+}
+.an-review-panel__summary { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+
+.an-review-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.an-review-count--block { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+.an-review-count--warn  { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.an-review-count--info  { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
+.an-review-count--muted { background: #f9fafb; border: 1px solid #e5e7eb; color: #6b7280; font-weight: 500; }
+.an-review-count--ok    { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+
+.an-review-panel__sections {
+  border: 1px solid #e5e5ea;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+
+/* ── Collapsible reviewer sections ──────────────────────────────────────── */
+.an-review-section { border-top: 1px solid #f1f5f9; }
+.an-review-section:first-child { border-top: none; }
+
+.an-review-section__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 120ms ease;
+  flex-wrap: wrap;
+}
+.an-review-section__header:hover { background: #f9f9fb; }
+.an-review-section--open .an-review-section__header { background: #f9f9fb; }
+.an-review-section__name { font-size: 13px; font-weight: 600; color: #1a2b5b; }
+.an-review-section__anchor { font-size: 11px; color: #7c3aed; }
+.an-review-section__counts { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+.an-review-section__caret { font-size: 11px; color: #94a3b8; margin-left: 4px; }
+
+.an-review-verdict {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.an-review-verdict--pass { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.an-review-verdict--revise { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.an-review-verdict--fail { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+
+.an-review-section__body { padding: 8px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+.an-review-empty { font-size: 12.5px; color: #64748b; font-style: italic; padding: 4px 0; }
+
+/* ── Per-comment cards ───────────────────────────────────────────────────── */
+.an-review-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  background: #f8f9fc;
+}
+.an-review-comment--info  { border-left-color: #60a5fa; background: #eff6ff; }
+.an-review-comment--warn  { border-left-color: #fbbf24; background: #fffbeb; }
+.an-review-comment--block { border-left-color: #f87171; background: #fef2f2; }
+.an-review-comment--acked { opacity: 0.6; }
+
+.an-review-comment__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.an-review-comment__icon { font-size: 13px; }
+.an-review-comment__step { font-size: 12px; font-weight: 600; color: #1a2b5b; }
+.an-review-comment__severity {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0,0,0,.04);
+}
+.an-review-comment__acked-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 1px 6px;
+  border-radius: 99px;
+}
+.an-review-comment__text {
+  font-size: 12.5px;
+  color: #374151;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.an-review-comment__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.an-review-comment__action {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #7c3aed;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 120ms ease;
+}
+.an-review-comment__action:hover { color: #5b21b6; }
+.an-review-comment__action--jump { color: #0ea5e9; }
+.an-review-comment__action--jump:hover { color: #0369a1; }
+
+/* ── ReviewPanelModal ────────────────────────────────────────────────────── */
+.an-review-modal {
+  width: min(880px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.an-review-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 20px;
+}
+.an-review-modal__results { flex: 1; min-height: 0; }
+
+/* ── StepReviewBadge ─────────────────────────────────────────────────────── */
+.an-step-review-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  flex-shrink: 0;
+}
+.an-step-review-badge:hover { transform: scale(1.15); }
+.an-step-review-badge--pass { background: #dcfce7; color: #166534; }
+.an-step-review-badge--warn { background: #fef3c7; color: #92400e; }
+.an-step-review-badge--block { background: #fee2e2; color: #b91c1c; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * EXPORT WIZARD — ExportWizardModal, StructureView, RenderedView
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Toolbar buttons ─────────────────────────────────────────────────────── */
+.an-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 7px;
+  border: 1.5px solid #7c3aed;
+  background: #f8f8fc;
+  color: #7c3aed;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  white-space: nowrap;
+}
+.an-btn-secondary:hover { background: #f3e8ff; border-color: #5b21b6; color: #5b21b6; }
+.an-btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+.an-btn-secondary--reviewed { background: #f0fdf4; border-color: #166534; color: #166534; }
+
+.an-export-doc-btn {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+/* ── Wizard modal ────────────────────────────────────────────────────────── */
+.an-wizard-modal {
+  width: min(1300px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: width 180ms ease, max-height 180ms ease, border-radius 180ms ease;
+}
+.an-wizard-modal--fullscreen {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  height: 100vh;
+  border-radius: 0 !important;
+}
+.an-wizard-modal__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+/* When the document step hosts the editor, the body must not scroll itself —
+   it stretches to give the editor shell all available height. */
+.an-wizard-modal__body--editor {
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  min-width: 0;
+}
+.an-wizard-step-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 99px;
+  padding: 2px 8px;
+  margin-left: 8px;
+}
+.an-wizard-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+}
+
+/* Back / Cancel — ghost text button */
+.an-wizard-footer__back,
+.an-wizard-footer__ghost {
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms, color 120ms;
+}
+.an-wizard-footer__back:hover,
+.an-wizard-footer__ghost:hover { background: #f3f4f6; color: #374151; }
+.an-wizard-footer__back:disabled,
+.an-wizard-footer__ghost:disabled { opacity: 0.45; cursor: default; }
+
+/* Grows to push right-side actions to the end */
+.an-wizard-footer__spacer { flex: 1; }
+
+/* Thin vertical rule between groups */
+.an-wizard-footer__divider {
+  width: 1px;
+  height: 22px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+/* Secondary export buttons — outlined */
+.an-wizard-footer__export-btn {
+  background: #fff;
+  border: 1.5px solid #d1d5db;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 120ms, background 120ms;
+}
+.an-wizard-footer__export-btn:hover { border-color: #9ca3af; background: #f9fafb; }
+.an-wizard-footer__export-btn:disabled { opacity: 0.45; cursor: default; }
+
+/* Primary CTA */
+.an-wizard-footer__primary {
+  display: inline-flex;
+  align-items: center;
+  background: #111827;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms;
+}
+.an-wizard-footer__primary:hover { background: #1f2937; }
+.an-wizard-footer__primary:disabled { opacity: 0.45; cursor: default; }
+
+.an-wizard-export-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.an-wizard-version-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.an-wizard-version-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+}
+.an-wizard-version-select {
+  appearance: auto;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #111827;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 120ms ease;
+}
+.an-wizard-version-select:focus { border-color: #6b7280; }
+.an-wizard-review-results { flex: 1; min-height: 0; }
+
+/* ── StructureView ───────────────────────────────────────────────────────── */
+.an-wizard-structure {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.an-wizard-structure__meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+.an-wizard-structure__meta-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
+.an-wizard-structure__flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.an-wizard-structure__flow-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+.an-wizard-structure__arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  padding-top: 28px;
+  font-size: 18px;
+  color: #94a3b8;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.an-wizard-structure__card {
+  width: 200px;
+  min-height: 100px;
+  border: 1.5px solid #e5e5ea;
+  border-top-width: 4px;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fff;
+  flex-shrink: 0;
+  cursor: grab;
+  transition: opacity 160ms ease, box-shadow 160ms ease;
+}
+.an-wizard-structure__card--dragging {
+  opacity: 0.45;
+  box-shadow: none;
+}
+.an-wizard-structure__card--drag-over {
+  box-shadow: 0 0 0 2px #7c3aed, 0 4px 16px rgba(124, 58, 237, 0.18);
+}
+.an-wizard-structure__card--hidden {
+  opacity: 0.45;
+}
+.an-wizard-structure__card--hidden .an-wizard-structure__card-heading {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+.an-wizard-structure__card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.an-wizard-structure__drag-handle {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  flex-shrink: 0;
+  user-select: none;
+}
+.an-wizard-structure__drag-handle:hover {
+  color: #64748b;
+}
+.an-wizard-structure__card-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a2b5b;
+  line-height: 1.3;
+  flex: 1;
+}
+.an-wizard-structure__toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 2px;
+  color: #94a3b8;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color 120ms ease;
+}
+.an-wizard-structure__toggle-btn:hover { color: #7c3aed; }
+.an-wizard-structure__card-count {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+.an-wizard-structure__card-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.an-wizard-structure__card-step {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 11.5px;
+  padding: 2px 4px;
+  border-radius: 5px;
+  cursor: grab;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.an-wizard-structure__card-step:hover {
+  background: rgba(124, 58, 237, 0.06);
+}
+.an-wizard-structure__card-step:hover .an-wizard-structure__card-step-handle {
+  color: #94a3b8;
+}
+.an-wizard-structure__card-step--dragging {
+  opacity: 0.45;
+}
+.an-wizard-structure__card-step--drag-over {
+  background: rgba(124, 58, 237, 0.12);
+  box-shadow: inset 0 1px 0 #7c3aed;
+}
+.an-wizard-structure__card-step-handle {
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+  transition: color 120ms ease;
+}
+.an-wizard-structure__card-step-name {
+  color: #374151;
+  line-height: 1.35;
+}
+
+/* ── RenderedView ────────────────────────────────────────────────────────── */
+.an-wizard-rendered {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+/* ── Markdown editor shell hosted inside the wizard ───────────────────────── */
+/* Fills all remaining height from .an-wizard-rendered, grows with the modal. */
+.an-wizard-editor-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 320px;
+  border: 1px solid #e6e6eb;
+  border-radius: 10px;
+  background: #ffffff;
+  overflow: hidden;
+}
+.an-md-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Preview Eye: first control on the markdown toolbar — stays visible when bar scrolls */
+.an-md-editor .c272-toolbar2 > button.c272-tb:first-of-type {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: #f9f9fb;
+  box-shadow: 8px 0 12px -6px #f9f9fb;
+}
+
+/* Horizontal scroll affordance — diffuse inner glow (inset shadow), not edge blocks */
+.an-md-editor__toolbar-wrap {
+  position: relative;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.an-md-editor__toolbar-wrap > .c272-toolbar2 {
+  transition: box-shadow 320ms ease;
+}
+.an-md-editor__toolbar-wrap--more-left:not(.an-md-editor__toolbar-wrap--more-right) > .c272-toolbar2 {
+  box-shadow: inset 56px 0 48px -18px rgba(124, 58, 237, 0.14),
+    inset 20px 0 28px -8px rgba(167, 139, 250, 0.1);
+}
+.an-md-editor__toolbar-wrap--more-right:not(.an-md-editor__toolbar-wrap--more-left) > .c272-toolbar2 {
+  box-shadow: inset -56px 0 48px -18px rgba(124, 58, 237, 0.14),
+    inset -20px 0 28px -8px rgba(167, 139, 250, 0.1);
+}
+.an-md-editor__toolbar-wrap--more-left.an-md-editor__toolbar-wrap--more-right > .c272-toolbar2 {
+  box-shadow: inset 56px 0 48px -18px rgba(124, 58, 237, 0.12),
+    inset 20px 0 28px -8px rgba(167, 139, 250, 0.08),
+    inset -56px 0 48px -18px rgba(124, 58, 237, 0.12),
+    inset -20px 0 28px -8px rgba(167, 139, 250, 0.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .an-md-editor__toolbar-wrap > .c272-toolbar2 {
+    transition: none;
+  }
+}
+
+/* Split-pane body: flex row, the JS sets flex-basis on each pane. */
+.an-md-editor__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+/* Editor textarea fills the body */
+.an-md-editor__body .c272-modal__editor {
+  flex: 1;
+  resize: none;
+  width: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+/* ── Inline preview (replaces textarea in the same body area) ────────────── */
+.an-md-preview-inline {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 28px 32px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1f2937;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+/* Match .c272-modal__preview.markdown-body heading scale so # … renders as clear H1 in Eye preview */
+.an-md-preview-inline.markdown-body h1,
+.an-md-preview-inline.markdown-body h2,
+.an-md-preview-inline.markdown-body h3,
+.an-md-preview-inline.markdown-body h4,
+.an-md-preview-inline.markdown-body h5,
+.an-md-preview-inline.markdown-body h6 {
+  color: #1a2b5b;
+  font-weight: 700;
+  margin: 1.2em 0 0.5em;
+}
+.an-md-preview-inline.markdown-body h1 {
+  font-size: 1.7em;
+  border-bottom: 1px solid #e6e6eb;
+  padding-bottom: 6px;
+}
+.an-md-preview-inline.markdown-body h2 { font-size: 1.35em; }
+.an-md-preview-inline.markdown-body h3 { font-size: 1.15em; }
+.an-md-preview-inline.markdown-body h5 { font-size: 1.05em; }
+.an-md-preview-inline.markdown-body h6 { font-size: 0.95em; font-weight: 600; }
+
+/* Active state for Preview toolbar button */
+.c272-tb--active {
+  background: #eaeaee;
+  color: #1a2b5b;
+  border-radius: 5px;
+}
+
+/* ── Block-severity confirmation dialog ─────────────────────────────────── */
+/* Wizard modal must clear the navbar (z-index: 9500) */
+.an-wizard-backdrop { z-index: 10000; }
+/* Block-confirm stacks above the wizard itself */
+.an-block-confirm-backdrop { z-index: 10100; }
+.an-block-confirm {
+  width: min(500px, 92vw);
+}
+.an-block-confirm__body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #374151;
+}
+.c272-btn--danger {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #b91c1c;
+  padding: 6px 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.c272-btn--danger:hover { background: #fee2e2; border-color: #f87171; }
+
+/* ── 3-column document step layout ─────────────────────────────────────── */
+.an-wizard-doc-layout {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── Section Outline (left column ~200px) ───────────────────────────────── */
+.an-section-outline {
+  flex: 0 0 36px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-right: 1px solid #e6e6eb;
+  background: #f9f9fb;
+  padding: 4px 0;
+}
+
+.an-section-outline__tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  padding: 7px 0;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+.an-section-outline__tab:hover {
+  background: #f3f4f6;
+  border-left-color: #d1d5db;
+}
+.an-section-outline__tab--active {
+  background: #f3f4f6;
+  border-left-color: #374151;
+}
+
+/* Numbered pill */
+.an-section-outline__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background 100ms ease, color 100ms ease;
+}
+.an-section-outline__tab:hover .an-section-outline__num {
+  background: #e5e7eb;
+  color: #374151;
+}
+.an-section-outline__tab--active .an-section-outline__num {
+  background: #374151;
+  color: #fff;
+}
+
+/* Comment count badge */
+.an-section-outline__badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ── Section Review Panel (right column ~300px) ─────────────────────────── */
+.an-section-review {
+  flex: 0 0 280px; /* overridden by inline style when resizing */
+  box-sizing: border-box;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  overflow-y: auto;
+  border-left: 1px solid #e6e6eb;
+  background: #f9f9fb;
+  padding: 10px;
+  gap: 10px;
+}
+
+/* ── Resize handle between editor and advisor panel ─────────────────────── */
+.an-review-drag-handle {
+  flex: 0 0 8px;
+  width: 8px;
+  cursor: col-resize;
+  background: #f4f1ff;
+  border-left: 1px solid #e2e2ea;
+  border-right: 1px solid #e2e2ea;
+  transition: background 100ms ease;
+  user-select: none;
+}
+.an-review-drag-handle:hover,
+.an-review-drag-handle:active {
+  background: #ddd6fe;
+  border-color: #c4b5fd;
+}
+
+/* Empty state */
+.an-section-review__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}
+.an-section-review__empty-icon { color: #c4b5fd; }
+
+/* Section header inside review panel */
+.an-section-review__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e6e6eb;
+}
+.an-section-review__section-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #111827;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.an-srev__readonly-badge {
+  font-size: 10px;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.an-srev__preset-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.an-srev__preset-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b5563;
+}
+.an-srev__preset-select {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  padding: 6px 8px;
+  cursor: pointer;
+  min-width: 0;
+}
+.an-srev__preset-select:hover:not(:disabled) { border-color: #c4b5fd; }
+.an-srev__preset-select:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+}
+.an-srev__preset-select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.an-srev__preset-hint {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: #6b7280;
+  min-width: 0;
+}
+
+.an-srev__stale-badge {
+  font-size: 10px;
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Reviewer card list (state B) */
+.an-section-review__reviewer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.an-srev__reviewer-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 100ms ease, background 100ms ease;
+}
+.an-srev__reviewer-card:hover { border-color: #d1d5db; background: #f9fafb; }
+.an-srev__reviewer-checkbox { margin-top: 2px; accent-color: #374151; }
+.an-srev__reviewer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.an-srev__reviewer-name { font-size: 12.5px; font-weight: 700; color: #374151; word-break: break-word; }
+.an-srev__reviewer-anchor {
+  font-size: 10.5px;
+  color: #6b7280;
+  font-style: italic;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.an-srev__reviewer-desc {
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Footer row for count + analyse button */
+.an-section-review__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #e6e6eb;
+}
+.an-section-review__footer--sticky-run {
+  border-top: none;
+  padding-top: 0;
+  padding-bottom: 10px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #e6e6eb;
+}
+.an-srev__count { font-size: 11px; color: #9ca3af; }
+
+.an-srev__reviewer-list-toggle {
+  display: flex;
+  justify-content: center;
+  padding: 2px 0 6px;
+}
+.an-srev__expand-link {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6d28d9;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.an-srev__expand-link:hover:not(:disabled) { color: #5b21b6; }
+.an-srev__expand-link:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Error message */
+.an-srev__run-error {
+  font-size: 12px;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+/* GDoc-style comment threads (state C) */
+.an-section-review__threads {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  border-top: 1px solid #e6e6eb;
+  padding-top: 10px;
+}
+
+.an-section-comment-thread {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 9px;
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.an-section-comment__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+.an-srev__reviewer-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: #374151;
+  background: #e5e7eb;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+.an-srev__findings-summary {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.an-srev__last-run-note {
+  margin: 0 12px 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.an-srev__verdict {
+  font-size: 10.5px;
+  font-weight: 700;
+  border-radius: 5px;
+  padding: 1px 7px;
+  border: 1.5px solid transparent;
+}
+.an-srev__verdict--pass { color: #166534; background: #dcfce7; border-color: #86efac; }
+.an-srev__verdict--fail { color: #991b1b; background: #fee2e2; border-color: #fca5a5; }
+.an-srev__verdict--revise { color: #92400e; background: #fef3c7; border-color: #fde68a; }
+
+/* Individual comment items */
+.an-section-comment__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.an-section-comment__item {
+  padding: 8px 10px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid #f3f4f6;
+  transition: opacity 150ms ease;
+  min-width: 0;
+}
+.an-section-comment__item:last-child { border-bottom: none; }
+.an-section-comment__item--block { border-left-color: #f87171; }
+.an-section-comment__item--warn  { border-left-color: #fbbf24; }
+.an-section-comment__item--info  { border-left-color: #60a5fa; }
+.an-section-comment__item--acked { opacity: 0.5; }
+
+.an-section-comment__item-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+.an-section-comment__step-number {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #6b7280;
+}
+.an-srev__icon--block { color: #ef4444; }
+.an-srev__icon--warn  { color: #f59e0b; }
+.an-srev__icon--info  { color: #3b82f6; }
+.an-srev__acked-icon  { color: #22c55e; margin-left: auto; }
+
+.an-section-comment__text {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.5;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.an-section-comment__ack-btn {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease;
+}
+.an-section-comment__ack-btn:hover { background: #f3f4f6; color: #374151; }
+
+/* Small button variant */
+.c272-btn--sm {
+  font-size: 11.5px;
+  padding: 3px 9px;
+}
+
+/* Toolbar: debug loaded agent JSON (dev / NEXT_PUBLIC_AGENTNODES_NAV_DEBUG_AGENT_JSON) */
+.an-toolbar-debug-json {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #6d28d9;
+}
+.an-toolbar-debug-json:hover:not(:disabled) {
+  color: #5b21b6;
+  background: rgba(124, 58, 237, 0.08);
+}
+.an-toolbar-debug-json:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.an-toolbar-debug-json__label {
+  max-width: 5.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 1100px) {
+  .an-toolbar-debug-json__label {
+    display: none;
+  }
+}
+
+.an-debug-agent-json-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.an-debug-agent-json-dialog {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+  max-width: min(960px, 100%);
+  max-height: min(85vh, 900px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.an-debug-agent-json-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.an-debug-agent-json-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #11074a;
+}
+.an-debug-agent-json-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.an-debug-agent-json-copy,
+.an-debug-agent-json-close {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.4rem 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.an-debug-agent-json-copy {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #11074a;
+  font-size: 0.85rem;
+}
+.an-debug-agent-json-copy:hover {
+  background: #e2e8f0;
+}
+.an-debug-agent-json-close {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.25rem 0.45rem;
+}
+.an-debug-agent-json-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.an-debug-agent-json-pre {
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #0f172a;
+  background: #f8fafc;
+  white-space: pre;
+  tab-size: 2;
+}

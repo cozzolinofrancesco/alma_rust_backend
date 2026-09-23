@@ -1,0 +1,97 @@
+/* Extracts List Container */
+.extracts-list {
+    margin: 20px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual extract entry */
+.extract-entry {
+    margin-bottom: 10px;
+    background-color: transparent;
+    padding: 8px;
+    border-radius: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+/* Yellow border for partially selected boxes */
+.extract-entry.partial-selected {
+    border: 2px solid #ffd9d1;
+    background-color: #ffd9d14b;
+    /* Yellow border */
+}
+
+/* Blue border for fully selected boxes */
+.extract-entry.selected {
+    border: 2px solid #007bff;
+    /* Blue border */
+    background-color: #007bff27;
+    /* Light blue background */
+}
+
+/* Hover effect for each extract entry */
+.extract-entry:hover {
+    background-color: rgba(168, 168, 168, 0.192);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the PDF name in each extract entry */
+.pdf-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* Container for extract items (list within each extract entry) */
+.extracts-items {
+    margin-top: 10px;
+}
+
+/* Individual extract items (pages) */
+.extract-item {
+    padding: 5px;
+    background-color: transparent;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover effect on extract items */
+.extract-item:hover {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Style for selected items */
+.extract-item.selected {
+    border: 2px solid rgba(0, 0, 0, 0.4);
+    /* Neutral highlight for selected pages */
+    background-color: rgba(0, 0, 0, 0.05);
+    /* Subtle background */
+}
+
+/* Style for Add to Context button */
+.add-to-context-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    margin-right: 10px;
+}
+
+/* Hover effect for buttons */
+.add-to-context-button:hover {
+    background-color: #007bff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}

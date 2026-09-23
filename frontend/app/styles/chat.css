@@ -1,0 +1,118 @@
+/* Chatbox section */
+.chatbox-container-right {
+    align-self: flex-end;
+    /* Stick to the bottom */
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Chatbox Input */
+.chatbox-wrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.chatbox-input {
+    width: 100%;
+    height: 40px;
+    /* Reasonable height for chat input */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+    box-sizing: border-box;
+    padding-right: 40px;
+}
+
+.send-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.send-icon {
+    color: #0070f3;
+    font-size: 24px;
+}
+
+.send-button:disabled .send-icon {
+    color: #cccccc;
+}
+
+/* Flows Section */
+.chat-log {
+    flex-grow: 1;
+    overflow-y: auto;
+    min-height: 50%;
+    /* Ensure at least 50% of the right column is reserved for the flows */
+    margin-bottom: 20px;
+}
+
+/* Styling for Google-like result display */
+.google-result {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #e1e1e1;
+}
+
+.chat-content {
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .chatbox-container-right {
+        padding: 8px;
+    }
+
+    .chatbox-input {
+        font-size: 14px;
+        padding: 8px;
+        height: 36px;
+    }
+
+    .send-icon {
+        font-size: 22px;
+    }
+
+    .google-result {
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .chatbox-container-right {
+        padding: 6px;
+    }
+
+    .chatbox-input {
+        font-size: 12px;
+        padding: 6px;
+        height: 32px;
+    }
+
+    .send-icon {
+        font-size: 20px;
+    }
+
+    .google-result {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,49 @@
+/* File List container */
+.fileList {
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    /* Allows scrolling if file list is long */
+    padding: 0;
+    list-style-type: none;
+    /* Removes bullet points for list items */
+}
+
+/* Individual file item */
+.fileItem {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+/* Hover effect for file items */
+.fileItem:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add shadow on hover */
+}
+
+/* Active state for selected file */
+.fileItem.active {
+    background-color: #0070f3;
+    color: #fff;
+    border-color: #005bb5;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .fileList {
+        max-height: 200px;
+        /* Reduce height for mobile */
+    }
+
+    .fileItem {
+        padding: 8px;
+        margin-bottom: 8px;
+        /* Adjust padding and margin for smaller screens */
+    }
+}
