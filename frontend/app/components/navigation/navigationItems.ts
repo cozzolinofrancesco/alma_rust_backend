@@ -18,9 +18,13 @@ export const navigationItems: NavigationItem[] = [
   { href: '/projects', labelKey: 'nav.projects', group: 'workspace', tour: 'nav-projects' },
   {
     href: '/ai-agents', labelKey: 'nav.agentNodes', group: 'workspace', tour: 'nav-agent-builder',
-    activePaths: ['/ai-agents', '/agentnodes', '/canvas-272'], aliases: ['agents', 'canvas'],
+    activePaths: ['/ai-agents', '/agentnodes'], aliases: ['agents'],
   },
   { href: '/SCT272', labelKey: 'nav.sct272', group: 'workspace', tour: 'nav-sct272' },
+  {
+    href: '/canvas-272', labelKey: 'nav.authoring', group: 'workspace',
+    aliases: ['authoring', 'canvas', 'canvas 272'],
+  },
   {
     href: '/upload', labelKey: 'nav.openDataStorage', group: 'data', tour: 'nav-add-data',
     aliases: ['add data', 'upload PDF', 'files'],

@@ -2,7 +2,7 @@
 import type { StructuredDoc } from './exportFormatter';
 
 export async function exportStructuredDocToDocx(doc: StructuredDoc, fileName: string): Promise<void> {
-  const res = await fetch('/api/export/docx', {
+  const res = await fetch('/api/rust/export/docx', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

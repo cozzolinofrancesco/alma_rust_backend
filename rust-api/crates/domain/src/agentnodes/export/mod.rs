@@ -4,6 +4,7 @@
 
 pub mod diagram;
 pub mod display_name;
+pub mod docx;
 pub mod layer_output;
 pub mod markdown;
 pub mod sanitize;

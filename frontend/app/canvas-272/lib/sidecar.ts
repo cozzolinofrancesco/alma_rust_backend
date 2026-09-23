@@ -106,7 +106,7 @@ export async function fetchDriveSidecar(
 ): Promise<Canvas272SidecarV1 | null> {
   try {
     const res = await fetch(
-      `/api/canvas-272/sidecar/${encodeURIComponent(agentId)}?projectId=${encodeURIComponent(projectId)}`,
+      `/api/rust/canvas-272/sidecar/${encodeURIComponent(agentId)}?projectId=${encodeURIComponent(projectId)}`,
       { credentials: 'include' }
     );
     if (res.status === 404) return null;
@@ -124,7 +124,7 @@ export async function saveDriveSidecar(
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     const res = await fetch(
-      `/api/canvas-272/sidecar/${encodeURIComponent(sidecar.agentId)}?projectId=${encodeURIComponent(projectId)}`,
+      `/api/rust/canvas-272/sidecar/${encodeURIComponent(sidecar.agentId)}?projectId=${encodeURIComponent(projectId)}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

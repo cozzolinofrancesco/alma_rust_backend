@@ -17,3 +17,8 @@ uuid = { workspace = true }
 axum = { workspace = true }
 indexmap = { workspace = true }
 sha2 = { workspace = true }
+# canvas-272 .docx export (finishes the deferred "Phase 6" docx path): renders a
+# StructuredDoc to an OOXML .docx byte buffer without any external binary. This
+# mirrors frontend_v3's non-pandoc fallback (simpleDocxExport), not the pandoc
+# primary, so LaTeX/OMML math fidelity is intentionally out of scope.
+docx-rs = "0.4"

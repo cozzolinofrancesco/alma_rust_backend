@@ -452,7 +452,7 @@ export default function StepEditorModal({
       setAiError(null);
       try {
         const finalPrompt = buildAiPrompt(action, selection.text, userPrompt);
-        const res = await fetch('/api/gemini', {
+        const res = await fetch('/api/rust/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

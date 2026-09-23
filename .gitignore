@@ -20,7 +20,8 @@
 !.npmrc
 !.nvmrc
 !.node-version
-
+.env.local
+.env*
 # ------------------------------------------
 # Python and Virtual Environments
 # ------------------------------------------

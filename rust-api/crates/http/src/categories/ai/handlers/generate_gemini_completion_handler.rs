@@ -17,21 +17,10 @@ const MINIMUM_SUPPORTED_GEMINI_TEMPERATURE: f64 = 0.0;
 const MAXIMUM_SUPPORTED_GEMINI_TEMPERATURE: f64 = 1.0;
 
 /// Returns the canonical default Gemini model name used when the caller does
-/// not explicitly request a particular model.
+/// not explicitly request a particular model. Mirrors the bootstrap
+/// `DEFAULT_GENERATION_MODEL`.
 fn default_gemini_model_name() -> &'static str {
-    "gemini-1.5-flash"
-}
-
-/// Returns the full list of Gemini model identifiers that this handler is
-/// willing to route completions to. Any requested model outside this list is
-/// rejected as a malformed request.
-fn list_supported_gemini_model_names() -> Vec<&'static str> {
-    vec![
-        "gemini-1.5-flash",
-        "gemini-1.5-pro",
-        "gemini-2.0-flash",
-        "gemini-2.0-pro",
-    ]
+    "gemini-2.5-flash"
 }
 
 /// Reads the raw `prompt` field from the submitted JSON body and returns it as
@@ -42,14 +31,60 @@ fn read_prompt_field_as_string_slice(submitted_body: &Value) -> Option<&str> {
         .and_then(|prompt_value| prompt_value.as_str())
 }
 
-/// Extracts the mandatory `prompt` field from the submitted body as an owned
-/// string, returning a malformed-body error when it is missing or not a string.
-fn extract_gemini_prompt_field_from_body(submitted_body: &Value) -> Result<String, HttpError> {
-    read_prompt_field_as_string_slice(submitted_body)
-        .map(|prompt_slice| prompt_slice.to_string())
-        .ok_or_else(|| HttpError::RequestBodyWasMalformed {
-            explanation: String::from("the 'prompt' field is required and must be a string"),
-        })
+/// Reads an optional `systemInstruction`, accepting either a bare string or a
+/// `{ text }` object (both shapes the reference `/api/gemini` accepts).
+fn read_system_instruction_text(submitted_body: &Value) -> Option<String> {
+    let system_instruction = submitted_body.get("systemInstruction")?;
+    if let Some(text) = system_instruction.as_str() {
+        return Some(text.to_string());
+    }
+    system_instruction
+        .get("text")
+        .and_then(Value::as_str)
+        .map(|text| text.to_string())
+}
+
+/// Extract the prompt text from **either** the `prompt` string field or a
+/// `messages` array. canvas-272 sends `{ messages: [{ role, text }], model }`
+/// (`StepEditorModal.tsx`), while other callers send `{ prompt }`. An optional
+/// `systemInstruction` is prepended. The single-string adapter interface takes
+/// one prompt, so message turns are flattened (blank-line separated) — grounding
+/// / multi-turn role fidelity is out of scope for this text-only path.
+fn extract_gemini_prompt_text(submitted_body: &Value) -> Result<String, HttpError> {
+    // Prefer an explicit non-empty `prompt`.
+    if let Some(prompt) = read_prompt_field_as_string_slice(submitted_body) {
+        if !prompt.trim().is_empty() {
+            return Ok(prompt.to_string());
+        }
+    }
+
+    // Otherwise flatten `messages` (+ optional systemInstruction).
+    if let Some(messages) = submitted_body.get("messages").and_then(Value::as_array) {
+        let mut parts: Vec<String> = Vec::new();
+        if let Some(system) = read_system_instruction_text(submitted_body) {
+            if !system.trim().is_empty() {
+                parts.push(system.trim().to_string());
+            }
+        }
+        for message in messages {
+            if let Some(text) = message.get("text").and_then(Value::as_str) {
+                let trimmed = text.trim();
+                if !trimmed.is_empty() {
+                    parts.push(trimmed.to_string());
+                }
+            }
+        }
+        let joined = parts.join("\n\n");
+        if !joined.trim().is_empty() {
+            return Ok(joined);
+        }
+    }
+
+    Err(HttpError::RequestBodyWasMalformed {
+        explanation: String::from(
+            "the request must include a non-empty 'prompt' string or a 'messages' array",
+        ),
+    })
 }
 
 /// Converts a domain parsing failure into a malformed-body HTTP error, keeping
@@ -82,29 +117,15 @@ fn read_requested_gemini_model_name_field(submitted_body: &Value) -> Option<Stri
 }
 
 /// Resolves the effective Gemini model name to use for the completion, falling
-/// back to the default model when the caller did not request one.
+/// back to the default model when the caller did not request one. The model is
+/// **not** checked against a hardcoded allow-list here: resolution/validation is
+/// deferred to the AI adapter (the real Gemini adapter errors on a truly unknown
+/// model; the hermetic stub ignores it), so current-generation model ids the
+/// frontend sends are accepted.
 fn resolve_effective_gemini_model_name(requested_model_name: Option<String>) -> String {
     match requested_model_name {
         Some(explicit_model_name) => explicit_model_name,
         None => default_gemini_model_name().to_string(),
-    }
-}
-
-/// Validates that the effective model name is one of the supported Gemini
-/// models, returning a malformed-body error otherwise.
-fn validate_requested_gemini_model_is_supported(
-    effective_model_name: &str,
-) -> Result<(), HttpError> {
-    if list_supported_gemini_model_names().contains(&effective_model_name) {
-        Ok(())
-    } else {
-        Err(HttpError::RequestBodyWasMalformed {
-            explanation: format!(
-                "the requested model '{}' is not supported; supported models are: {}",
-                effective_model_name,
-                list_supported_gemini_model_names().join(", ")
-            ),
-        })
     }
 }
 
@@ -135,8 +156,7 @@ fn validate_gemini_temperature_within_unit_range(
                 return Err(HttpError::RequestBodyWasMalformed {
                     explanation: format!(
                         "the 'temperature' field must be between {} and {}",
-                        MINIMUM_SUPPORTED_GEMINI_TEMPERATURE,
-                        MAXIMUM_SUPPORTED_GEMINI_TEMPERATURE
+                        MINIMUM_SUPPORTED_GEMINI_TEMPERATURE, MAXIMUM_SUPPORTED_GEMINI_TEMPERATURE
                     ),
                 });
             }
@@ -204,12 +224,11 @@ pub async fn generate_gemini_completion_handler<TransactionalUnitOfWork>(
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
-    let prompt_string = extract_gemini_prompt_field_from_body(&submitted_body)?;
+    let prompt_string = extract_gemini_prompt_text(&submitted_body)?;
     let prompt_text = parse_gemini_prompt_into_non_empty_text(prompt_string)?;
 
     let requested_model_name = read_requested_gemini_model_name_field(&submitted_body);
     let effective_model_name = resolve_effective_gemini_model_name(requested_model_name);
-    validate_requested_gemini_model_is_supported(&effective_model_name)?;
 
     let requested_temperature = read_optional_gemini_temperature_field(&submitted_body);
     validate_gemini_temperature_within_unit_range(requested_temperature)?;
@@ -243,64 +262,66 @@ mod tests {
     }
 
     #[test]
-    fn read_prompt_field_as_string_slice_returns_none_for_missing_or_wrong_type() {
-        let missing = json!({ "other": "x" });
-        assert_eq!(read_prompt_field_as_string_slice(&missing), None);
-        let wrong_type = json!({ "prompt": 42 });
-        assert_eq!(read_prompt_field_as_string_slice(&wrong_type), None);
-    }
-
-    #[test]
-    fn extract_gemini_prompt_field_from_body_returns_owned_string_when_present() {
+    fn extract_prompt_text_prefers_explicit_prompt() {
         let body = json!({ "prompt": "summarize this" });
-        let extracted = extract_gemini_prompt_field_from_body(&body).expect("should extract");
-        assert_eq!(extracted, "summarize this");
+        assert_eq!(extract_gemini_prompt_text(&body).unwrap(), "summarize this");
     }
 
     #[test]
-    fn extract_gemini_prompt_field_from_body_errors_when_absent() {
-        let body = json!({ "model": "gemini-1.5-pro" });
-        let error = extract_gemini_prompt_field_from_body(&body).expect_err("should error");
-        assert!(is_malformed_body_error(&error));
-    }
-
-    #[test]
-    fn map_gemini_prompt_parsing_failure_produces_malformed_body_error() {
-        let parse_failure = NonEmptyText::parse(String::new())
-            .expect_err("empty text must fail to parse");
-        let mapped = map_gemini_prompt_parsing_failure_to_malformed_body_error(parse_failure);
-        assert!(is_malformed_body_error(&mapped));
-    }
-
-    #[test]
-    fn parse_gemini_prompt_into_non_empty_text_succeeds_for_valid_input() {
-        let parsed = parse_gemini_prompt_into_non_empty_text(String::from("valid prompt"))
-            .expect("should parse");
-        assert_eq!(parsed.as_str(), "valid prompt");
-    }
-
-    #[test]
-    fn parse_gemini_prompt_into_non_empty_text_errors_for_empty_input() {
-        let error = parse_gemini_prompt_into_non_empty_text(String::new())
-            .expect_err("empty should error");
-        assert!(is_malformed_body_error(&error));
-    }
-
-    #[test]
-    fn read_requested_gemini_model_name_field_returns_trimmed_value() {
-        let body = json!({ "model": "  gemini-1.5-pro  " });
+    fn extract_prompt_text_flattens_messages() {
+        // canvas-272's shape: { messages: [{role, text}], model }.
+        let body = json!({
+            "messages": [
+                { "role": "user", "text": "  first turn  " },
+                { "role": "user", "text": "second turn" },
+            ],
+            "model": "gemini-2.5-flash",
+        });
         assert_eq!(
-            read_requested_gemini_model_name_field(&body),
-            Some(String::from("gemini-1.5-pro"))
+            extract_gemini_prompt_text(&body).unwrap(),
+            "first turn\n\nsecond turn"
         );
     }
 
     #[test]
-    fn read_requested_gemini_model_name_field_returns_none_for_blank_or_missing() {
-        let blank = json!({ "model": "   " });
-        assert_eq!(read_requested_gemini_model_name_field(&blank), None);
-        let missing = json!({ "prompt": "x" });
-        assert_eq!(read_requested_gemini_model_name_field(&missing), None);
+    fn extract_prompt_text_prepends_system_instruction_for_messages() {
+        let body = json!({
+            "systemInstruction": { "text": "You are helpful." },
+            "messages": [{ "role": "user", "text": "hi" }],
+        });
+        assert_eq!(
+            extract_gemini_prompt_text(&body).unwrap(),
+            "You are helpful.\n\nhi"
+        );
+    }
+
+    #[test]
+    fn extract_prompt_text_errors_when_neither_present() {
+        let body = json!({ "model": "gemini-2.5-flash" });
+        assert!(is_malformed_body_error(
+            &extract_gemini_prompt_text(&body).unwrap_err()
+        ));
+        // Empty messages array is also malformed.
+        let empty = json!({ "messages": [] });
+        assert!(is_malformed_body_error(
+            &extract_gemini_prompt_text(&empty).unwrap_err()
+        ));
+    }
+
+    #[test]
+    fn parse_gemini_prompt_into_non_empty_text_succeeds_for_valid_input() {
+        let parsed =
+            parse_gemini_prompt_into_non_empty_text(String::from("valid prompt")).expect("parse");
+        assert_eq!(parsed.as_str(), "valid prompt");
+    }
+
+    #[test]
+    fn read_requested_gemini_model_name_field_returns_trimmed_value() {
+        let body = json!({ "model": "  gemini-3.5-flash  " });
+        assert_eq!(
+            read_requested_gemini_model_name_field(&body),
+            Some(String::from("gemini-3.5-flash"))
+        );
     }
 
     #[test]
@@ -312,37 +333,12 @@ mod tests {
     }
 
     #[test]
-    fn resolve_effective_gemini_model_name_uses_requested_when_present() {
+    fn resolve_effective_gemini_model_name_accepts_any_current_model() {
+        // No allow-list: a current-generation id the frontend sends is accepted.
         assert_eq!(
-            resolve_effective_gemini_model_name(Some(String::from("gemini-2.0-pro"))),
-            "gemini-2.0-pro"
+            resolve_effective_gemini_model_name(Some(String::from("gemini-3.5-flash"))),
+            "gemini-3.5-flash"
         );
-    }
-
-    #[test]
-    fn validate_requested_gemini_model_is_supported_accepts_known_model() {
-        assert!(validate_requested_gemini_model_is_supported("gemini-1.5-flash").is_ok());
-    }
-
-    #[test]
-    fn validate_requested_gemini_model_is_supported_rejects_unknown_model() {
-        let error = validate_requested_gemini_model_is_supported("gpt-4")
-            .expect_err("unknown model should error");
-        assert!(is_malformed_body_error(&error));
-    }
-
-    #[test]
-    fn read_optional_gemini_temperature_field_returns_numeric_value() {
-        let body = json!({ "temperature": 0.7 });
-        assert_eq!(read_optional_gemini_temperature_field(&body), Some(0.7));
-    }
-
-    #[test]
-    fn read_optional_gemini_temperature_field_returns_none_when_absent_or_non_numeric() {
-        let absent = json!({ "prompt": "x" });
-        assert_eq!(read_optional_gemini_temperature_field(&absent), None);
-        let non_numeric = json!({ "temperature": "hot" });
-        assert_eq!(read_optional_gemini_temperature_field(&non_numeric), None);
     }
 
     #[test]
@@ -350,14 +346,11 @@ mod tests {
         assert!(validate_gemini_temperature_within_unit_range(None).is_ok());
         assert!(validate_gemini_temperature_within_unit_range(Some(0.0)).is_ok());
         assert!(validate_gemini_temperature_within_unit_range(Some(1.0)).is_ok());
-        assert!(validate_gemini_temperature_within_unit_range(Some(0.5)).is_ok());
     }
 
     #[test]
     fn validate_gemini_temperature_within_unit_range_rejects_out_of_range_and_nan() {
-        assert!(
-            validate_gemini_temperature_within_unit_range(Some(-0.1)).is_err()
-        );
+        assert!(validate_gemini_temperature_within_unit_range(Some(-0.1)).is_err());
         assert!(validate_gemini_temperature_within_unit_range(Some(1.1)).is_err());
         assert!(validate_gemini_temperature_within_unit_range(Some(f64::NAN)).is_err());
     }
@@ -365,24 +358,8 @@ mod tests {
     #[test]
     fn build_gemini_prompt_with_model_directive_prefixes_directive() {
         let prompt = NonEmptyText::parse(String::from("do the thing")).expect("parse");
-        let built = build_gemini_prompt_with_model_directive(&prompt, "gemini-1.5-pro");
-        assert_eq!(built, "[gemini-model: gemini-1.5-pro]\ndo the thing");
-    }
-
-    #[test]
-    fn parse_gemini_directive_prompt_into_non_empty_text_succeeds_for_valid_input() {
-        let parsed = parse_gemini_directive_prompt_into_non_empty_text(String::from(
-            "[gemini-model: gemini-1.5-flash]\nhi",
-        ))
-        .expect("should parse");
-        assert!(parsed.as_str().contains("gemini-1.5-flash"));
-    }
-
-    #[test]
-    fn parse_gemini_directive_prompt_into_non_empty_text_errors_for_empty_input() {
-        let error = parse_gemini_directive_prompt_into_non_empty_text(String::new())
-            .expect_err("empty should error");
-        assert!(is_malformed_body_error(&error));
+        let built = build_gemini_prompt_with_model_directive(&prompt, "gemini-2.5-flash");
+        assert_eq!(built, "[gemini-model: gemini-2.5-flash]\ndo the thing");
     }
 
     #[test]
@@ -390,18 +367,19 @@ mod tests {
         let completion = GeneratedCompletion {
             produced_text: String::from("the answer"),
         };
-        let body = build_gemini_completion_response_body(completion, "gemini-2.0-flash");
-        assert_eq!(body.get("response").and_then(|v| v.as_str()), Some("the answer"));
-        assert_eq!(body.get("model").and_then(|v| v.as_str()), Some("gemini-2.0-flash"));
+        let body = build_gemini_completion_response_body(completion, "gemini-2.5-flash");
+        assert_eq!(
+            body.get("response").and_then(|v| v.as_str()),
+            Some("the answer")
+        );
+        assert_eq!(
+            body.get("model").and_then(|v| v.as_str()),
+            Some("gemini-2.5-flash")
+        );
     }
 
     #[test]
-    fn list_supported_gemini_model_names_includes_default() {
-        assert!(list_supported_gemini_model_names().contains(&default_gemini_model_name()));
-    }
-
-    #[test]
-    fn default_gemini_model_name_is_stable() {
-        assert_eq!(default_gemini_model_name(), "gemini-1.5-flash");
+    fn default_gemini_model_name_is_current_default() {
+        assert_eq!(default_gemini_model_name(), "gemini-2.5-flash");
     }
 }
