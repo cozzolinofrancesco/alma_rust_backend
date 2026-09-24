@@ -316,3 +316,4 @@ script_testing/*.pdf
 !.npmrc
 !.nvmrc
 !.node-version
+PENTEST_PROMPT.md
