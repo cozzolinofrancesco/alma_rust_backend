@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import { fetch as undiciFetch } from 'undici';
 import { z } from 'zod';
 import { authOptions } from '@/app/lib/authOptions';
-import { assertPublicHttpUrl } from '@/app/lib/ssrfGuard';
+import { assertPublicHttpUrl, pinnedHttpsDispatcher } from '@/app/lib/ssrfGuard';
 
 const MAX_PDF_BYTES = 50 * 1024 * 1024;
 
@@ -17,6 +18,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // FE-SSRF-002: track the pinned dispatcher so it is always torn down, even on
+  // an early return from a redirect/guard failure.
+  let dispatcher: ReturnType<typeof pinnedHttpsDispatcher> | null = null;
   try {
     const parsed = requestSchema.safeParse(await request.json());
     if (!parsed.success) {
@@ -25,13 +29,18 @@ export async function POST(request: NextRequest) {
     const { pdfUrl, filename } = parsed.data;
 
     let nextUrl = pdfUrl;
-    let response: Response | null = null;
+    let response: Awaited<ReturnType<typeof undiciFetch>> | null = null;
     const MAX_REDIRECTS = 5;
 
     try {
       for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-        const safeUrl = await assertPublicHttpUrl(nextUrl);
-        const hopResponse = await fetch(safeUrl, {
+        const { url: safeUrl, addresses } = await assertPublicHttpUrl(nextUrl);
+        // FE-SSRF-002: connect only to the address just validated so undici cannot
+        // re-resolve the hostname to a rebound private IP between check and fetch.
+        if (dispatcher) await dispatcher.destroy();
+        dispatcher = pinnedHttpsDispatcher(addresses);
+        const hopResponse = await undiciFetch(safeUrl, {
+          dispatcher,
           redirect: 'manual',
           headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -103,5 +112,8 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to download PDF' },
       { status: 500 }
     );
+  } finally {
+    // FE-SSRF-002: release the pinned connection pool once the body is read.
+    if (dispatcher) await dispatcher.destroy();
   }
 }

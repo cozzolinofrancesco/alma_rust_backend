@@ -25,6 +25,16 @@ pub async fn debug_shared_projects_handler<TransactionalUnitOfWork>(
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
+    // MISC-DEBUG-001: this diagnostic endpoint enumerates cross-tenant project
+    // ids/owner data. It is disabled by default and only responds when
+    // `ALMA_ENABLE_DEBUG_ENDPOINTS` is truthy; otherwise it is indistinguishable
+    // from an unmounted route (404).
+    if !debug_endpoints_are_enabled() {
+        return Err(HttpError::RequestedResourceWasNotFound {
+            explanation: "Not found".to_string(),
+        });
+    }
+
     let owning_account = extract_owning_account_from_authorized_request(&authorized_request);
 
     let total_count = count_all_saved_project_documents(&application_state).await?;
@@ -54,6 +64,21 @@ where
     );
 
     Ok(Json(payload))
+}
+
+/// Whether the diagnostic debug endpoints are enabled. Disabled by default so
+/// the endpoint is unavailable in normal deployments; enabled only when
+/// `ALMA_ENABLE_DEBUG_ENDPOINTS` is set to a truthy value
+/// (`1`/`true`/`yes`/`on`). (MISC-DEBUG-001)
+fn debug_endpoints_are_enabled() -> bool {
+    std::env::var("ALMA_ENABLE_DEBUG_ENDPOINTS")
+        .map(|raw_flag| {
+            matches!(
+                raw_flag.trim().to_ascii_lowercase().as_str(),
+                "1" | "true" | "yes" | "on"
+            )
+        })
+        .unwrap_or(false)
 }
 
 /// (1) Pull the owning account (the authenticated principal's email) out of the

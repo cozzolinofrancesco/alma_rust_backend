@@ -127,17 +127,19 @@ async fn fetch_job_document_or_not_found(
 
 /// (3) Enforce ownership: an owned job may only be read by its owner.
 ///
-/// A job with no `owning_account` is treated as shared/system-owned and is
-/// visible to any authenticated requester.
+/// RUST-IDOR-003: a job with no `owning_account` is NOT world-visible — an
+/// ownerless job is default-denied rather than treated as shared/system-owned.
 fn assert_job_document_is_visible_to_requester(
     job_document: &StoredDocument,
     requesting_account: &Email,
 ) -> Result<(), HttpError> {
     match job_document.owning_account.as_deref() {
-        None => Ok(()),
         Some(owner) if owner.eq_ignore_ascii_case(requesting_account.as_str()) => Ok(()),
         Some(_) => Err(HttpError::AuthorizationWasDenied {
             explanation: "this RAG job belongs to a different account".to_string(),
+        }),
+        None => Err(HttpError::AuthorizationWasDenied {
+            explanation: "the requested RAG job has no recorded owner".to_string(),
         }),
     }
 }
@@ -365,14 +367,15 @@ mod tests {
     }
 
     #[test]
-    fn visibility_allows_unowned_job() {
+    fn visibility_denies_unowned_job() {
+        // RUST-IDOR-003: ownerless jobs are default-denied, not world-visible.
         let document = StoredDocument {
             document_identifier: "job-shared".to_string(),
             owning_account: None,
             document_body: json!({}),
         };
         let requester = Email::parse("anyone@example.com".to_string()).unwrap();
-        assert!(assert_job_document_is_visible_to_requester(&document, &requester).is_ok());
+        assert!(assert_job_document_is_visible_to_requester(&document, &requester).is_err());
     }
 
     #[test]

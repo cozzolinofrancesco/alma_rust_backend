@@ -18,8 +18,9 @@ use alma_infrastructure::persistence::InMemoryUnitOfWork;
 use alma_infrastructure::rag_ingest::GeminiCorpusIngestionAdapter;
 use alma_infrastructure::retrieval::{GeminiFileSearchRetrievalAdapter, LexicalRetrievalAdapter};
 use alma_infrastructure::storage::InMemoryBlobStorageAdapter;
+use axum::http::HeaderValue;
 use std::sync::Arc;
-use tower_http::cors::CorsLayer;
+use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tracing_subscriber::EnvFilter;
 
 type FullyResolvedApplicationState = ApplicationState<InMemoryUnitOfWork>;
@@ -44,6 +45,15 @@ async fn main() {
         .init();
 
     let runtime_configuration = RuntimeConfiguration::resolve_from_environment();
+
+    // Fail closed: refuse to start if the shared-secret perimeter would be
+    // disabled on a reachable (non-loopback) bind (RUST-AUTHN-001). A configured
+    // SERVICE_API_KEY, a loopback bind, or an explicit ALMA_ALLOW_INSECURE opt-in
+    // all satisfy the invariant.
+    if let Err(reason) = runtime_configuration.verify_security_invariants() {
+        tracing::error!("{reason}");
+        std::process::exit(1);
+    }
 
     // Env-driven real-vs-stub adapter selection (plan Phase 0). All three seams
     // are `Arc<dyn Port>`, so the swap is a single branch: a usable
@@ -162,7 +172,7 @@ async fn main() {
             RATE_LIMIT_MAXIMUM_REQUESTS,
         >::construct())
         .layer(RequestObservationLayer::construct())
-        .layer(CorsLayer::permissive())
+        .layer(build_cors_layer(&runtime_configuration.allowed_cors_origins))
         .with_state(fully_resolved_application_state);
 
     let bound_listener = tokio::net::TcpListener::bind(&runtime_configuration.bind_address)
@@ -178,6 +188,24 @@ async fn main() {
     axum::serve(bound_listener, assembled_router)
         .await
         .expect("the http server terminated unexpectedly");
+}
+
+/// Build the CORS layer from the configured allowlist. Empty ⇒ no cross-origin
+/// access (the BFF calls this API server-to-server; browsers must not reach it
+/// directly). Non-empty ⇒ reflect only the listed origins, replacing the former
+/// `CorsLayer::permissive()` that reflected any origin (MISC-CORS-001).
+fn build_cors_layer(allowed_origins: &[String]) -> CorsLayer {
+    if allowed_origins.is_empty() {
+        return CorsLayer::new();
+    }
+    let parsed_origins: Vec<HeaderValue> = allowed_origins
+        .iter()
+        .filter_map(|origin| origin.parse::<HeaderValue>().ok())
+        .collect();
+    CorsLayer::new()
+        .allow_origin(AllowOrigin::list(parsed_origins))
+        .allow_methods(Any)
+        .allow_headers(Any)
 }
 
 /// Resolve the Gemini File Search model override. An empty result is intentional:

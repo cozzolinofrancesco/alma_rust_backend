@@ -30,8 +30,8 @@ pub async fn files_search_by_query_handler<TransactionalUnitOfWork>(
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
-    // Establish the identity of the caller for audit / ownership context.
-    let _owning_account = extract_owning_account_from_authorized_request(&authorized_request);
+    // Establish the identity of the caller; the search is scoped to their files.
+    let owning_account = extract_owning_account_from_authorized_request(&authorized_request);
 
     // Parse and validate the mandatory search query.
     let raw_query = extract_search_query_from_query_parameters(&query_parameters)?;
@@ -42,8 +42,9 @@ where
     let pagination_offset = extract_pagination_offset_from_query_parameters(&query_parameters);
     let pagination_limit = extract_pagination_limit_from_query_parameters(&query_parameters);
 
-    // Fetch every stored project-file document, then filter it in memory.
-    let all_documents = list_all_project_file_documents(&application_state).await?;
+    // RUST-IDOR-002: fetch only the caller's own documents (never every tenant's)
+    // so the search cannot be used as a cross-tenant read/existence oracle.
+    let all_documents = list_project_file_documents_owned_by(&application_state, &owning_account).await?;
 
     let normalized_query = normalize_query_term_for_case_insensitive_match(validated_query.as_str());
     let matched_documents =
@@ -131,14 +132,16 @@ fn extract_pagination_limit_from_query_parameters(
     }
 }
 
-/// (7) Load every stored project-file document from the document collection.
-fn list_all_project_file_documents<'a, TransactionalUnitOfWork: UnitOfWork>(
+/// (7) Load the caller's own project-file documents from the document collection
+/// (RUST-IDOR-002: owner-scoped, never all tenants).
+fn list_project_file_documents_owned_by<'a, TransactionalUnitOfWork: UnitOfWork>(
     application_state: &'a ApplicationState<TransactionalUnitOfWork>,
+    owning_account: &'a str,
 ) -> impl std::future::Future<Output = Result<Vec<StoredDocument>, HttpError>> + 'a {
     async move {
         application_state
             .document_collection
-            .list_documents(PROJECT_FILES_COLLECTION_NAME)
+            .list_documents_owned_by(PROJECT_FILES_COLLECTION_NAME, owning_account)
             .await
             .map_err(map_document_collection_failure_to_http_error)
     }

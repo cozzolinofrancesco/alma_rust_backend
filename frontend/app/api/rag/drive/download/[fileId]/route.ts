@@ -45,13 +45,26 @@ export async function GET(
         return NextResponse.json(parsed);
       } catch {
         return new NextResponse(String(content), {
-          headers: { 'Content-Type': 'text/plain' },
+          headers: {
+            'Content-Type': 'text/plain',
+            // MISC-INFO-001: force download + block MIME sniffing so attacker-supplied
+            // content cannot render inline (e.g. as HTML) in this origin.
+            'Content-Disposition': 'attachment',
+            'X-Content-Type-Options': 'nosniff',
+          },
         });
       }
     }
 
     return new NextResponse(String(content), {
-      headers: { 'Content-Type': fileMetadata.data.mimeType || 'text/plain' },
+      headers: {
+        'Content-Type': fileMetadata.data.mimeType || 'text/plain',
+        // MISC-INFO-001: the mimeType comes from Drive (attacker-controllable);
+        // force download + block MIME sniffing so a declared HTML mimeType cannot
+        // render inline in this origin.
+        'Content-Disposition': 'attachment',
+        'X-Content-Type-Options': 'nosniff',
+      },
     });
   } catch (error) {
     console.error('Failed to download file:', error);

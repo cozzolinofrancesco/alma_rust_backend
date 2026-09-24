@@ -52,8 +52,9 @@ archive/
 .env.production.local
 
 # KEEP these for build (public vars only, no secrets!)
+# FE-SECRET-001: .env.production is deliberately NOT re-included — it holds
+# server secrets and must never enter the build context. Inject at runtime.
 !.env.docker
-!.env.production
 !.env.example
 !.env.template
 

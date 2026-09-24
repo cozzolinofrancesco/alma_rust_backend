@@ -11,11 +11,16 @@ use alma_application::ports::google_drive::{
     DriveFile, DriveFileContent, DriveFolderListing, GoogleDriveObjectPort,
 };
 use async_trait::async_trait;
+use futures_util::StreamExt;
 use serde_json::Value;
 
 /// Default Drive API host. Override via bootstrap (env `GOOGLE_DRIVE_BASE_URL`) to
 /// point tests at a local mock.
 pub const DEFAULT_GOOGLE_DRIVE_BASE_URL: &str = "https://www.googleapis.com";
+
+/// Upper bound on a single Drive download held in memory (RUST-SSRF-003). Guards
+/// against a large (or lying-`Content-Length`) file exhausting server memory.
+const MAX_DRIVE_DOWNLOAD_BYTES: usize = 50 * 1024 * 1024;
 
 /// The `fields` mask requested for file listings (search + folder browse).
 const FILE_LIST_FIELDS: &str = "nextPageToken, files(id, name, mimeType, parents, size)";
@@ -47,6 +52,23 @@ impl GoogleDriveClient {
 /// requires `\` and `'` to be backslash-escaped.
 fn escape_drive_query_literal(literal: &str) -> String {
     literal.replace('\\', "\\\\").replace('\'', "\\'")
+}
+
+/// Percent-encode a Drive object id for safe interpolation into a URL **path**
+/// segment (RUST-SSRF-003). Real Drive ids are `[A-Za-z0-9_-]`; anything else
+/// (`/`, `?`, `#`, `.`, whitespace, control bytes) is escaped so a crafted id
+/// cannot traverse or alter the request path or inject query/fragment parts.
+fn percent_encode_path_segment(segment: &str) -> String {
+    let mut encoded = String::with_capacity(segment.len());
+    for byte in segment.bytes() {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'~' => {
+                encoded.push(byte as char);
+            }
+            _ => encoded.push_str(&format!("%{byte:02X}")),
+        }
+    }
+    encoded
 }
 
 /// Build the `q` expression for a full-text search, optionally constrained by MIME.
@@ -229,7 +251,10 @@ impl GoogleDriveObjectPort for GoogleDriveClient {
         file_id: &str,
     ) -> Result<DriveFileContent, ApplicationError> {
         // 1. Metadata (name + mime).
-        let metadata_endpoint = format!("{}/drive/v3/files/{}", self.base_url, file_id);
+        // RUST-SSRF-003: percent-encode the caller-supplied id so it cannot break out
+        // of its path segment (traversal / query / fragment injection).
+        let encoded_file_id = percent_encode_path_segment(file_id);
+        let metadata_endpoint = format!("{}/drive/v3/files/{}", self.base_url, encoded_file_id);
         let metadata_response = self
             .http_client
             .get(&metadata_endpoint)
@@ -264,7 +289,7 @@ impl GoogleDriveObjectPort for GoogleDriveClient {
         // 2. Bytes (binary media). Google-native docs (application/vnd.google-apps.*)
         //    require :export instead of alt=media — out of scope for v1; Drive
         //    returns an error which surfaces as a Drive failure.
-        let media_endpoint = format!("{}/drive/v3/files/{}", self.base_url, file_id);
+        let media_endpoint = format!("{}/drive/v3/files/{}", self.base_url, encoded_file_id);
         let media_response = self
             .http_client
             .get(&media_endpoint)
@@ -278,11 +303,32 @@ impl GoogleDriveObjectPort for GoogleDriveClient {
             let body = media_response.text().await.unwrap_or_default();
             return Err(map_drive_status_to_error(media_status, "drive download", &body));
         }
-        let bytes = media_response
-            .bytes()
-            .await
-            .map_err(|error| transport_error("drive download body", error))?
-            .to_vec();
+        // RUST-SSRF-003: bound the download instead of an unbounded `.bytes()`. Reject
+        // early when Drive advertises an oversize body, then stream with a hard cap in
+        // case the header is absent or understated.
+        if media_response
+            .content_length()
+            .is_some_and(|length| length > MAX_DRIVE_DOWNLOAD_BYTES as u64)
+        {
+            return Err(ApplicationError::GoogleDriveAdapterFailure {
+                failure_description: format!(
+                    "drive download: file exceeds maximum allowed size of {MAX_DRIVE_DOWNLOAD_BYTES} bytes"
+                ),
+            });
+        }
+        let mut bytes: Vec<u8> = Vec::new();
+        let mut byte_stream = media_response.bytes_stream();
+        while let Some(chunk) = byte_stream.next().await {
+            let chunk = chunk.map_err(|error| transport_error("drive download body", error))?;
+            if bytes.len() + chunk.len() > MAX_DRIVE_DOWNLOAD_BYTES {
+                return Err(ApplicationError::GoogleDriveAdapterFailure {
+                    failure_description: format!(
+                        "drive download: file exceeds maximum allowed size of {MAX_DRIVE_DOWNLOAD_BYTES} bytes"
+                    ),
+                });
+            }
+            bytes.extend_from_slice(&chunk);
+        }
 
         Ok(DriveFileContent {
             id: file_id.to_string(),
@@ -301,6 +347,23 @@ mod tests {
     #[test]
     fn escape_literal_escapes_backslash_and_quote() {
         assert_eq!(escape_drive_query_literal("it's a \\test"), "it\\'s a \\\\test");
+    }
+
+    #[test]
+    fn path_segment_encoding_neutralizes_traversal_and_injection() {
+        // Legitimate Drive ids pass through untouched.
+        assert_eq!(percent_encode_path_segment("1AbC_def-GHI"), "1AbC_def-GHI");
+        // Path/query/fragment and traversal metacharacters are escaped (dots too,
+        // so a `..` segment cannot traverse).
+        assert_eq!(
+            percent_encode_path_segment("../../etc"),
+            "%2E%2E%2F%2E%2E%2Fetc"
+        );
+        assert_eq!(
+            percent_encode_path_segment("id?alt=media#x"),
+            "id%3Falt%3Dmedia%23x"
+        );
+        assert_eq!(percent_encode_path_segment("a b"), "a%20b");
     }
 
     #[test]

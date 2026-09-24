@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { corsHeaders } from './app/lib/cors';
+import { isAllowedOrgEmail } from './app/lib/orgDomain';
 
 // Routes that are intentionally public (no auth): the NextAuth flow manages its
 // own cookies/headers, and setAuthCookie self-gates on a Bearer token.
@@ -31,7 +32,10 @@ function isServiceEndpoint(pathname: string): boolean {
 // single backstop so no route is ever left unauthenticated by omission.
 async function isAuthorized(req: NextRequest): Promise<boolean> {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  if (token) return true;
+  // A valid Google JWT is only accepted for an allowed-org account — the
+  // @roche.com restriction is enforced here, server-side (FE-AUTHZ-001), not
+  // just in the client AuthGuard.
+  if (token) return isAllowedOrgEmail(typeof token.email === 'string' ? token.email : undefined);
   const serviceKey = process.env.SERVICE_API_KEY;
   return !!serviceKey && req.headers.get('x-api-key') === serviceKey;
 }

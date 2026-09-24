@@ -1,9 +1,14 @@
 // pages/api/setAuthCookie.ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import cookie from 'cookie';
 import { corsHeaders } from '../../app/lib/cors';
 
+// FE-AUTH-002 (Part B): this endpoint previously wrote an `Authorization: Bearer
+// <token>` httpOnly cookie taken verbatim from the request header, with no
+// validation against the session. That cookie had no readers anywhere in the app
+// (confirmed dead write) and enabled cookie fixation, so the write has been
+// removed. The endpoint only validates the Bearer header shape and is otherwise
+// a no-op — kept so its public route contract does not break.
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // Set consistent CORS headers
   Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -33,19 +38,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       .json({ error: 'Invalid Authorization header format' });
   }
 
-  const token = parts[1];
-
-  // Set the cookie with the token in the "Authorization2" header format.
-  res.setHeader(
-    'Set-Cookie',
-    cookie.serialize('Authorization', `Bearer ${token}`, {
-      httpOnly: true, // Makes cookie inaccessible to client-side JavaScript.
-      secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production.
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: '/',
-      sameSite: 'strict',
-    })
-  );
-
-  return res.status(200).json({ message: 'Cookie set successfully' });
+  // No cookie is written — see the FE-AUTH-002 note above.
+  return res.status(200).json({ message: 'OK' });
 }

@@ -151,19 +151,23 @@ async fn fetch_owning_job_document_or_not_found(
     })
 }
 
-/// (4) Ensure the requesting account is permitted to view this job document. A
-/// job with no owner is treated as globally visible; an owned job is only
-/// visible to its owner.
+/// (4) Ensure the requesting account is permitted to view this job document. An
+/// owned job is only visible to its owner.
+///
+/// RUST-IDOR-003: a job with no owner is NOT globally visible — an ownerless job
+/// is default-denied.
 fn assert_job_document_is_visible_to_requester(
     job_document: &StoredDocument,
     requesting_account: &Email,
 ) -> Result<(), HttpError> {
     match job_document.owning_account.as_deref() {
-        None => Ok(()),
         Some(owner) if owner == requesting_account.as_str() => Ok(()),
         Some(_) => Err(HttpError::AuthorizationWasDenied {
             explanation: "the authenticated account may not view files for this RAG job"
                 .to_string(),
+        }),
+        None => Err(HttpError::AuthorizationWasDenied {
+            explanation: "the requested RAG job has no recorded owner".to_string(),
         }),
     }
 }
@@ -419,14 +423,15 @@ mod tests {
     }
 
     #[test]
-    fn assert_visibility_allows_owner_and_public() {
+    fn assert_visibility_allows_owner_and_denies_unowned() {
         let owner_email = Email::parse("owner@example.com".to_string()).unwrap();
+        // RUST-IDOR-003: ownerless jobs are default-denied, not globally visible.
         let public_document = StoredDocument {
             document_identifier: "job-1".to_string(),
             owning_account: None,
             document_body: json!({}),
         };
-        assert!(assert_job_document_is_visible_to_requester(&public_document, &owner_email).is_ok());
+        assert!(assert_job_document_is_visible_to_requester(&public_document, &owner_email).is_err());
 
         let owned_document = StoredDocument {
             document_identifier: "job-1".to_string(),

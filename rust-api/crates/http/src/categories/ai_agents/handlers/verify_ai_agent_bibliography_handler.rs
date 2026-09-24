@@ -1,3 +1,4 @@
+use crate::categories::projects_files::collections::PROJECT_FILES_COLLECTION_NAME;
 use crate::error::HttpError;
 use crate::pipeline::request::HttpRequestInPipeline;
 use crate::pipeline::stages::RequestHasBeenAuthorized;
@@ -23,14 +24,23 @@ use serde_json::{Value, json};
 #[route(method = "POST", path = "/api/ai-agents/verify-bibliography")]
 pub async fn verify_ai_agent_bibliography_handler<TransactionalUnitOfWork>(
     State(application_state): State<ApplicationState<TransactionalUnitOfWork>>,
-    _authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
+    authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
     Json(submitted_body): Json<Value>,
 ) -> Result<Json<Value>, HttpError>
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
+    let requesting_account = authorized_request.authorized_principal();
+
     let bibliography_entry_array = extract_bibliography_entry_array(&submitted_body)?;
     ensure_bibliography_entry_array_is_not_empty(&bibliography_entry_array)?;
+
+    // verify-bibliography owner check: the storage/gdrive existence probe below is
+    // otherwise a global oracle for arbitrary object keys. Restrict it to storage
+    // references the caller actually owns.
+    let caller_owned_storage_references =
+        collect_caller_owned_storage_references(&application_state, requesting_account.as_str())
+            .await?;
 
     let mut per_entry_verification_results: Vec<Value> =
         Vec::with_capacity(bibliography_entry_array.len());
@@ -44,18 +54,25 @@ where
             "storage" | "gdrive" => {
                 let object_identifier =
                     build_storage_object_identifier_from_entry_path(&entry_declared_path);
-                let fetched_blob_result =
-                    application_state.storage_adapter.fetch_blob(&object_identifier).await;
-                let located = interpret_storage_fetch_result_as_existence(fetched_blob_result)?;
-                let link = if located {
-                    Some(build_web_view_link_for_located_entry(
-                        &entry_declared_path,
-                        &entry_path_type,
-                    ))
+                if !caller_owned_storage_references.contains(&object_identifier.opaque_reference) {
+                    // Not a storage object the caller owns: report not-located
+                    // without probing, so existence of other owners' blobs is
+                    // never revealed.
+                    (false, None)
                 } else {
-                    None
-                };
-                (located, link)
+                    let fetched_blob_result =
+                        application_state.storage_adapter.fetch_blob(&object_identifier).await;
+                    let located = interpret_storage_fetch_result_as_existence(fetched_blob_result)?;
+                    let link = if located {
+                        Some(build_web_view_link_for_located_entry(
+                            &entry_declared_path,
+                            &entry_path_type,
+                        ))
+                    } else {
+                        None
+                    };
+                    (located, link)
+                }
             }
             _ => {
                 // No storage-backed path: fall back to a literature search using
@@ -127,6 +144,34 @@ fn extract_bibliography_entry_array(submitted_body: &Value) -> Result<Vec<Value>
             "expected a 'bibliography' array (or 'entries'/'references', or a bare array)"
                 .to_string(),
     })
+}
+
+/// Owner check helper (verify-bibliography): collect the set of storage
+/// references the caller owns — each owned project-file document's identifier and
+/// its recorded `storage_object_reference` — so the existence probe can be gated
+/// to the caller's own objects rather than acting as a global existence oracle.
+async fn collect_caller_owned_storage_references<TransactionalUnitOfWork: UnitOfWork>(
+    application_state: &ApplicationState<TransactionalUnitOfWork>,
+    owning_account: &str,
+) -> Result<std::collections::HashSet<String>, HttpError> {
+    let owned_documents = application_state
+        .document_collection
+        .list_documents_owned_by(PROJECT_FILES_COLLECTION_NAME, owning_account)
+        .await
+        .map_err(map_verification_lookup_failure_to_http_error)?;
+
+    let mut owned_references = std::collections::HashSet::new();
+    for owned_document in owned_documents {
+        owned_references.insert(owned_document.document_identifier.clone());
+        if let Some(storage_reference) = owned_document
+            .document_body
+            .get("storage_object_reference")
+            .and_then(Value::as_str)
+        {
+            owned_references.insert(storage_reference.to_string());
+        }
+    }
+    Ok(owned_references)
 }
 
 /// (2) Guard against an empty batch — verifying nothing is a client error.

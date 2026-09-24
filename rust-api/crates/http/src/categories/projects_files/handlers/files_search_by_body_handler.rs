@@ -29,10 +29,9 @@ pub async fn files_search_by_body_handler<TransactionalUnitOfWork>(
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
-    // The owning account is not used to restrict the search here (project files are
-    // shared search targets) but it is resolved so the behaviour can be tightened
-    // later without changing the extractor signature.
-    let _owning_account = extract_owning_account_from_authorized_request(&authorized_request);
+    // RUST-IDOR-002: the search is scoped to the caller's own files so it cannot
+    // read or probe other tenants' documents.
+    let owning_account = extract_owning_account_from_authorized_request(&authorized_request);
 
     let raw_query = extract_search_query_field_from_body(&submitted_body)?;
     let validated_query = validate_search_query_expression(raw_query)?;
@@ -41,7 +40,7 @@ where
     let mime_type_filter = extract_mime_type_filter_from_body(&submitted_body);
     let result_limit = extract_result_limit_from_body(&submitted_body);
 
-    let all_documents = list_all_project_file_documents(&application_state).await?;
+    let all_documents = list_project_file_documents_owned_by(&application_state, &owning_account).await?;
 
     let mut matched_documents = filter_documents_by_body_search_criteria(
         all_documents,
@@ -133,14 +132,16 @@ fn extract_result_limit_from_body(submitted_body: &Value) -> usize {
     }
 }
 
-/// 7. Lists every stored document in the project-files collection.
-fn list_all_project_file_documents<'a, TransactionalUnitOfWork: UnitOfWork>(
+/// 7. Lists the caller's own documents in the project-files collection
+/// (RUST-IDOR-002: owner-scoped, never all tenants).
+fn list_project_file_documents_owned_by<'a, TransactionalUnitOfWork: UnitOfWork>(
     application_state: &'a ApplicationState<TransactionalUnitOfWork>,
+    owning_account: &'a str,
 ) -> impl std::future::Future<Output = Result<Vec<StoredDocument>, HttpError>> + 'a {
     async move {
         application_state
             .document_collection
-            .list_documents(PROJECT_FILES_COLLECTION_NAME)
+            .list_documents_owned_by(PROJECT_FILES_COLLECTION_NAME, owning_account)
             .await
             .map_err(map_document_collection_failure_to_http_error)
     }

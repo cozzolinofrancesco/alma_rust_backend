@@ -4,6 +4,17 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../lib/authOptions";
 
 export async function GET(request: Request) {
+  // MISC-DEBUG-001: debug endpoint disabled by default. It only responds when
+  // ENABLE_DEBUG_ENDPOINTS is truthy (server-only env, no NEXT_PUBLIC_ prefix so
+  // the flag is never shipped to the browser); otherwise it 404s like an
+  // unmounted route.
+  const debugEndpointsEnabled = ['1', 'true', 'yes', 'on'].includes(
+    (process.env.ENABLE_DEBUG_ENDPOINTS || '').trim().toLowerCase()
+  );
+  if (!debugEndpointsEnabled) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     const accessToken = session?.accessToken;

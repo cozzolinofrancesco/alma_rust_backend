@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { z } from 'zod';
 import { authOptions } from './authOptions';
 import { authorizeServiceRequest } from './serviceApiAuth';
+import { isAllowedOrgEmail } from './orgDomain';
 
 const googleIdentitySchema = z.object({
   sub: z.string().min(1),
@@ -19,6 +20,9 @@ export async function getApiSession(request: Request): Promise<Session | null> {
   if (!request.headers.has('x-api-key')) {
     const session = await getServerSession(authOptions);
     if (bearer && bearer !== session?.accessToken) return null;
+    // Server-side org restriction (FE-AUTHZ-001): a session for a non-@roche.com
+    // account is not authorized, even though NextAuth minted a valid JWT.
+    if (session && !isAllowedOrgEmail(session.user?.email)) return null;
     return session;
   }
 
@@ -33,6 +37,9 @@ export async function getApiSession(request: Request): Promise<Session | null> {
     if (!response.ok) return null;
     const identity = googleIdentitySchema.safeParse(await response.json());
     if (!identity.success) return null;
+    // Enforce the org restriction on the service-key + Bearer path too, so the
+    // acting user is always an allowed-org account (FE-AUTHZ-001).
+    if (!isAllowedOrgEmail(identity.data.email)) return null;
     return {
       user: { email: identity.data.email.toLowerCase(), name: identity.data.name },
       accessToken: bearer,

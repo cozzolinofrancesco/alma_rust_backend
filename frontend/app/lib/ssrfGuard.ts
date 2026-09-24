@@ -1,6 +1,7 @@
 
 import { lookup } from 'node:dns/promises';
 import net from 'node:net';
+import { Agent } from 'undici';
 
 const BLOCKED_HOSTNAMES = new Set([
   'localhost',
@@ -49,7 +50,14 @@ function isPrivateAddress(ip: string): boolean {
   return true;
 }
 
-export async function assertPublicHttpUrl(rawUrl: string): Promise<URL> {
+export interface ValidatedUrl {
+  /** The syntactically-validated request URL (hostname preserved for SNI/Host). */
+  url: URL;
+  /** The public IP address(es) the host resolved to at validation time. */
+  addresses: string[];
+}
+
+export async function assertPublicHttpUrl(rawUrl: string): Promise<ValidatedUrl> {
   let url: URL;
   try {
     url = new URL(rawUrl);
@@ -70,7 +78,7 @@ export async function assertPublicHttpUrl(rawUrl: string): Promise<URL> {
     if (isPrivateAddress(hostname)) {
       throw new Error('URL host is not allowed');
     }
-    return url;
+    return { url, addresses: [hostname] };
   }
 
   let results: { address: string }[];
@@ -84,5 +92,38 @@ export async function assertPublicHttpUrl(rawUrl: string): Promise<URL> {
     throw new Error('URL host is not allowed');
   }
 
-  return url;
+  return { url, addresses: results.map((r) => r.address) };
+}
+
+/**
+ * Build an undici dispatcher that connects only to the given, already-validated
+ * public IP address(es). Passing this to `fetch` pins the socket to the address
+ * vetted by {@link assertPublicHttpUrl} (the original hostname/SNI is preserved),
+ * closing the DNS-rebind TOCTOU window in which the name could re-resolve to a
+ * private IP between validation and the request (FE-SSRF-002). Addresses are
+ * re-checked here as defense in depth.
+ */
+export function pinnedHttpsDispatcher(addresses: string[]): Agent {
+  const safeAddresses = addresses.filter((address) => !isPrivateAddress(address));
+  // Signature matches `net.connect`'s `lookup` option; handle both the single
+  // and `all: true` (autoSelectFamily) callback conventions Node may use.
+  const lookupPinned: net.LookupFunction = (_hostname, options, callback) => {
+    if (safeAddresses.length === 0) {
+      callback(new Error('URL host is not allowed') as NodeJS.ErrnoException, '', 0);
+      return;
+    }
+    if (options.all) {
+      callback(
+        null,
+        safeAddresses.map((address) => ({ address, family: net.isIPv6(address) ? 6 : 4 })),
+      );
+      return;
+    }
+    const address = safeAddresses[0];
+    callback(null, address, net.isIPv6(address) ? 6 : 4);
+  };
+  // `connect.lookup` lives only on undici's TcpNetConnectOpts branch (which also
+  // marks `port` required), so a bare `{ lookup }` literal doesn't line up with the
+  // BuildOptions union — cast to the constructor's option type at this one seam.
+  return new Agent({ connect: { lookup: lookupPinned } } as unknown as Agent.Options);
 }

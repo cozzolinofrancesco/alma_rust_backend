@@ -260,20 +260,23 @@ async fn fetch_job_document_or_not_found(
     })
 }
 
-/// (5) Enforce that the requester owns the job. Documents with no owner are
-/// treated as shared/system-owned and are writable by any authenticated caller,
-/// matching the read behaviour of the sibling list handlers.
+/// (5) Enforce that the requester owns the job.
+///
+/// RUST-IDOR-003: documents with no owner are NOT world-writable — an ownerless
+/// job is default-denied, matching the sibling `delete_rag_corpus_handler`.
 fn assert_job_document_is_owned_by_requester(
     job_document: &StoredDocument,
     requesting_account: &Email,
 ) -> Result<(), HttpError> {
     match job_document.owning_account.as_deref() {
-        None => Ok(()),
         Some(owner) if owner.eq_ignore_ascii_case(requesting_account.as_str()) => Ok(()),
         Some(_) => Err(HttpError::AuthorizationWasDenied {
             explanation: String::from(
                 "the authenticated principal does not own this rag job",
             ),
+        }),
+        None => Err(HttpError::AuthorizationWasDenied {
+            explanation: String::from("the requested rag job has no recorded owner"),
         }),
     }
 }
@@ -653,10 +656,14 @@ mod tests {
     }
 
     #[test]
-    fn owner_check_allows_unowned_document() {
+    fn owner_check_denies_unowned_document() {
+        // RUST-IDOR-003: ownerless jobs are default-denied, not world-writable.
         let document = sample_job_document("running", None);
         let requester = Email::parse("someone@example.com".to_string()).unwrap();
-        assert!(assert_job_document_is_owned_by_requester(&document, &requester).is_ok());
+        assert!(matches!(
+            assert_job_document_is_owned_by_requester(&document, &requester),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
     }
 
     #[test]

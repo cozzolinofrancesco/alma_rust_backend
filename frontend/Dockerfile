@@ -122,11 +122,15 @@ COPY --from=builder --chown=nextjs:nodejs /app/public          ./public
 COPY --from=builder --chown=nextjs:nodejs /app/package.json    ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/next.config.mjs ./next.config.mjs
 # Server-side env vars (NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, etc.)
-# are read at runtime from process.env. Next.js loads .env.production on
-# `next start`, so it MUST exist in the runner workdir. Without this file the
-# app falls back to http://localhost:${PORT} (= localhost:8080) and 500s on
-# /api/auth/session because NEXTAUTH_SECRET is undefined.
-COPY --from=builder --chown=nextjs:nodejs /app/.env.production ./.env.production
+# are read at runtime from process.env.
+#
+# FE-SECRET-001: .env.production is intentionally NOT baked into the image —
+# doing so shipped NEXTAUTH_SECRET / GOOGLE_CLIENT_SECRET inside the artifact
+# (anyone with the image could forge sessions). Secrets are injected at runtime
+# instead (Cloud Run env / secret manager, or `docker run --env-file`). Provide
+# NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID/SECRET as runtime env; without
+# NEXTAUTH_SECRET /api/auth/session will 500, which is the intended fail-closed
+# signal that runtime secrets were not supplied.
 
 RUN mkdir -p /app/tmp_uploads_ocr && chown -R nextjs:nodejs /app/tmp_uploads_ocr
 

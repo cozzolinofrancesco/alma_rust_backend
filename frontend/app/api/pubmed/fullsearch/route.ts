@@ -23,8 +23,8 @@ async function runESearch(term: string, apiKey: string, retmax = 100, retstart =
     `&retmax=${retmax}` +
     `&retstart=${retstart}` +
     (apiKey ? `&api_key=${apiKey}` : '')
-  console.log('🔍 | ==== ESearch URL ====')
-  console.log(url)
+  // Do NOT log the full URL — it carries the NCBI api_key (secret hygiene).
+  console.log('🔍 | ESearch request (db=pubmed)')
   const res = await fetch(url)
   const json = await res.json()
   const idlist = (json?.esearchresult?.idlist as string[]) || []
@@ -66,10 +66,11 @@ function extractAbstractText(abstractData: unknown): string {
   }
 }
 
-const missing: string[] = []
-
 export async function GET(request: Request) {
   console.log('🚀 | ==== Starting fullsearch Route ====')
+  // Request-scoped: a module-level array bled unresolved titles across users
+  // and grew unbounded across the process lifetime (FE-LEAK-001).
+  const missing: string[] = []
   const { searchParams } = new URL(request.url)
   const rawRef = searchParams.get('title')
   if (!rawRef) {
@@ -120,8 +121,8 @@ export async function GET(request: Request) {
     `&id=${idlist.join(',')}` +
     `&retmode=json` +
     (apiKey ? `&api_key=${apiKey}` : '')
-  console.log('🔍 | ==== ESummary URL ====')
-  console.log(esummaryUrl)
+  // Do NOT log the full URL — it carries the NCBI api_key (secret hygiene).
+  console.log('🔍 | ESummary request (db=pubmed)')
   const esumJson = await (await fetch(esummaryUrl)).json()
   console.log(`✅ | Retrieved summaries for ${idlist.length} PMIDs`)
   const summaries = idlist.map(id => (esumJson.result as ESummaryResult)[id] as Summary)
@@ -132,8 +133,8 @@ export async function GET(request: Request) {
     `&id=${idlist.join(',')}` +
     `&retmode=xml` +
     (apiKey ? `&api_key=${apiKey}` : '')
-  console.log('🔍 | ==== EFetch URL ====')
-  console.log(efetchUrl)
+  // Do NOT log the full URL — it carries the NCBI api_key (secret hygiene).
+  console.log('🔍 | EFetch request (db=pubmed)')
   const efetchXml = await (await fetch(efetchUrl)).text()
   const parsedXml = await new xml2js.Parser({ explicitArray: false }).parseStringPromise(efetchXml)
   console.log(`✅ | Parsed XML for ${idlist.length} articles`)

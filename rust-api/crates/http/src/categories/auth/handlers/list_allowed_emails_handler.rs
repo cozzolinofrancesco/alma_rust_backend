@@ -27,6 +27,16 @@ pub async fn list_allowed_emails_handler<TransactionalUnitOfWork>(
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
+    // MISC-DEBUG-001: this diagnostic endpoint discloses PII (the allow-list of
+    // emails). It is disabled by default and only responds when
+    // `ALMA_ENABLE_DEBUG_ENDPOINTS` is truthy; otherwise it is indistinguishable
+    // from an unmounted route (404).
+    if !debug_endpoints_are_enabled() {
+        return Err(HttpError::RequestedResourceWasNotFound {
+            explanation: "Not found".to_string(),
+        });
+    }
+
     let requesting_account_principal = extract_requesting_account_principal(&authorized_request);
     let requesting_account_email = parse_requesting_account_as_email(requesting_account_principal)?;
 
@@ -46,6 +56,21 @@ where
     let response_body = build_allowed_emails_response_body(serialized_emails, total_count);
 
     Ok(Json(response_body))
+}
+
+/// Whether the diagnostic debug endpoints are enabled. Disabled by default so
+/// the endpoint is unavailable in normal deployments; enabled only when
+/// `ALMA_ENABLE_DEBUG_ENDPOINTS` is set to a truthy value
+/// (`1`/`true`/`yes`/`on`). (MISC-DEBUG-001)
+fn debug_endpoints_are_enabled() -> bool {
+    std::env::var("ALMA_ENABLE_DEBUG_ENDPOINTS")
+        .map(|raw_flag| {
+            matches!(
+                raw_flag.trim().to_ascii_lowercase().as_str(),
+                "1" | "true" | "yes" | "on"
+            )
+        })
+        .unwrap_or(false)
 }
 
 /// (1) Pull the raw authenticated principal string out of the authorized

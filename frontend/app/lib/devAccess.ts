@@ -5,17 +5,18 @@
 // this bypasses the per-user Drive-registry ownership gate. It is a deliberate
 // privilege escalation scoped to developers/testers.
 //
-// Extend the allow-list without a code change via NEXT_PUBLIC_DEV_EMAILS
-// (comma-separated). The NEXT_PUBLIC_ prefix is intentional: the same gate is read on
-// the client (to show the corpus-search UI) and on the server (to authorize the
-// run-path bypass), so it must be readable in both.
+// Extend the allow-list without a code change via DEV_EMAILS (comma-separated).
+// FE-PRIVESC-001: this env var is SERVER-only (no NEXT_PUBLIC_ prefix) so the
+// allow-list is never inlined into the client bundle / disclosed to the browser.
+// The authorization consumers (rag/query, rag/corpora, ...) run server-side and
+// pass the server-verified session email, so a server-only read is sufficient.
 
 // No emails are hardcoded here — the allow-list is configured entirely via
-// NEXT_PUBLIC_DEV_EMAILS (comma-separated) so no personal addresses live in source.
+// DEV_EMAILS (comma-separated) so no personal addresses live in source.
 const BUILTIN_DEV_EMAILS: string[] = [];
 
 function envDevEmails(): string[] {
-  return (process.env.NEXT_PUBLIC_DEV_EMAILS || '')
+  return (process.env.DEV_EMAILS || '')
     .split(',')
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);

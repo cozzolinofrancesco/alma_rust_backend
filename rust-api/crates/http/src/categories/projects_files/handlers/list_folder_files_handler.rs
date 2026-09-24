@@ -29,12 +29,14 @@ const CANONICAL_PROJECT_FOLDER_NAMES: [&str; 5] = [
 )]
 pub async fn list_folder_files_handler<TransactionalUnitOfWork>(
     State(application_state): State<ApplicationState<TransactionalUnitOfWork>>,
-    _authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
+    authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
     Path(path_parameters): Path<(String, String)>,
 ) -> Result<Json<Value>, HttpError>
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
+    let requesting_account = authorized_request.authorized_principal();
+
     // 1. Destructure and validate the two path parameters.
     let (raw_project_identifier, raw_folder_name) =
         destructure_folder_files_path_parameters(path_parameters);
@@ -45,9 +47,11 @@ where
     // 2. Reject folder names that are not part of the canonical folder set.
     assert_folder_name_is_within_canonical_folder_set(validated_folder_name.as_str())?;
 
-    // 3. Load every stored file document and keep only those belonging to the
-    //    requested project and folder.
-    let all_project_file_documents = list_all_project_file_documents(&application_state).await?;
+    // 3. Load the caller's own file documents (RUST-IDOR-001/-002: scope the
+    //    listing to the requester instead of every tenant) and keep only those
+    //    belonging to the requested project and folder.
+    let all_project_file_documents =
+        list_project_file_documents_owned_by(&application_state, requesting_account.as_str()).await?;
     let matching_documents = filter_documents_to_folder_files(
         all_project_file_documents,
         validated_project_identifier.as_str(),
@@ -118,15 +122,17 @@ fn assert_folder_name_is_within_canonical_folder_set(
     }
 }
 
-/// (5) Fetches every document from the project-files collection, translating any
-/// document-collection failure into an appropriate HTTP error.
-fn list_all_project_file_documents<'a, TransactionalUnitOfWork: UnitOfWork>(
+/// (5) Fetches the caller's own documents from the project-files collection
+/// (RUST-IDOR-002: owner-scoped so no other tenant's files are enumerated),
+/// translating any document-collection failure into an appropriate HTTP error.
+fn list_project_file_documents_owned_by<'a, TransactionalUnitOfWork: UnitOfWork>(
     application_state: &'a ApplicationState<TransactionalUnitOfWork>,
+    owning_account: &'a str,
 ) -> impl std::future::Future<Output = Result<Vec<StoredDocument>, HttpError>> + 'a {
     async move {
         application_state
             .document_collection
-            .list_documents(PROJECT_FILES_COLLECTION_NAME)
+            .list_documents_owned_by(PROJECT_FILES_COLLECTION_NAME, owning_account)
             .await
             .map_err(map_document_collection_failure_to_http_error)
     }

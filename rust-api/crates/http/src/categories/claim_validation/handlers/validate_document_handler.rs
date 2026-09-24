@@ -43,8 +43,13 @@ const FALLBACK_DEFAULT_MODEL: &str = "gemini-2.5-flash";
 
 /// Default and hard ceiling on the number of claims validated per request. The
 /// cap is logged when it truncates (no silent cap).
-const DEFAULT_MAX_CLAIMS: usize = 50;
-const MAX_MAX_CLAIMS: usize = 500;
+///
+/// LLM-DOS-001: each retained claim fans out to up to two upstream Gemini calls
+/// (evidence + judgment), so the absolute max bounds total per-request fan-out
+/// to ~1 + 2·MAX_MAX_CLAIMS calls. Kept deliberately small (was 50/500, i.e.
+/// ~1001 calls) so a single request cannot amplify into ~1000 upstream calls.
+const DEFAULT_MAX_CLAIMS: usize = 25;
+const MAX_MAX_CLAIMS: usize = 50;
 
 /// The inline reference document each claim is checked against (paper's `source`).
 #[derive(Debug, Deserialize)]
@@ -65,7 +70,7 @@ struct ValidateRequest {
     /// Optional generation model override.
     #[serde(default)]
     model: Option<String>,
-    /// Optional cap on claims validated (default 50, max 500).
+    /// Optional cap on claims validated (default 25, max 50).
     #[serde(default)]
     max_claims: Option<usize>,
 }

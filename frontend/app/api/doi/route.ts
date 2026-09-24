@@ -35,8 +35,13 @@ If no DOI can be found, respond with the string "none".
 Return your answer as JSONL: one JSON object per line, each with keys "reference" and "doi".\n\n${formattedList}`
 
   try {
-    const url     = new URL(request.url)
-    const baseUrl = `${url.protocol}//${url.host}`
+    // FE-SSRF-002: derive the internal API origin from server config, never from
+    // the request Host header — a spoofed Host would otherwise exfiltrate
+    // SERVICE_API_KEY to an attacker-controlled origin.
+    const baseUrl =
+      process.env.INTERNAL_BASE_URL ??
+      process.env.NEXTAUTH_URL ??
+      'http://127.0.0.1:3000'
 
     const geminiRes = await fetchWithTimeout(`${baseUrl}/api/gemini`, {
       method: 'POST',

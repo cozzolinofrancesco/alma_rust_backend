@@ -34,12 +34,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid StructuredDoc payload' }, { status: 400 });
     }
 
-    const buffer = await structuredDocToDocxBuffer(body.doc);
+    // FE-SSRF-001: use the sandboxed pandoc path (--sandbox + validateDocumentResources)
+    // so a markdown image/link embedded in the doc can't drive SSRF or local file reads.
+    const buffer = await structuredDocToDocxBuffer(body.doc, { safe: true });
 
-    const filename =
+    const rawFilename =
       body.fileName && /\.docx$/i.test(body.fileName)
         ? body.fileName
         : `${(body.fileName ?? body.doc.agentName ?? 'canvas272').replace(/[^a-z0-9-_]+/gi, '_')}.docx`;
+    // FE-SSRF-001: strip CR/LF, quotes and backslashes so a crafted fileName can't
+    // inject extra Content-Disposition directives or split the response headers.
+    const filename = rawFilename.replace(/[\r\n"\\]+/g, '_');
 
     return new NextResponse(buffer, {
       status: 200,

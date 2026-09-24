@@ -550,12 +550,17 @@ where
     let _confirmation_token =
         validate_run_cleanup_temporary_files_confirmation_token("CONFIRM_CLEANUP")?;
 
-    let _principal = authorized_request.authorized_principal();
+    let principal = authorized_request.authorized_principal();
     let _correlation = authorized_request.correlation_identifier();
 
+    // RUST-AUTHZ-002: scope the cleanup to the caller's own OCR jobs. Listing all
+    // owners here would let one caller enumerate and delete another owner's
+    // artifacts and job records; owner-scoping confines every deletion below
+    // (artifact keys and orphan purges are derived from these documents) to the
+    // caller's own records.
     let ocr_job_documents = application_state
         .document_collection
-        .list_documents(OCR_JOBS_COLLECTION_NAME)
+        .list_documents_owned_by(OCR_JOBS_COLLECTION_NAME, principal.as_str())
         .await?;
 
     let deletable_keys = enumerate_deletable_temporary_ocr_artifact_keys(

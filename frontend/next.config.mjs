@@ -29,16 +29,29 @@ const nextConfig = {
   compress: true,
 
   // Baseline security headers on all responses. frame-ancestors 'none' closes
-  // clickjacking; the rest are zero-risk hardening. A strict script-src CSP is
-  // intentionally NOT set here — app/layout.tsx uses an inline <style> and katex
-  // needs inline styles; a nonce-based script CSP should be a separate change.
+  // clickjacking; the rest are zero-risk hardening.
+  //
+  // FE-TOKEN-001: add a conservative script-src CSP so a reflected/stored XSS
+  // cannot load attacker script and exfiltrate the OAuth accessToken the session
+  // still exposes. script-src is scoped to 'self'; 'unsafe-inline' is retained
+  // ONLY because Next.js injects inline bootstrap/runtime scripts (and katex
+  // needs inline styles) — a nonce-based CSP that drops 'unsafe-inline' should
+  // be a follow-up. object-src 'none' + base-uri 'self' block plugin and
+  // base-tag injection vectors.
   async headers() {
+    const contentSecurityPolicy = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "frame-ancestors 'none'",
+    ].join('; ');
     return [
       {
         source: '/:path*',
         headers: [
           { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
+          { key: 'Content-Security-Policy', value: contentSecurityPolicy },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
         ],

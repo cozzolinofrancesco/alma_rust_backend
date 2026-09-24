@@ -49,6 +49,12 @@ VOLUME ["/data"]
 
 # Container-critical: the app defaults to 127.0.0.1 (loopback only), which is
 # unreachable from outside the container — bind to 0.0.0.0 here.
+#
+# SECURITY (RUST-AUTHN-001): because this bind is non-loopback, the app now
+# REFUSES TO START unless a SERVICE_API_KEY is provided (fail-closed perimeter),
+# or ALMA_ALLOW_INSECURE=1 is set for an explicitly insecure local run. Provide
+# SERVICE_API_KEY via the runtime env / secret manager for any exposed deploy —
+# do NOT bake it into the image.
 ENV ALMA_RUST_BIND_ADDRESS=0.0.0.0:8811 \
     ALMA_RUST_DATA_DIR=/data \
     RUST_LOG=info

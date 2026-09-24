@@ -85,8 +85,9 @@ const MAXIMUM_GENERATION_ATTEMPTS: u32 = 3;
 /// `2^attempt * 1000ms` exponential back-off; this is the `1000` base.
 const DEFAULT_RETRY_BASE_DELAY_MILLISECONDS: u64 = 1_000;
 
-/// Real Gemini adapter: issues `POST /v1beta/models/{model}:generateContent?key=`
-/// over `reqwest`, mirroring `geminiChatCore`
+/// Real Gemini adapter: issues `POST /v1beta/models/{model}:generateContent`
+/// over `reqwest` (the API key travels in the `x-goog-api-key` header, never in
+/// the URL — RUST-SECRET-002), mirroring `geminiChatCore`
 /// (`frontend_v3/app/lib/gemini.ts`).
 ///
 /// Behavioural parity carried over from the reference:
@@ -313,7 +314,11 @@ impl GeminiAiAdapter {
             let send_result = self
                 .http_client
                 .post(&endpoint)
-                .query(&[("key", self.gemini_api_key.as_str())])
+                // RUST-SECRET-002: send the key as a header, not `.query(&[("key",…)])`.
+                // reqwest attaches the full (key-bearing) URL to transport-error
+                // Display, which the error path echoes to clients — the header
+                // keeps the secret out of that URL entirely.
+                .header("x-goog-api-key", self.gemini_api_key.as_str())
                 .json(payload)
                 .send()
                 .await;
@@ -595,9 +600,11 @@ mod tests {
         assert!(outcome.json.is_none());
 
         let captured = handle.await.unwrap();
-        // endpoint + api key on the query string.
+        // endpoint on the URL; api key carried in the x-goog-api-key header,
+        // never in the query string (RUST-SECRET-002).
         assert!(captured.contains("/v1beta/models/gemini-3-flash-preview:generateContent"));
-        assert!(captured.contains("key=test-key"));
+        assert!(captured.contains("x-goog-api-key: test-key"));
+        assert!(!captured.contains("key=test-key"));
 
         let body = request_body_json(&captured);
         let generation_config = &body["generationConfig"];

@@ -134,7 +134,7 @@ fn assert_job_is_deletable_in_current_status(
     }
 }
 
-/// (5) Confirm the requesting principal owns the job (when ownership is recorded).
+/// (5) Confirm the requesting principal owns the job.
 fn assert_job_document_is_owned_by_requester(
     job_document: &StoredDocument,
     requesting_account: &Email,
@@ -144,9 +144,11 @@ fn assert_job_document_is_owned_by_requester(
         Some(_) => Err(HttpError::AuthorizationWasDenied {
             explanation: String::from("the authenticated principal does not own this rag job"),
         }),
-        // An ownerless job is treated as system-owned and freely deletable by any
-        // authenticated principal.
-        None => Ok(()),
+        // RUST-IDOR-003: an ownerless job is NOT world-accessible; default-deny
+        // rather than allowing any authenticated principal to delete it.
+        None => Err(HttpError::AuthorizationWasDenied {
+            explanation: String::from("the requested rag job has no recorded owner"),
+        }),
     }
 }
 
@@ -445,10 +447,14 @@ mod tests {
     }
 
     #[test]
-    fn ownership_check_permits_ownerless_job() {
+    fn ownership_check_denies_ownerless_job() {
+        // RUST-IDOR-003: ownerless jobs are default-denied, not freely deletable.
         let requester = Email::parse(String::from("anyone@example.edu")).unwrap();
         let document = stored_document_with_body("j", None, json!({}));
-        assert!(assert_job_document_is_owned_by_requester(&document, &requester).is_ok());
+        assert!(matches!(
+            assert_job_document_is_owned_by_requester(&document, &requester),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
     }
 
     #[test]

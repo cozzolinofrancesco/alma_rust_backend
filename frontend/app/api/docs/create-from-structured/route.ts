@@ -45,7 +45,9 @@ export async function POST(request: NextRequest) {
     }
     const doc = parsed.data.doc as StructuredDoc;
 
-    const buffer = await structuredDocToDocxBuffer(doc);
+    // FE-SSRF-001: use the sandboxed pandoc path (--sandbox + validateDocumentResources)
+    // so doc content can't drive SSRF / local file reads during conversion.
+    const buffer = await structuredDocToDocxBuffer(doc, { safe: true });
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID!,

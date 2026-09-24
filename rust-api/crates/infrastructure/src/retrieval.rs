@@ -431,8 +431,9 @@ fn read_finite_u32(object: &Value, key: &str) -> Option<u32> {
 
 /// Production [`RetrievalPort`] backed by Gemini File Search over plain HTTP.
 ///
-/// Constructed with the Gemini base URL, an API key (sent as `?key=`), and the
-/// File Search model. Mirrors the query path of `queryFileSearchStore`.
+/// Constructed with the Gemini base URL, an API key (sent as the
+/// `x-goog-api-key` header, never in the URL — RUST-SECRET-002), and the File
+/// Search model. Mirrors the query path of `queryFileSearchStore`.
 pub struct GeminiFileSearchRetrievalAdapter {
     http_client: reqwest::Client,
     base_url: String,
@@ -558,9 +559,13 @@ impl GeminiFileSearchRetrievalAdapter {
         for store_name in store_names {
             let mut page_token: Option<String> = None;
             loop {
+                // RUST-SECRET-002: build the URL WITHOUT the key — reqwest echoes
+                // the full request URL into transport-error Display, which the
+                // error path returns to clients. The key travels in the
+                // `x-goog-api-key` header on the request builder below instead.
                 let mut url = format!(
-                    "{}/v1beta/{}/documents?key={}&pageSize=20",
-                    self.base_url, store_name, self.api_key
+                    "{}/v1beta/{}/documents?pageSize=20",
+                    self.base_url, store_name
                 );
                 if let Some(token) = &page_token {
                     url.push_str("&pageToken=");
@@ -570,6 +575,7 @@ impl GeminiFileSearchRetrievalAdapter {
                 let response = self
                     .http_client
                     .get(&url)
+                    .header("x-goog-api-key", &self.api_key)
                     .send()
                     .await
                     .map_err(|error| ApplicationError::ArtificialIntelligenceAdapterFailure {
@@ -709,14 +715,17 @@ impl RetrievalPort for GeminiFileSearchRetrievalAdapter {
             "systemInstruction": { "parts": [ { "text": RETRIEVAL_SYSTEM_INSTRUCTION } ] },
         });
 
+        // RUST-SECRET-002: key omitted from the URL; sent via header below so it
+        // cannot leak through reqwest's URL-bearing transport-error Display.
         let url = format!(
-            "{}/v1beta/models/{}:generateContent?key={}",
-            self.base_url, self.model, self.api_key
+            "{}/v1beta/models/{}:generateContent",
+            self.base_url, self.model
         );
 
         let response = self
             .http_client
             .post(&url)
+            .header("x-goog-api-key", &self.api_key)
             .json(&request_body)
             .send()
             .await

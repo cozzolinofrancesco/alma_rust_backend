@@ -179,19 +179,23 @@ async fn fetch_job_document_or_not_found(
     })
 }
 
-/// (4) Confirm the job belongs to the requester. Documents that carry no owner
-/// are considered public and pass the check.
+/// (4) Confirm the job belongs to the requester.
+///
+/// RUST-IDOR-003: documents that carry no owner are NOT public — an ownerless
+/// job is default-denied rather than restartable by any authenticated caller.
 fn assert_job_document_is_owned_by_requester(
     job_document: &StoredDocument,
     requesting_account: &Email,
 ) -> Result<(), HttpError> {
     match job_document.owning_account.as_deref() {
-        None => Ok(()),
         Some(owner) if owner == requesting_account.as_str() => Ok(()),
         Some(_) => Err(HttpError::AuthorizationWasDenied {
             explanation: String::from(
                 "the authenticated principal does not own this rag job",
             ),
+        }),
+        None => Err(HttpError::AuthorizationWasDenied {
+            explanation: String::from("the requested rag job has no recorded owner"),
         }),
     }
 }
@@ -486,10 +490,14 @@ mod tests {
     }
 
     #[test]
-    fn assert_job_document_is_owned_by_requester_allows_unowned() {
+    fn assert_job_document_is_owned_by_requester_denies_unowned() {
+        // RUST-IDOR-003: ownerless jobs are default-denied, not public.
         let document = build_job_document(json!({}), None);
         let requester = Email::parse(String::from("anyone@example.com")).unwrap();
-        assert!(assert_job_document_is_owned_by_requester(&document, &requester).is_ok());
+        assert!(matches!(
+            assert_job_document_is_owned_by_requester(&document, &requester),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
     }
 
     #[test]

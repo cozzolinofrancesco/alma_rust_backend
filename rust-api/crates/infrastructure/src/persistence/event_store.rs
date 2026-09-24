@@ -107,10 +107,13 @@ impl UnitOfWork for InMemoryUnitOfWork {
             + 'static,
     {
         let isolated_working_copy = {
+            // RUST-DOS-002(b): recover from a poisoned lock (a prior panic while
+            // holding it) instead of turning every later transaction into a
+            // persistent 500 — the snapshot is only cloned here.
             let acquired_guard = self
                 .shared_event_store_state
                 .lock()
-                .expect("the in-memory event store mutex was poisoned");
+                .unwrap_or_else(|poisoned_guard| poisoned_guard.into_inner());
             acquired_guard.clone()
         };
 
@@ -120,10 +123,11 @@ impl UnitOfWork for InMemoryUnitOfWork {
 
         let produced_outcome = transactional_operation(&mut scoped_repository).await?;
 
+        // RUST-DOS-002(b): poison-tolerant access (see the load above).
         let mut acquired_guard = self
             .shared_event_store_state
             .lock()
-            .expect("the in-memory event store mutex was poisoned");
+            .unwrap_or_else(|poisoned_guard| poisoned_guard.into_inner());
         *acquired_guard = scoped_repository.isolated_working_copy;
 
         Ok(produced_outcome)

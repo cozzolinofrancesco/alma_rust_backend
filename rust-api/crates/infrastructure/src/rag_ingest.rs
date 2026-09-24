@@ -7,8 +7,10 @@
 //! keeps:
 //!
 //! 1. create (or reuse) a File Search store — `getOrCreateFileSearchStore`;
-//! 2. for each document, a **resumable upload** to `/upload/v1beta/files?key=`
+//! 2. for each document, a **resumable upload** to `/upload/v1beta/files`
 //!    (`uploadBufferToGemini`) followed by `:importFile` (`importFileToStore`);
+//!    the Gemini key is sent via the `x-goog-api-key` header (RUST-SECRET-002),
+//!    never in the URL;
 //! 3. poll `listStoreDocuments` + `aggregateDocumentStates` until the store's
 //!    documents reach `ACTIVE` (bounded ~120 s — the reference's
 //!    `verifyFileActive` LRO poll);
@@ -586,7 +588,9 @@ impl GeminiCorpusIngestionAdapter {
             .send_with_retry("store-check", || {
                 self.http_client
                     .get(format!("{}/v1beta/{}", self.gemini_base_url, candidate_store_name))
-                    .query(&[("key", self.gemini_api_key.as_str())])
+                    // RUST-SECRET-002: key via x-goog-api-key header, not the
+                    // query string (reqwest leaks the URL in transport errors).
+                    .header("x-goog-api-key", self.gemini_api_key.as_str())
             })
             .await;
         if let Ok(probe_response) = probe {
@@ -612,7 +616,9 @@ impl GeminiCorpusIngestionAdapter {
             .send_with_retry("store-create", || {
                 self.http_client
                     .post(format!("{}/v1beta/fileSearchStores", self.gemini_base_url))
-                    .query(&[("key", self.gemini_api_key.as_str())])
+                    // RUST-SECRET-002: key via x-goog-api-key header, not the
+                    // query string (reqwest leaks the URL in transport errors).
+                    .header("x-goog-api-key", self.gemini_api_key.as_str())
                     .json(&create_body)
             })
             .await?;
@@ -647,7 +653,9 @@ impl GeminiCorpusIngestionAdapter {
             .send_with_retry("upload-init", || {
                 self.http_client
                     .post(format!("{}/upload/v1beta/files", self.gemini_base_url))
-                    .query(&[("key", self.gemini_api_key.as_str())])
+                    // RUST-SECRET-002: key via x-goog-api-key header, not the
+                    // query string (reqwest leaks the URL in transport errors).
+                    .header("x-goog-api-key", self.gemini_api_key.as_str())
                     .header("X-Goog-Upload-Protocol", "resumable")
                     .header("X-Goog-Upload-Command", "start")
                     .header("X-Goog-Upload-Header-Content-Length", file_size.to_string())
@@ -735,7 +743,9 @@ impl GeminiCorpusIngestionAdapter {
                         "{}/v1beta/{}:importFile",
                         self.gemini_base_url, store_name
                     ))
-                    .query(&[("key", self.gemini_api_key.as_str())])
+                    // RUST-SECRET-002: key via x-goog-api-key header, not the
+                    // query string (reqwest leaks the URL in transport errors).
+                    .header("x-goog-api-key", self.gemini_api_key.as_str())
                     .json(&import_body)
             })
             .await?;
@@ -791,10 +801,10 @@ impl GeminiCorpusIngestionAdapter {
                             "{}/v1beta/{}/documents",
                             self.gemini_base_url, store_name
                         ))
-                        .query(&[
-                            ("key", self.gemini_api_key.as_str()),
-                            ("pageSize", DOCUMENTS_PAGE_SIZE),
-                        ]);
+                        // RUST-SECRET-002: key via header; only the non-secret
+                        // pageSize param stays in the query string.
+                        .header("x-goog-api-key", self.gemini_api_key.as_str())
+                        .query(&[("pageSize", DOCUMENTS_PAGE_SIZE)]);
                     if let Some(token) = &token_for_page {
                         request = request.query(&[("pageToken", token.as_str())]);
                     }

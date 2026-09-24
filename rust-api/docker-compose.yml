@@ -25,12 +25,22 @@ services:
       dockerfile: Dockerfile
     image: alma-rust-api:latest
     container_name: alma-rust-api
+    # Publish to the host LOOPBACK only (127.0.0.1), never 0.0.0.0 — the API
+    # trusts an x-account-email header for identity, so it must not be reachable
+    # from the LAN (RUST-AUTHN-001 / MISC-CORS-001). For a real deployment, drop
+    # this mapping entirely and reach the API over the internal compose network
+    # with a SERVICE_API_KEY set.
     ports:
-      - "8811:8811"
+      - "127.0.0.1:8811:8811"
     environment:
       ALMA_RUST_BIND_ADDRESS: 0.0.0.0:8811
       ALMA_RUST_DATA_DIR: /data
       RUST_LOG: info
+      # This compose file is the LOCAL-DEV profile: it runs without a
+      # SERVICE_API_KEY, so the fail-closed perimeter is explicitly opted out of
+      # here. NEVER set this in a shared/staging/production deploy — set
+      # SERVICE_API_KEY (e.g. in ./.env) instead, and remove this line.
+      ALMA_ALLOW_INSECURE: "1"
     env_file:
       # Optional: create ./ .env with GEMINI_API_KEY etc. Absent is fine.
       - path: .env

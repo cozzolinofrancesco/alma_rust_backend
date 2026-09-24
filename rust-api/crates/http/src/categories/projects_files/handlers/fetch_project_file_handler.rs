@@ -6,7 +6,7 @@ use crate::state::ApplicationState;
 use alma_application::error::ApplicationError;
 use alma_application::ports::document_collection::StoredDocument;
 use alma_application::ports::unit_of_work::UnitOfWork;
-use alma_domain::value_objects::NonEmptyText;
+use alma_domain::value_objects::{Email, NonEmptyText};
 use alma_macros::route;
 use axum::Json;
 use axum::extract::{Path, State};
@@ -18,12 +18,14 @@ use serde_json::{Value, json};
 )]
 pub async fn fetch_project_file_handler<TransactionalUnitOfWork>(
     State(application_state): State<ApplicationState<TransactionalUnitOfWork>>,
-    _authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
+    authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
     Path(path_parameters): Path<(String, String)>,
 ) -> Result<Json<Value>, HttpError>
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
+    let requesting_account = authorized_request.authorized_principal();
+
     // Break the two-tuple produced by the router into named parts.
     let (raw_project_identifier, raw_file_identifier) =
         destructure_project_file_path_parameters(path_parameters);
@@ -36,8 +38,10 @@ where
     let optionally_located_document =
         fetch_project_file_document(&application_state, validated_file_identifier.as_str()).await?;
 
-    // If the file exists it must belong to the addressed project.
+    // A located file is owner-scoped: it must belong to the caller (RUST-IDOR-001)
+    // and to the addressed project. A cross-tenant or ownerless file is denied.
     if let Some(located_document) = optionally_located_document.as_ref() {
+        assert_project_file_is_owned_by_requester(located_document, requesting_account)?;
         assert_located_file_belongs_to_project(
             located_document,
             validated_project_identifier.as_str(),
@@ -189,6 +193,21 @@ fn assert_located_file_belongs_to_project(
                 })
             }
         }
+    }
+}
+
+/// Owner-scope guard (RUST-IDOR-001): a located project file is only visible to
+/// the principal recorded as its owner. A file owned by a different account — or
+/// with no recorded owner — is treated as inaccessible rather than world-readable.
+fn assert_project_file_is_owned_by_requester(
+    located_document: &StoredDocument,
+    requesting_account: &Email,
+) -> Result<(), HttpError> {
+    match located_document.owning_account.as_deref() {
+        Some(owner) if owner == requesting_account.as_str() => Ok(()),
+        _ => Err(HttpError::AuthorizationWasDenied {
+            explanation: "the authenticated principal does not own this project file".to_string(),
+        }),
     }
 }
 
@@ -378,6 +397,29 @@ mod tests {
     fn resolves_placeholder_when_document_absent() {
         let resolved = resolve_project_file_content_or_placeholder(None);
         assert!(resolved.contains("Sample Agent"));
+    }
+
+    #[test]
+    fn owner_check_allows_owner_and_denies_stranger_or_ownerless() {
+        let owner = Email::parse("owner@example.com".to_string()).unwrap();
+        let owned = stored_document_with_body(json!({}));
+        assert!(assert_project_file_is_owned_by_requester(&owned, &owner).is_ok());
+
+        let stranger = Email::parse("intruder@example.com".to_string()).unwrap();
+        assert!(matches!(
+            assert_project_file_is_owned_by_requester(&owned, &stranger),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
+
+        let ownerless = StoredDocument {
+            document_identifier: "file-1".to_string(),
+            owning_account: None,
+            document_body: json!({}),
+        };
+        assert!(matches!(
+            assert_project_file_is_owned_by_requester(&ownerless, &owner),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
     }
 
     #[test]

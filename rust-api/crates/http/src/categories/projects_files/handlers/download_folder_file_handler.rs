@@ -6,7 +6,7 @@ use alma_application::error::ApplicationError;
 use alma_application::ports::document_collection::StoredDocument;
 use alma_application::ports::storage::StorageObjectIdentifier;
 use alma_application::ports::unit_of_work::UnitOfWork;
-use alma_domain::value_objects::NonEmptyText;
+use alma_domain::value_objects::{Email, NonEmptyText};
 use alma_macros::route;
 use axum::Json;
 use axum::extract::{Path, State};
@@ -25,12 +25,14 @@ const DEFAULT_DOWNLOAD_DISPLAY_NAME: &str = "downloaded-file";
 )]
 pub async fn download_folder_file_handler<TransactionalUnitOfWork>(
     State(application_state): State<ApplicationState<TransactionalUnitOfWork>>,
-    _authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
+    authorized_request: HttpRequestInPipeline<RequestHasBeenAuthorized>,
     Path(path_parameters): Path<(String, String, String)>,
 ) -> Result<Json<Value>, HttpError>
 where
     TransactionalUnitOfWork: UnitOfWork + 'static,
 {
+    let requesting_account = authorized_request.authorized_principal();
+
     let (_project_identifier, raw_folder_name, raw_file_identifier) =
         destructure_folder_file_path_parameters(path_parameters);
 
@@ -41,6 +43,9 @@ where
         fetch_folder_file_document_for_download(&application_state, validated_file_identifier.as_str())
             .await?;
     let located_document = require_located_folder_file_for_download(optionally_located)?;
+
+    // Owner-scope guard (RUST-IDOR-001): only the file's owner may download it.
+    assert_folder_file_is_owned_by_requester(&located_document, requesting_account)?;
 
     let storage_reference = extract_storage_object_reference_from_document(&located_document)?;
     let blob_bytes = fetch_blob_bytes_from_storage(&application_state, &storage_reference).await?;
@@ -113,6 +118,20 @@ fn require_located_folder_file_for_download(
     optionally_located.ok_or_else(|| HttpError::RequestedResourceWasNotFound {
         explanation: "the requested folder file does not exist".to_string(),
     })
+}
+
+/// Owner-scope guard (RUST-IDOR-001): a folder file may only be downloaded by
+/// its recorded owner. A different owner — or no recorded owner — is denied.
+fn assert_folder_file_is_owned_by_requester(
+    located_document: &StoredDocument,
+    requesting_account: &Email,
+) -> Result<(), HttpError> {
+    match located_document.owning_account.as_deref() {
+        Some(owner) if owner == requesting_account.as_str() => Ok(()),
+        _ => Err(HttpError::AuthorizationWasDenied {
+            explanation: "the authenticated principal does not own this folder file".to_string(),
+        }),
+    }
 }
 
 /// (6) Read the opaque storage object reference out of the stored document body.
@@ -290,6 +309,29 @@ mod tests {
         assert!(require_located_folder_file_for_download(None).is_err());
         let document = document_with_body(json!({}));
         assert!(require_located_folder_file_for_download(Some(document)).is_ok());
+    }
+
+    #[test]
+    fn owner_check_allows_owner_and_denies_stranger_or_ownerless() {
+        let owner = Email::parse("owner@example.com".to_string()).unwrap();
+        let owned = document_with_body(json!({}));
+        assert!(assert_folder_file_is_owned_by_requester(&owned, &owner).is_ok());
+
+        let stranger = Email::parse("intruder@example.com".to_string()).unwrap();
+        assert!(matches!(
+            assert_folder_file_is_owned_by_requester(&owned, &stranger),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
+
+        let ownerless = StoredDocument {
+            document_identifier: "file-1".to_string(),
+            owning_account: None,
+            document_body: json!({}),
+        };
+        assert!(matches!(
+            assert_folder_file_is_owned_by_requester(&ownerless, &owner),
+            Err(HttpError::AuthorizationWasDenied { .. })
+        ));
     }
 
     #[test]
